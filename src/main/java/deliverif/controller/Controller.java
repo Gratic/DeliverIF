@@ -7,13 +7,14 @@ import deliverif.controller.state.*;
 public class Controller {
     
     private View view;
-    private State currentState;
     private CityMap cityMap;
 
-    protected State initState;
-    
+    public State initState;
+    public State loadState;
+    protected State currentState;
+
     public Controller() {
-        view = new View();
+        view = new View(this);
         currentState = new InitState();
         cityMap = new CityMap();
 
@@ -23,14 +24,12 @@ public class Controller {
     public void init() {
         // states, solution 3
         initState = new InitState();
+        currentState = initState;
         
         view.init();
     }
 
     // state functions
-    public void load() {
-        currentState.load();
-    }
     public void undo() {
         currentState.undo();
     }
@@ -43,5 +42,14 @@ public class Controller {
     public void leftClick(Controller controller, View view) {
         currentState.leftClick(this, view);
     }
+    public void buttonClick(View view) { currentState.loadMapButtonClick(this, view); }
 
+    // getters & setters
+    public void setCurrentState(State state) {
+        this.currentState = state;
+    }
+
+    public CityMap getCityMap() {
+        return cityMap;
+    }
 }
