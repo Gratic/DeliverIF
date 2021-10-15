@@ -9,5 +9,5 @@ public interface State {
     public default void redo() {};
     public default void rightClick(Controller controller, View view) {}
     public default void leftClick(Controller controller, View view) {}
-    public default void loadMapButtonClick(Controller controller, View view) {}
+    public default void buttonClick(Controller controller, View view) {}
 }
