@@ -42,7 +42,7 @@ public class Controller {
     public void leftClick(Controller controller, View view) {
         currentState.leftClick(this, view);
     }
-    public void loadMapButtonClick(View view) { currentState.loadMapButtonClick(this, view); }
+    public void loadMapButtonClick(View view) { currentState.buttonClick(this, view); }
 
     // getters & setters
     public void setCurrentState(State state) {

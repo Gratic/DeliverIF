@@ -1,22 +1,50 @@
 package deliverif.view;
 
-import javax.swing.*;
-import deliverif.controller.Controller;
-
+import java.awt.*;
 import java.awt.event.*;
-import deliverif.view.viewState.*;
+import deliverif.controller.Controller;
+import deliverif.view.viewstate.*;
+
+import javax.swing.*;
 
 public class View implements ActionListener {
 
     protected Controller controller;
     protected ViewState currentViewState;
+
+    protected JFrame frame;
+    protected JPanel mainPanel;
+
+    protected int height = 600;
+    protected int width = 800;
     
     public View(Controller controller) {
         this.controller = controller;
+        this.frame = new JFrame("Deliverif");
+        this.frame.setSize(height, width);
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.setLayout(null);
+        this.mainPanel = new MainPanel(height, width);
+        System.out.println(this.mainPanel.getWidth());
+        System.out.println(this.mainPanel.getHeight());
+        this.frame.setContentPane(this.mainPanel);
+        this.frame.setVisible(true);
+
+        // debug panel
+        JPanel panel1 = new JPanel();
+        panel1.setLocation(0, 0);
+        panel1.setSize(100, 100);
+        panel1.setBackground(Color.blue);
+        this.frame.add(panel1);
+
+        JPanel panel2 = new JPanel();
+        panel2.setBackground(Color.blue);
+        this.frame.add(panel2);
     }
 
     public void init() {
         this.currentViewState = new InitialView(this);
+        this.frame.add(this.currentViewState.getJPanel());
     }
 
     @Override
@@ -31,6 +59,12 @@ public class View implements ActionListener {
     }
     public ViewState getCurrentViewState() {
         return this.currentViewState;
+    }
+    public int getHeight() {
+        return this.height;
+    }
+    public int getWidth() {
+        return this.width;
     }
     
 }
