@@ -32,19 +32,31 @@ public class View implements ActionListener {
 
         // debug panel
         JPanel panel1 = new JPanel();
-        panel1.setLocation(0, 0);
-        panel1.setSize(100, 100);
-        panel1.setBackground(Color.blue);
+        panel1.setLayout(new BorderLayout());
+        panel1.setLocation(10, 10);
+        panel1.setSize(300, 200);
+        panel1.setBackground(Color.red);
+        panel1.setVisible(true);
         this.frame.add(panel1);
 
         JPanel panel2 = new JPanel();
         panel2.setBackground(Color.blue);
         this.frame.add(panel2);
+
+        JFrame frame3 = new JFrame();
+        frame3.setBackground(Color.cyan);
+        frame3.setSize(50, 100);
+        frame3.setLocation(400, 50);
+        frame3.setVisible(true);
+        //this.frame.add(frame3);
     }
 
     public void init() {
         this.currentViewState = new InitialView(this);
-        this.frame.add(this.currentViewState.getJPanel());
+        JPanel panel = this.currentViewState.getJPanel();
+        this.frame.add(panel);
+        panel.repaint(); // WARN: crucial !!!
+
     }
 
     @Override
