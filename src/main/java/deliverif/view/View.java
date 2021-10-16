@@ -23,25 +23,21 @@ public class View implements ActionListener {
         this.frame = new JFrame("Deliverif");
         this.frame.setSize(height, width);
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.setLayout(null);
+        this.frame.setVisible(true);
+
         this.mainPanel = new MainPanel(height, width);
+        this.frame.setContentPane(this.mainPanel);
         System.out.println(this.mainPanel.getWidth());
         System.out.println(this.mainPanel.getHeight());
-        this.frame.setContentPane(this.mainPanel);
-        this.frame.setVisible(true);
 
         // debug panel
         JPanel panel1 = new JPanel();
-        panel1.setLayout(new BorderLayout());
-        panel1.setLocation(10, 10);
-        panel1.setSize(300, 200);
         panel1.setBackground(Color.red);
-        panel1.setVisible(true);
-        this.frame.add(panel1);
+        this.mainPanel.add(panel1);
 
         JPanel panel2 = new JPanel();
         panel2.setBackground(Color.blue);
-        this.frame.add(panel2);
+        this.mainPanel.add(panel2);
 
         JFrame frame3 = new JFrame();
         frame3.setBackground(Color.cyan);
