@@ -3,6 +3,7 @@ package deliverif.view;
 import java.awt.*;
 import java.awt.event.*;
 import deliverif.controller.Controller;
+import deliverif.view.utils.Assets;
 import deliverif.view.utils.ColorTheme;
 import deliverif.view.viewstate.*;
 
@@ -83,6 +84,10 @@ public class View implements ActionListener {
     }
 
     public void init() {
+        // load assets
+        Assets.init();
+
+        // set current ViewState
         this.currentViewState = new InitialView(this);
         JPanel panel = this.currentViewState.getJPanel();
         this.frame.getContentPane().add(
