@@ -13,10 +13,10 @@ public abstract class ViewState {
     public ViewState(View view) {
         this.view = view;
         this.panel = new JPanel();
-        this.panel.setSize(this.view.getWidth(), this.view.getHeight());
         this.panel.setOpaque(true);
         this.panel.setBackground(Color.green);
         this.panel.setLocation(50, 50);
+        this.panel.setLayout(null);
     }
 
     public JPanel getJPanel() {
