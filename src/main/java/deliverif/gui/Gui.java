@@ -10,6 +10,7 @@ import deliverif.gui.panel.TextualViewPanel;
 import deliverif.gui.utils.Assets;
 import deliverif.gui.utils.ColorTheme;
 import deliverif.gui.viewstate.*;
+import deliverif.gui.graphicalview.MapView;
 
 import javax.swing.*;
 
@@ -24,9 +25,11 @@ public class Gui implements ActionListener {
     protected GraphicalViewPanel graphicalViewPanel;
     protected TextualViewPanel textualViewPanel;
 
+    protected MapView mapView;
+
     protected int height = 960;
     protected int width = 1280;
-    
+
     public Gui(Controller controller) {
         this.controller = controller;
 
@@ -52,6 +55,8 @@ public class Gui implements ActionListener {
         frame.getContentPane().add(
                 textualViewPanel, BorderLayout.EAST
         );
+
+        mapView = new MapView(controller.getCityMap());
 
         //this.frame.pack(); // resize to fit components
         frame.setVisible(true);
