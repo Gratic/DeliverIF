@@ -3,12 +3,14 @@ package deliverif.view.graphicalview;
 import deliverif.model.Address;
 import deliverif.model.CityMap;
 import deliverif.model.RoadSegment;
+import deliverif.observer.Observable;
+import deliverif.observer.Observer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class GraphicalView extends JPanel {
+public class GraphicalView extends JPanel implements Observer {
     private CityMap map;
 
     private double
@@ -17,14 +19,15 @@ public class GraphicalView extends JPanel {
             longitudeMin = Double.MAX_VALUE,
             longitudeMax = Double.MIN_VALUE;
 
-    private final int width = 600, height = 400;
+    private final int DEFAULT_WIDTH = 600, DEFAULT_HEIGHT = 400;
 
     public GraphicalView(CityMap map) {
-        this.setPreferredSize(new Dimension(width, height));
+        this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         this.setBackground(new Color(213, 213, 213));
 
         this.map = map;
         this.recomputeMinMaxLatLong();
+        this.map.addObserver(this);
     }
 
     @Override
@@ -92,5 +95,10 @@ public class GraphicalView extends JPanel {
 
     private boolean isMapLoaded() {
         return !(map == null || map.getAddresses().size() == 0);
+    }
+
+    @Override
+    public void update(Observable observed, Object arg) {
+        this.recomputeMinMaxLatLong();
     }
 }
