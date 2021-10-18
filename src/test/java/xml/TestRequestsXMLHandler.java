@@ -51,7 +51,7 @@ public class TestRequestsXMLHandler {
     void prepHandler() {
         map = new CityMap();
         tour = new DeliveryTour();
-        Request.resetRequests();
+        tour.getRequests().clear();
 
         requestsHandler = new RequestsXMLHandler(tour, map);
         mapHandler = new MapXMLHandler(map);
@@ -91,7 +91,7 @@ public class TestRequestsXMLHandler {
         Assertions.assertEquals(0, departureTime.getMinutes());
         Assertions.assertEquals(0, departureTime.getSeconds());
 
-        Collection<Request> requests = Request.getRequests();
+        Collection<Request> requests = tour.getRequests();
         Assertions.assertEquals(2, requests.size());
 
         for (Request request : requests) {
