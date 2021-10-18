@@ -1,7 +1,6 @@
 package deliverif.model;
 
-public class RoadSegment
-{
+public class RoadSegment {
     private Address origin;
     private Address destination;
 
