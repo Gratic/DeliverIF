@@ -54,7 +54,7 @@ public class Controller {
         currentState.leftClick(this, gui);
     }
     public void loadMapButtonClick(Gui gui) { currentState.buttonClick(this, gui); }
-
+    public void loadRequestsButtonClick(Gui gui) { currentState.buttonClick(this, gui); }
     // getters & setters
     public void setCurrentState(State state) {
         this.currentState = state;

@@ -18,13 +18,11 @@ public class Gui implements ActionListener {
     protected Controller controller;
     protected ViewState currentViewState;
 
-
-
     protected JFrame frame;
 
-    protected JPanel controlPanel;
-    protected JPanel graphicalViewPanel;
-    protected JPanel textualViewPanel;
+    protected ControlPanel controlPanel;
+    protected GraphicalViewPanel graphicalViewPanel;
+    protected TextualViewPanel textualViewPanel;
 
     protected int height = 960;
     protected int width = 1280;
@@ -42,7 +40,7 @@ public class Gui implements ActionListener {
         System.out.println(frame.getContentPane().getHeight());
 
         // create panels
-        controlPanel = new ControlPanel();
+        controlPanel = new ControlPanel(this);
         graphicalViewPanel = new GraphicalViewPanel();
         textualViewPanel = new TextualViewPanel();
         frame.getContentPane().add(
@@ -65,15 +63,11 @@ public class Gui implements ActionListener {
 
         // set current ViewState
         this.currentViewState = new InitialView(this);
-        JPanel panel = this.currentViewState.getJPanel();
-        /*this.frame.getContentPane().add(
-                panel, BorderLayout.CENTER
-        );
-        panel.repaint(); // WARN: crucial !!!*/
 
-        graphicalViewPanel.add(panel, BorderLayout.CENTER);
-        graphicalViewPanel.repaint();
+    }
 
+    public void setCurrentViewState(ViewState currentViewState) {
+        this.currentViewState = currentViewState;
     }
 
     @Override
@@ -95,8 +89,17 @@ public class Gui implements ActionListener {
     public int getWidth() {
         return this.width;
     }
+    public ControlPanel getControlPanel() {
+        return controlPanel;
+    }
+    public GraphicalViewPanel getGraphicalViewPanel() {
+        return graphicalViewPanel;
+    }
+    public JPanel getTextualViewPanel() {
+        return textualViewPanel;
+    }
     public JFrame getFrame() {
         return frame;
     }
-    
+
 }

@@ -1,6 +1,7 @@
 package deliverif.gui.viewstate;
 
 import deliverif.gui.Gui;
+import deliverif.gui.panel.GraphicalViewPanel;
 import deliverif.gui.utils.Assets;
 import deliverif.gui.utils.ColorTheme;
 
@@ -9,12 +10,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class InitialView extends ViewState {
+public class LoadRequestsView extends ViewState {
 
-    public InitialView(Gui gui) {
+    public LoadRequestsView(Gui gui) {
         super(gui);
 
         createGuiComponents();
+
+        GraphicalViewPanel graphicalViewPanel = gui.getGraphicalViewPanel();
+        graphicalViewPanel.removeAll();
         gui.getGraphicalViewPanel().add(
                 panel, BorderLayout.CENTER
         );
@@ -41,7 +45,7 @@ public class InitialView extends ViewState {
         Font titleFont = Assets.expletusSans;
 
         JLabel welcomeLabel = new JLabel(
-                "Please choose a map to load."
+                "Please choose a request to load."
         );
         welcomeLabel.setSize(600, 30);
         welcomeLabel.setFont(titleFont);
@@ -52,5 +56,6 @@ public class InitialView extends ViewState {
         panel.setPreferredSize(new Dimension(700,700));
         panel.add(innerPanel);
         panel.setVisible(true);
+        panel.repaint();
     }
 }

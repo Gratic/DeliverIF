@@ -1,13 +1,21 @@
 package deliverif.gui.panel;
 
+import deliverif.gui.Gui;
 import deliverif.gui.utils.ColorTheme;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class ControlPanel extends JPanel {
+public class ControlPanel extends GuiPanel implements ActionListener {
 
-    public ControlPanel() {
-        super();
+    JButton loadMapButton;
+    JButton loadRequestsButton;
+    JButton addRequestButton;
+    JButton deleteRequestButton;
+
+    public ControlPanel(Gui gui) {
+        super(gui);
         setOpaque(true);
         setBackground(ColorTheme.PANEL_1_BASE_BG);
         setPreferredSize(
@@ -24,29 +32,39 @@ public class ControlPanel extends JPanel {
     }
 
     private void init() {
-        JButton loadMapButton = new JButton("Load Map");
+        loadMapButton = new JButton("Load Map");
         loadMapButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        loadMapButton.addActionListener(this);
         add(loadMapButton);
 
-        JButton loadRequestsButton = new JButton("Load Requests");
+        loadRequestsButton = new JButton("Load Requests");
         loadRequestsButton.setPreferredSize(
-                new Dimension(0, 50)
+                new Dimension(50, 50)
         );
         add(loadRequestsButton);
 
-        JButton addRequestButton = new JButton("Add request");
+        addRequestButton = new JButton("Add request");
         addRequestButton.setPreferredSize(
                 new Dimension(50, 50)
         );
         add(addRequestButton);
 
-        JButton deleteRequestButton = new JButton("Delete request");
+        deleteRequestButton = new JButton("Delete request");
         deleteRequestButton.setPreferredSize(
                 new Dimension(50, 50)
         );
         add(deleteRequestButton);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // load action
+        if(e.getSource() == loadMapButton) {
+            this.gui.getController().loadMapButtonClick(this.gui);
+        }
+
     }
 
 }
