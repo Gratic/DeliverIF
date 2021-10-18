@@ -37,7 +37,7 @@ public class InitialView extends ViewState implements ActionListener {
         innerPanel.add(textForMapFilePathField);
 
         this.mapFilePathField = new JTextField(
-                "/home/onyr/Documents/4if/s1/pld_agile/testzone/hello_world.xml", 50
+                "C:\\Users\\salom\\Desktop\\4IF\\AGILE\\PLD AGILE\\resources\\xml\\largeMap.xml", 50
         );
         this.mapFilePathField.setSize(600, 30);
         innerPanel.add(this.mapFilePathField);

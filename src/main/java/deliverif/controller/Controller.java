@@ -10,12 +10,19 @@ public class Controller {
     private CityMap cityMap;
 
     public State initState;
-    public State loadState;
+    public State loadingMap;
+    public State mapLoaded;
+    public State loadingRequests;
+    public State requestsLoaded;
     protected State currentState;
 
     public Controller() {
         gui = new Gui(this);
         currentState = new InitState();
+        loadingMap =  new LoadingMap();
+        mapLoaded = new MapLoaded();
+        loadingRequests = new LoadingRequests();
+        // requestsLoaded = new RequestsLoaded();
         cityMap = new CityMap();
 
         init();
