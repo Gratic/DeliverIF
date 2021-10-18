@@ -28,7 +28,7 @@ public class LoadingRequests implements State {
         if (option == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try {
-                Request.loadRequestsFromFile(file, controller.getCityMap(), controller.getTour());
+                controller.getTour().loadRequestsFromFile(file, controller.getCityMap(), controller.getTour());
                 controller.setCurrentState(controller.requestsLoaded);
             } catch (Exception e) {
                 e.printStackTrace();
