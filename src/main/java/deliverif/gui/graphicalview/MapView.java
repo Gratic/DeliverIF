@@ -1,4 +1,4 @@
-package deliverif.view.graphicalview;
+package deliverif.gui.graphicalview;
 
 import deliverif.model.Address;
 import deliverif.model.CityMap;
@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class GraphicalView extends JPanel implements Observer {
+public class MapView extends JPanel implements Observer {
     private CityMap map;
 
     private double
@@ -21,7 +21,7 @@ public class GraphicalView extends JPanel implements Observer {
 
     private final int DEFAULT_WIDTH = 600, DEFAULT_HEIGHT = 400;
 
-    public GraphicalView(CityMap map) {
+    public MapView(CityMap map) {
         this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         this.setBackground(new Color(213, 213, 213));
 
