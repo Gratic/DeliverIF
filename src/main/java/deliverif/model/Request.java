@@ -11,11 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Request {
-    /**
-     * List of all loaded requests
-     */
-    private static Collection<Request> requestsList = new ArrayList<>();
-
     private final Address pickupAddress;
     private final Address deliveryAddress;
 
@@ -43,28 +38,5 @@ public class Request {
 
     public int getDeliveryDuration() {
         return deliveryDuration;
-    }
-
-    public static void loadRequestsFromFile(File requestsFile, CityMap map, DeliveryTour tour) {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser parser = factory.newSAXParser();
-            RequestsXMLHandler handler = new RequestsXMLHandler(tour, map);
-            parser.parse(requestsFile, handler);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void addRequest(Request request) {
-        requestsList.add(request);
-    }
-
-    public static Collection<Request> getRequests() {
-        return requestsList;
-    }
-
-    public static void resetRequests() {
-        requestsList = new ArrayList<>();
     }
 }

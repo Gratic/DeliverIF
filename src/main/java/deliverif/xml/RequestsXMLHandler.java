@@ -53,7 +53,6 @@ public class RequestsXMLHandler extends org.xml.sax.helpers.DefaultHandler {
                     this.tour.addAddress(addr);
 
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
                     throw new SAXException("AddressID \"" + addressString + "\" is not a valid number");
                 }
 
@@ -64,7 +63,6 @@ public class RequestsXMLHandler extends org.xml.sax.helpers.DefaultHandler {
                 try {
                     this.tour.setDepartureTime(sdf.parse(timeString));
                 } catch (ParseException e) {
-                    e.printStackTrace();
                     throw new SAXException("Time " + timeString + " is not a valid time format");
                 }
 
@@ -110,7 +108,7 @@ public class RequestsXMLHandler extends org.xml.sax.helpers.DefaultHandler {
 
                 Request req = new Request(pickupAddress, deliveryAddress, pickupDuration, deliveryDuration);
 
-                Request.addRequest(req);
+                tour.addRequest(req);
             }
             case "planningRequest" ->{}
             default -> throw new SAXException("Tag "+qName+" is not a valid tag");
