@@ -13,12 +13,12 @@ public class Assets {
     public static void init() {
         // fonts
         expletusSans = FontLoader.loadFontToSize(
-                "./fonts/ExpletusSans-SemiBold.ttf",
+                "./resources/fonts/ExpletusSans-SemiBold.ttf",
                 28f
         );
         //Minecraftia-Regular.ttf
         minecraftia = FontLoader.loadFontToSize(
-                "./fonts/Minecraftia-Regular.ttf",
+                "./resources/fonts/Minecraftia-Regular.ttf",
                 28f
         );
 

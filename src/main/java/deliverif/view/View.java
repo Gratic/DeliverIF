@@ -16,8 +16,8 @@ public class View implements ActionListener {
 
     protected JFrame frame;
 
-    protected int height = 600;
-    protected int width = 800;
+    protected int height = 1280;
+    protected int width = 960;
     
     public View(Controller controller) {
         this.controller = controller;
