@@ -1,6 +1,7 @@
 package deliverif.gui.viewstate;
 
 import deliverif.gui.Gui;
+import deliverif.gui.mapview.MapView;
 import deliverif.gui.panel.GraphicalViewPanel;
 import deliverif.gui.panel.TextualViewPanel;
 import deliverif.gui.utils.Assets;
@@ -42,16 +43,6 @@ public class LoadRequestsView extends ViewState {
     }
 
     private void createGuiComponents() {
-        // create mapView
-        JPanel mapView = new JPanel();
-        mapView.setBackground(Color.cyan);
-        //mapView.setPreferredSize(new Dimension(300, 200));
-        JLabel testMapText = new JLabel("Map");
-        testMapText.setPreferredSize(
-                new Dimension(100, 100)
-        );
-        mapView.add(testMapText);
-
-        this.panel = mapView;
+        this.panel = this.gui.getMapView();
     }
 }

@@ -1,8 +1,6 @@
-package deliverif.gui.graphicalview;
+package deliverif.gui.mapview;
 
-import deliverif.model.Address;
-import deliverif.model.CityMap;
-import deliverif.model.RoadSegment;
+import deliverif.model.*;
 import deliverif.observer.Observable;
 import deliverif.observer.Observer;
 
@@ -13,6 +11,7 @@ import java.util.Collection;
 
 public class MapView extends JPanel implements Observer, MouseWheelListener, MouseMotionListener {
     private CityMap map;
+    private DeliveryTour tour;
 
     private double
             latitudeMin = Double.MAX_VALUE,
@@ -29,15 +28,18 @@ public class MapView extends JPanel implements Observer, MouseWheelListener, Mou
 
     private int xTranslation = 0, yTranslation = 0;
 
-    public MapView(CityMap map) {
+    public MapView(CityMap map, DeliveryTour tour) {
         this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         this.setBackground(new Color(213, 213, 213));
         this.addMouseMotionListener(this);
         this.addMouseWheelListener(this);
 
         this.map = map;
-        this.recomputeMinMaxLatLong();
         this.map.addObserver(this);
+        this.recomputeMinMaxLatLong();
+
+        this.tour = tour;
+        this.tour.addObserver(this);
     }
 
     @Override
@@ -56,7 +58,8 @@ public class MapView extends JPanel implements Observer, MouseWheelListener, Mou
                     for (RoadSegment segment : segments) {
                         Point startCoord = this.latlongToXY(segment.getOrigin().getLatitude(),
                                 segment.getOrigin().getLongitude());
-                        Point endCoord = this.latlongToXY(segment.getDestination().getLatitude(), segment.getDestination().getLongitude());
+                        Point endCoord = this.latlongToXY(segment.getDestination().getLatitude(),
+                                segment.getDestination().getLongitude());
 
                         g.drawLine(startCoord.x, startCoord.y, endCoord.x, endCoord.y);
                     }
@@ -67,14 +70,26 @@ public class MapView extends JPanel implements Observer, MouseWheelListener, Mou
             int messageWidth = g.getFontMetrics().stringWidth(message);
             g.drawString(message, getHeight() / 2, (getWidth() - messageWidth) / 2);
         }
+
+        if (this.isTourLoaded()) {
+            for (Request request : this.tour.getRequests()) {
+                Point pickupPoint = this.latlongToXY(request.getPickupAddress().getLatitude(), request.getPickupAddress().getLongitude());
+                Point deliveryPoint = this.latlongToXY(request.getDeliveryAddress().getLatitude(), request.getDeliveryAddress().getLongitude());
+
+                g.fillOval(pickupPoint.x, pickupPoint.y, (int)(8 * this.zoomLevel), (int)(8 * this.zoomLevel));
+                g.fillRect(deliveryPoint.x, deliveryPoint.y, (int)(8 * this.zoomLevel), (int)(8 * this.zoomLevel));
+            }
+        }
     }
+
+    private int MAP_BASE_WIDTH = 900, MAP_BASE_HEIGHT = 900;
 
     private Point latlongToXY(double latitude, double longitude) {
         double normalizedLatitude = (latitude - latitudeMin) / (latitudeMax - latitudeMin);
         double normalizedLongitude = (longitude - longitudeMin) / (longitudeMax - longitudeMin);
 
-        int y = 800 - (int) (normalizedLatitude * 800 * zoomLevel) + yTranslation;
-        int x = (int) (normalizedLongitude * 800 * zoomLevel) + xTranslation;
+        int y = MAP_BASE_HEIGHT - (int) (normalizedLatitude * MAP_BASE_HEIGHT * zoomLevel) + yTranslation;
+        int x = (int) (normalizedLongitude * MAP_BASE_WIDTH * zoomLevel) + xTranslation;
         return new Point(x, y);
     }
 
@@ -103,13 +118,21 @@ public class MapView extends JPanel implements Observer, MouseWheelListener, Mou
     }
 
     private boolean isMapLoaded() {
-        return !(map == null || map.getAddresses().size() == 0);
+        return map != null && map.getAddresses().size() > 0;
+    }
+
+    private boolean isTourLoaded() {
+        return tour != null && tour.getRequests().size() > 0;
     }
 
     @Override
     public void update(Observable observed, Object arg) {
-        this.recomputeMinMaxLatLong();
-        this.repaint();
+        if (observed == this.map) {
+            this.recomputeMinMaxLatLong();
+            this.repaint();
+        } else if (observed == this.tour) {
+            this.repaint();
+        }
     }
 
     private Point lastPointDragged = null;
