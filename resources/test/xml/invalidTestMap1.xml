@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<map>
+    <segment origin="1" destination="2" length="2.0" name="Rue Placard" />
+    <segment origin="2" destination="1" length="2" name="Rue Placard" />
+    <segment origin="2" destination="3" length="1.0" name="Rue Penderie" />
+    <segment origin="3" destination="2" length="1.0" name="Rue Penderie" />
+    <segment origin="3" destination="4" length="1.0" name="" />
+    <segment origin="4" destination="3" length="1.0" name="" />
+    <segment origin="2" destination="4" length="1.0" name="Rue Commode" />
+    <segment origin="4" destination="5" length="2" name="Allée du meuble à chaussures" />
+    <segment origin="5" destination="4" length="2" name="Allée du meuble à chaussures" />
+    <segment origin="1" destination="6" length="1" name="Rue plouf" />
+    <segment origin="6" destination="5" length="1" name="Rue Pilaf" />
+</map>

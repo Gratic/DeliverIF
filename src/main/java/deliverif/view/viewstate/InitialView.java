@@ -42,6 +42,19 @@ public class InitialView extends ViewState implements ActionListener {
         this.mapFilePathField.setSize(600, 30);
         innerPanel.add(this.mapFilePathField);
 
+        JLabel textForRequestsFilePathField = new JLabel(
+                "Absolute file path for XML requests file:"
+        );
+        textForRequestsFilePathField.setSize(600, 30);
+        textForRequestsFilePathField.setFont(titleFont);
+        innerPanel.add(textForRequestsFilePathField);
+
+        this.requestsFilePathField = new JTextField(
+                "/home/onyr/Documents/4if/s1/pld_agile/testzone/requests.xml",50
+        );
+        this.requestsFilePathField.setSize(600, 30);
+        innerPanel.add(this.requestsFilePathField);
+
         JButton loadButton=new JButton("Load");
         loadButton.addActionListener(this);
         loadButton.setFont(titleFont);
