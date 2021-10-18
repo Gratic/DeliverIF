@@ -37,7 +37,7 @@ public class InitialView extends ViewState implements ActionListener {
         innerPanel.add(textForMapFilePathField);
 
         this.mapFilePathField = new JTextField(
-                "C:\\Users\\salom\\Desktop\\4IF\\AGILE\\PLD AGILE\\resources\\xml\\largeMap.xml", 50
+                "C:\\Users\\thiba\\IdeaProjects\\deliverif\\resources\\xml\\largeMap.xml", 50
         );
         this.mapFilePathField.setSize(600, 30);
         innerPanel.add(this.mapFilePathField);
@@ -50,12 +50,12 @@ public class InitialView extends ViewState implements ActionListener {
         innerPanel.add(textForRequestsFilePathField);
 
         this.requestsFilePathField = new JTextField(
-                "/home/onyr/Documents/4if/s1/pld_agile/testzone/requests.xml",50
+                "C:\\Users\\thiba\\IdeaProjects\\deliverif\\resources\\xml\\requestsLarge9.xml", 50
         );
         this.requestsFilePathField.setSize(600, 30);
         innerPanel.add(this.requestsFilePathField);
 
-        JButton loadButton=new JButton("Load");
+        JButton loadButton = new JButton("Load");
         loadButton.addActionListener(this);
         loadButton.setFont(titleFont);
         loadButton.setSize(180, 90);
@@ -63,7 +63,7 @@ public class InitialView extends ViewState implements ActionListener {
 
         // main panel settings
         this.panel.setLayout(new GridBagLayout());
-        this.panel.setPreferredSize(new Dimension(700,700));
+        this.panel.setPreferredSize(new Dimension(700, 700));
         this.panel.add(innerPanel);
         this.panel.setVisible(true);
     }
@@ -78,6 +78,7 @@ public class InitialView extends ViewState implements ActionListener {
     public String getMapFilePath() {
         return this.mapFilePathField.getText();
     }
+
     public String getRequestsFilePath() {
         return this.requestsFilePathField.getText();
     }

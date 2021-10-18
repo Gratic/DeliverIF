@@ -2,17 +2,25 @@ package deliverif.model;
 
 import deliverif.xml.MapXMLHandler;
 import deliverif.xml.RequestsXMLHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class CityMap {
-    /** All addresses (address id => Address) */
+    /**
+     * All addresses (address id => Address)
+     */
     private Map<Long, Address> addresses;
 
-    /** Neighbors list (address id => Collection of RoadSegment originating from this address) */
+    /**
+     * Neighbors list (address id => Collection of RoadSegment originating from this address)
+     */
     private Map<Long, Collection<RoadSegment>> segments;
 
     public CityMap() {
@@ -20,15 +28,15 @@ public class CityMap {
         this.segments = new HashMap<>();
     }
 
-    public void loadMapFromFile(File mapFile) {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser parser = factory.newSAXParser();
-            MapXMLHandler handler = new MapXMLHandler(this);
-            parser.parse(mapFile, handler);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void loadMapFromFile(File mapFile) throws SAXException, ParserConfigurationException, IOException {
+
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser parser = factory.newSAXParser();
+        this.addresses = new HashMap<>();
+        this.segments = new HashMap<>();
+        MapXMLHandler handler = new MapXMLHandler(this);
+        parser.parse(mapFile, handler);
+
     }
 
     public Map<Long, Address> getAddresses() {

@@ -2,12 +2,14 @@ package deliverif.controller;
 
 import deliverif.model.CityMap;
 import deliverif.gui.Gui;
+import deliverif.model.DeliveryTour;
 import deliverif.controller.state.*;
 
 public class Controller {
     
     private Gui gui;
     private CityMap cityMap;
+    private DeliveryTour tour;
 
     public State initState;
     public State loadingMap;
@@ -19,11 +21,13 @@ public class Controller {
     public Controller() {
         gui = new Gui(this);
         currentState = new InitState();
-        loadingMap =  new LoadingMap();
+        loadingMap = new LoadingMap();
         mapLoaded = new MapLoaded();
         loadingRequests = new LoadingRequests();
-        // requestsLoaded = new RequestsLoaded();
+        requestsLoaded = new RequestsLoaded();
         cityMap = new CityMap();
+        tour = new DeliveryTour();
+
 
         init();
     }
@@ -54,9 +58,14 @@ public class Controller {
     // getters & setters
     public void setCurrentState(State state) {
         this.currentState = state;
+        currentState.run(this, gui);
     }
 
     public CityMap getCityMap() {
         return cityMap;
+    }
+
+    public DeliveryTour getTour() {
+        return tour;
     }
 }

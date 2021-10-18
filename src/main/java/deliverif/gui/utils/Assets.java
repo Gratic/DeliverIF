@@ -1,6 +1,7 @@
 package deliverif.gui.utils;
 
 import java.awt.*;
+import java.nio.file.Path;
 
 /**
  * This class contains assets for the program.
@@ -13,15 +14,10 @@ public class Assets {
     public static void init() {
         // fonts
         expletusSans = FontLoader.loadFontToSize(
-                "./resources/fonts/ExpletusSans-SemiBold.ttf",
-                28f
-        );
+                Path.of("resources/fonts/ExpletusSans-SemiBold.ttf"), 28f);
         //Minecraftia-Regular.ttf
         minecraftia = FontLoader.loadFontToSize(
-                "./resources/fonts/Minecraftia-Regular.ttf",
-                28f
-        );
-
+                Path.of("resources/fonts/Minecraftia-Regular.ttf"), 28f);
 
     }
 }

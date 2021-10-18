@@ -18,21 +18,23 @@ public class Gui implements ActionListener {
     protected Controller controller;
     protected ViewState currentViewState;
 
+
+
     protected JFrame frame;
 
     protected JPanel controlPanel;
     protected JPanel graphicalViewPanel;
     protected JPanel textualViewPanel;
 
-    protected int height = 1280;
-    protected int width = 960;
+    protected int height = 960;
+    protected int width = 1280;
     
     public Gui(Controller controller) {
         this.controller = controller;
 
         // create Frame and its MainPanel
         frame = new JFrame("Deliverif");
-        frame.setSize(height, width);
+        frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setContentPane(new MainPanel());
 
@@ -92,6 +94,9 @@ public class Gui implements ActionListener {
     }
     public int getWidth() {
         return this.width;
+    }
+    public JFrame getFrame() {
+        return frame;
     }
     
 }
