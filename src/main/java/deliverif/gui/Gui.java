@@ -8,9 +8,7 @@ import deliverif.gui.panel.GraphicalViewPanel;
 import deliverif.gui.panel.MainPanel;
 import deliverif.gui.panel.TextualViewPanel;
 import deliverif.gui.utils.Assets;
-import deliverif.gui.utils.ColorTheme;
 import deliverif.gui.viewstate.*;
-import deliverif.gui.graphicalview.MapView;
 
 import javax.swing.*;
 
@@ -78,7 +76,7 @@ public class Gui implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // load action
-        this.controller.loadMapButtonClick(this);
+        this.controller.buttonClick(this);
     }
 
     // getters & setters
@@ -100,7 +98,7 @@ public class Gui implements ActionListener {
     public GraphicalViewPanel getGraphicalViewPanel() {
         return graphicalViewPanel;
     }
-    public JPanel getTextualViewPanel() {
+    public TextualViewPanel getTextualViewPanel() {
         return textualViewPanel;
     }
     public JFrame getFrame() {

@@ -2,6 +2,8 @@ package deliverif.gui.utils;
 
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class ColorTheme {
     // palette1: https://paletton.com/#uid=3170T0k2ljc6hnI3vhb50fr6wdx
@@ -12,6 +14,21 @@ public class ColorTheme {
     public static Color MEDIUM_BASE_PURPLE = new Color(0x635E65);
 
     public static Color BOX_BG_LIGHT_BASE_GREY = new Color(0x89857A);
+
+    public static Collection<Color> REQUEST_PALETTE = new ArrayList<>(){
+        {
+            add(new Color(0x197278));
+            add(new Color(0x5CE9FF));
+            add(new Color(0x98FDD5));
+            add(new Color(0x7BE85D));
+            add(new Color(0x772E25));
+            add(new Color(0xF75C03));
+            add(new Color(0x947EB0));
+            add(new Color(0x765379));
+            add(new Color(0xE3B5E3));
+            add(new Color(0xCF1259));
+        }
+    };
 
     // general theme settings
     public static Color GENERAL_BASE_BG = LIGHT_BASE_GREY;

@@ -1,24 +1,43 @@
 package deliverif.gui.viewstate;
 
 import deliverif.gui.Gui;
+import deliverif.gui.panel.GraphicalViewPanel;
+import deliverif.gui.panel.TextualViewPanel;
 import deliverif.gui.utils.Assets;
 import deliverif.gui.utils.ColorTheme;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class InitialView extends ViewState {
-
-    public InitialView(Gui gui) {
+public class DisplayRequestsView extends ViewState {
+    public DisplayRequestsView(Gui gui) {
         super(gui);
 
-        createGuiComponents();
-        gui.getGraphicalViewPanel().add(
+        createGuiComponents(); // create mapView there
+
+        // add map to Center panel
+        GraphicalViewPanel graphicalViewPanel = gui.getGraphicalViewPanel();
+        graphicalViewPanel.removeAll();
+
+        graphicalViewPanel.add(
                 panel, BorderLayout.CENTER
         );
-        gui.getGraphicalViewPanel().repaint();
+
+        graphicalViewPanel.revalidate(); // WARN: crucial after a removeAll()
+        gui.getFrame().repaint();
+
+
+        // add text to East panel
+        TextualViewPanel textualViewPanel = gui.getTextualViewPanel();
+        textualViewPanel.removeAll();
+
+        JLabel pleaseLoadRequestsText = new JLabel("Compute a tour");
+        textualViewPanel.add(pleaseLoadRequestsText);
+        JButton computeButton = new JButton("Compute");
+        textualViewPanel.add(computeButton);
+
+        textualViewPanel.revalidate();
+        textualViewPanel.repaint();
     }
 
     private void createGuiComponents() {
@@ -26,6 +45,8 @@ public class InitialView extends ViewState {
         panel = new JPanel();
         panel.setOpaque(true);
         panel.setBackground(ColorTheme.LIGHT_BASE_GREY);
+        panel.setLocation(50, 50);
+        panel.setLayout(null);
 
         // inner JPanel to be centered
         JPanel innerPanel = new JPanel();
@@ -39,7 +60,7 @@ public class InitialView extends ViewState {
         Font titleFont = Assets.expletusSans;
 
         JLabel welcomeLabel = new JLabel(
-                "Please choose a map to load."
+                "You win"
         );
         welcomeLabel.setSize(600, 30);
         welcomeLabel.setFont(titleFont);
@@ -50,5 +71,6 @@ public class InitialView extends ViewState {
         panel.setPreferredSize(new Dimension(700,700));
         panel.add(innerPanel);
         panel.setVisible(true);
+        panel.repaint();
     }
 }

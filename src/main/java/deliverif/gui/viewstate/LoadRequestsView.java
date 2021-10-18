@@ -2,6 +2,7 @@ package deliverif.gui.viewstate;
 
 import deliverif.gui.Gui;
 import deliverif.gui.panel.GraphicalViewPanel;
+import deliverif.gui.panel.TextualViewPanel;
 import deliverif.gui.utils.Assets;
 import deliverif.gui.utils.ColorTheme;
 
@@ -15,47 +16,42 @@ public class LoadRequestsView extends ViewState {
     public LoadRequestsView(Gui gui) {
         super(gui);
 
-        createGuiComponents();
+        createGuiComponents(); // create mapView there
 
+        // add map to Center panel
         GraphicalViewPanel graphicalViewPanel = gui.getGraphicalViewPanel();
         graphicalViewPanel.removeAll();
-        gui.getGraphicalViewPanel().add(
+
+        graphicalViewPanel.add(
                 panel, BorderLayout.CENTER
         );
-        gui.getGraphicalViewPanel().repaint();
+
+        graphicalViewPanel.revalidate(); // WARN: crucial after a removeAll()
+        gui.getFrame().repaint();
+
+
+        // add text to East panel
+        TextualViewPanel textualViewPanel = gui.getTextualViewPanel();
+        textualViewPanel.removeAll();
+
+        JLabel pleaseLoadRequestsText = new JLabel("Please load requests.");
+        textualViewPanel.add(pleaseLoadRequestsText);
+
+        textualViewPanel.revalidate();
+        textualViewPanel.repaint();
     }
 
     private void createGuiComponents() {
-        // base panel
-        panel = new JPanel();
-        panel.setOpaque(true);
-        panel.setBackground(ColorTheme.LIGHT_BASE_GREY);
-        panel.setLocation(50, 50);
-        panel.setLayout(null);
-
-        // inner JPanel to be centered
-        JPanel innerPanel = new JPanel();
-        FlowLayout verticalFlowLayout = new FlowLayout(
-                FlowLayout.LEADING, 50, 15
+        // create mapView
+        JPanel mapView = new JPanel();
+        mapView.setBackground(Color.cyan);
+        //mapView.setPreferredSize(new Dimension(300, 200));
+        JLabel testMapText = new JLabel("Map");
+        testMapText.setPreferredSize(
+                new Dimension(100, 100)
         );
-        innerPanel.setLayout(verticalFlowLayout);
-        innerPanel.setPreferredSize(new Dimension(700, 400));
-        innerPanel.setBackground(ColorTheme.BOX_GENERAL_BASE_BG);
+        mapView.add(testMapText);
 
-        Font titleFont = Assets.expletusSans;
-
-        JLabel welcomeLabel = new JLabel(
-                "Please choose a request to load."
-        );
-        welcomeLabel.setSize(600, 30);
-        welcomeLabel.setFont(titleFont);
-        innerPanel.add(welcomeLabel);
-
-        // main panel settings
-        panel.setLayout(new GridBagLayout());
-        panel.setPreferredSize(new Dimension(700,700));
-        panel.add(innerPanel);
-        panel.setVisible(true);
-        panel.repaint();
+        this.panel = mapView;
     }
 }
