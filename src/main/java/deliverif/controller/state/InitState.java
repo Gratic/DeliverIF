@@ -2,8 +2,8 @@ package deliverif.controller.state;
 
 import deliverif.controller.Controller;
 import deliverif.model.CityMap;
-import deliverif.view.View;
-import deliverif.view.viewstate.InitialView;
+import deliverif.gui.Gui;
+import deliverif.gui.viewstate.InitialView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,13 +19,13 @@ public class InitState implements State {
      * Method that gets called when the user validates the paths given
      * at start of the app to load XML files.
      * @param controller
-     * @param view
+     * @param gui
      */
-    public void buttonClick(Controller controller, View view) {
+    public void buttonClick(Controller controller, Gui gui) {
         // get path to file
         // PROB: The actual class currentViewState instance is lost
         //String path = view.getCurrentViewState().getText();
-        InitialView initialView = (InitialView)(view.getCurrentViewState());
+        InitialView initialView = (InitialView)(gui.getCurrentViewState());
         String mapPath = initialView.getMapFilePath();
         String requestsPath = initialView.getRequestsFilePath();
 

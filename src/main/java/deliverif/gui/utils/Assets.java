@@ -1,4 +1,4 @@
-package deliverif.view.utils;
+package deliverif.gui.utils;
 
 import java.awt.*;
 

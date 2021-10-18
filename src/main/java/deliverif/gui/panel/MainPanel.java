@@ -1,6 +1,6 @@
-package deliverif.view;
+package deliverif.gui.panel;
 
-import deliverif.view.utils.ColorTheme;
+import deliverif.gui.utils.ColorTheme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +10,7 @@ public class MainPanel extends JPanel {
     public MainPanel() {
         super();
         setOpaque(true);
-        setBackground(ColorTheme.GENERAL_BASE_BG);
+        setBackground(Color.cyan);
         setLayout(new BorderLayout());
     }
 

@@ -1,8 +1,8 @@
-package deliverif.view.viewstate;
+package deliverif.gui.viewstate;
 
-import deliverif.view.View;
-import deliverif.view.utils.Assets;
-import deliverif.view.utils.ColorTheme;
+import deliverif.gui.Gui;
+import deliverif.gui.utils.Assets;
+import deliverif.gui.utils.ColorTheme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,8 +14,8 @@ public class InitialView extends ViewState implements ActionListener {
     public JTextField mapFilePathField;
     public JTextField requestsFilePathField;
 
-    public InitialView(View view) {
-        super(view);
+    public InitialView(Gui gui) {
+        super(gui);
 
         // inner JPanel to be centered
         JPanel innerPanel = new JPanel();
@@ -71,7 +71,7 @@ public class InitialView extends ViewState implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // load action
-        this.view.getController().loadMapButtonClick(this.view);
+        this.gui.getController().loadMapButtonClick(this.gui);
     }
 
     // getters & setters

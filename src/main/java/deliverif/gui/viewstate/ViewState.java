@@ -1,18 +1,17 @@
-package deliverif.view.viewstate;
+package deliverif.gui.viewstate;
 
-import deliverif.view.View;
-import deliverif.view.utils.ColorTheme;
+import deliverif.gui.Gui;
+import deliverif.gui.utils.ColorTheme;
 
 import javax.swing.*;
-import java.awt.*;
 
 public abstract class ViewState {
 
-    protected View view;
+    protected Gui gui;
     protected JPanel panel;
 
-    public ViewState(View view) {
-        this.view = view;
+    public ViewState(Gui gui) {
+        this.gui = gui;
         this.panel = new JPanel();
         this.panel.setOpaque(true);
         this.panel.setBackground(ColorTheme.LIGHT_BASE_GREY);

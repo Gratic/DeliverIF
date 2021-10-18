@@ -1,12 +1,12 @@
 package deliverif.controller;
 
 import deliverif.model.CityMap;
-import deliverif.view.View;
+import deliverif.gui.Gui;
 import deliverif.controller.state.*;
 
 public class Controller {
     
-    private View view;
+    private Gui gui;
     private CityMap cityMap;
 
     public State initState;
@@ -14,7 +14,7 @@ public class Controller {
     protected State currentState;
 
     public Controller() {
-        view = new View(this);
+        gui = new Gui(this);
         currentState = new InitState();
         cityMap = new CityMap();
 
@@ -26,7 +26,7 @@ public class Controller {
         initState = new InitState();
         currentState = initState;
         
-        view.init();
+        gui.init();
     }
 
     // state functions
@@ -36,13 +36,13 @@ public class Controller {
     public void redo() {
         currentState.redo();
     }
-    public void rightClick(Controller controller, View view) {
-        currentState.rightClick(this, view);
+    public void rightClick(Controller controller, Gui gui) {
+        currentState.rightClick(this, gui);
     }
-    public void leftClick(Controller controller, View view) {
-        currentState.leftClick(this, view);
+    public void leftClick(Controller controller, Gui gui) {
+        currentState.leftClick(this, gui);
     }
-    public void loadMapButtonClick(View view) { currentState.buttonClick(this, view); }
+    public void loadMapButtonClick(Gui gui) { currentState.buttonClick(this, gui); }
 
     // getters & setters
     public void setCurrentState(State state) {
