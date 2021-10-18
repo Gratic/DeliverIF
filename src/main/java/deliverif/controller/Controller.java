@@ -19,15 +19,15 @@ public class Controller {
     protected State currentState;
 
     public Controller() {
+        cityMap = new CityMap();
+        tour = new DeliveryTour();
+
         gui = new Gui(this);
         currentState = new InitState();
         loadingMap = new LoadingMap();
         mapLoaded = new MapLoaded();
         loadingRequests = new LoadingRequests();
         requestsLoaded = new RequestsLoaded();
-        cityMap = new CityMap();
-        tour = new DeliveryTour();
-
 
         init();
     }
