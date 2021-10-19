@@ -11,6 +11,4 @@ public class RequestsLoaded implements State {
     public void run(Controller controller, Gui gui) {
         gui.setCurrentViewState(new DisplayRequestsView(gui));
     }
-
-
 }

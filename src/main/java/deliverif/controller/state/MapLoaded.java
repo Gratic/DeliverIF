@@ -11,7 +11,6 @@ public class MapLoaded implements State {
 
     @Override
     public void run(Controller controller, Gui gui) {
-        System.out.println("MapLoaded");
         gui.setCurrentViewState(new LoadRequestsView(gui));
     }
 }

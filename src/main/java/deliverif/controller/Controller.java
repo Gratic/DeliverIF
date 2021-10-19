@@ -5,6 +5,8 @@ import deliverif.gui.Gui;
 import deliverif.model.DeliveryTour;
 import deliverif.controller.state.*;
 
+import java.util.Stack;
+
 public class Controller {
     
     private Gui gui;
@@ -17,13 +19,17 @@ public class Controller {
     public State loadingRequests;
     public State requestsLoaded;
     protected State currentState;
+    protected Stack<State> previousStates;
 
     public Controller() {
         cityMap = new CityMap();
         tour = new DeliveryTour();
 
         gui = new Gui(this);
+
         currentState = new InitState();
+        previousStates = new Stack<State>();
+
         loadingMap = new LoadingMap();
         mapLoaded = new MapLoaded();
         loadingRequests = new LoadingRequests();
@@ -59,6 +65,10 @@ public class Controller {
         currentState.run(this, gui);
     }
 
+    public Stack<State> getPreviousStates() {
+        return previousStates;
+    }
+
     public CityMap getCityMap() {
         return cityMap;
     }
@@ -68,9 +78,11 @@ public class Controller {
     }
 
     public void loadMapButtonClick(Gui gui) {
+        previousStates.push(currentState);
         this.setCurrentState(loadingMap);
     }
     public void loadRequestsButtonClick(Gui gui) {
+        previousStates.push(currentState);
         this.setCurrentState(loadingRequests);
     }
 
