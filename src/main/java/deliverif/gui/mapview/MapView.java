@@ -1,5 +1,6 @@
 package deliverif.gui.mapview;
 
+import deliverif.gui.utils.ColorTheme;
 import deliverif.model.*;
 import deliverif.observer.Observable;
 import deliverif.observer.Observer;
@@ -72,12 +73,43 @@ public class MapView extends JPanel implements Observer, MouseWheelListener, Mou
         }
 
         if (this.isTourLoaded()) {
+            int i = 0;
+            int iconsWidth = (int)(8 * this.zoomLevel);
+            int iconsHeight = (int)(8 * this.zoomLevel);
+
             for (Request request : this.tour.getRequests()) {
                 Point pickupPoint = this.latlongToXY(request.getPickupAddress().getLatitude(), request.getPickupAddress().getLongitude());
                 Point deliveryPoint = this.latlongToXY(request.getDeliveryAddress().getLatitude(), request.getDeliveryAddress().getLongitude());
 
-                g.fillOval(pickupPoint.x, pickupPoint.y, (int)(8 * this.zoomLevel), (int)(8 * this.zoomLevel));
-                g.fillRect(deliveryPoint.x, deliveryPoint.y, (int)(8 * this.zoomLevel), (int)(8 * this.zoomLevel));
+                g.setColor(ColorTheme.REQUEST_PALETTE.get(i % ColorTheme.REQUEST_PALETTE.size()));
+
+                g.fillOval(
+                        pickupPoint.x - (iconsWidth / 2),
+                        pickupPoint.y - (iconsHeight / 2),
+                        iconsWidth, iconsHeight
+                );
+                g.fillRect(
+                        deliveryPoint.x - (iconsWidth / 2),
+                        deliveryPoint.y - (iconsHeight / 2),
+                        iconsWidth, iconsHeight
+                );
+                i++;
+            }
+
+            Address departureAddress = this.tour.getDepartureAddress();
+            if(departureAddress != null) {
+                Point point = this.latlongToXY(departureAddress.getLatitude(), departureAddress.getLongitude());
+
+                g.setColor(new Color(255, 0, 0));
+                g.fillPolygon(
+                        new int[] { point.x - (int)(5 * this.zoomLevel),
+                                    point.x,
+                                    point.x + (int)(5 * this.zoomLevel) },
+                        new int[] { point.y - (int)(5 * this.zoomLevel),
+                                    point.y + (int)(5 * this.zoomLevel),
+                                    point.y - (int)(5 * this.zoomLevel) },
+                        3
+                );
             }
         }
     }
@@ -158,13 +190,20 @@ public class MapView extends JPanel implements Observer, MouseWheelListener, Mou
     public void mouseWheelMoved(MouseWheelEvent e) {
         int wheelRotationAbs = Math.abs(e.getWheelRotation());
         if (e.getWheelRotation() > 0) { // positive is unzoom
-            this.zoomView(-ZOOM_SENSITIVITY * wheelRotationAbs);
+            this.zoomView(-ZOOM_SENSITIVITY * wheelRotationAbs,
+                    (int)(e.getX() * this.zoomLevel) + xTranslation,
+                    (int)(e.getY() * this.zoomLevel) + yTranslation
+            );
         } else if (e.getWheelRotation() < 0) { // negative is zoom
-            this.zoomView(ZOOM_SENSITIVITY * wheelRotationAbs);
+            this.zoomView(ZOOM_SENSITIVITY * wheelRotationAbs,
+                    (int)(e.getX() * this.zoomLevel) + xTranslation,
+                    (int)(e.getY() * this.zoomLevel) + yTranslation
+            );
         }
+        System.out.println(e.getX() + " " + e.getY());
     }
 
-    public void zoomView(double zoomDelta) {
+    public void zoomView(double zoomDelta, int zoomPointX, int zoomPointY) {
         double prevZoomLevel = this.zoomLevel;
 
         this.zoomLevel += zoomDelta;
@@ -176,6 +215,17 @@ public class MapView extends JPanel implements Observer, MouseWheelListener, Mou
         }
 
         this.repaint();
+
+        double absScaleDelta = (1.0 / prevZoomLevel) - (1.0 / this.zoomLevel);
+        /*int zoomPointX = (this.MAP_BASE_WIDTH / 2);
+        int zoomPointY = (this.MAP_BASE_HEIGHT / 2);*/
+
+        int xOffset = (int) -(zoomPointX * absScaleDelta);
+        int yOffset = (int) -(zoomPointY * absScaleDelta);
+
+
+        this.translateView(xOffset, yOffset);
+
 /*
         double absoluteZoomDelta = this.zoomLevel - prevZoomLevel;
         // double relativeZoomDelta = absoluteZoomDelta / this.zoomLevel;

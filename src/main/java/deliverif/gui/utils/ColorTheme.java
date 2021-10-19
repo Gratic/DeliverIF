@@ -3,7 +3,7 @@ package deliverif.gui.utils;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 public class ColorTheme {
     // palette1: https://paletton.com/#uid=3170T0k2ljc6hnI3vhb50fr6wdx
@@ -15,17 +15,17 @@ public class ColorTheme {
 
     public static Color BOX_BG_LIGHT_BASE_GREY = new Color(0x89857A);
 
-    public static Collection<Color> REQUEST_PALETTE = new ArrayList<>(){
+    public static List<Color> REQUEST_PALETTE = new ArrayList<>(){
         {
             add(new Color(0x197278));
             add(new Color(0x5CE9FF));
-            add(new Color(0x98FDD5));
+            add(new Color(0x009758));
             add(new Color(0x7BE85D));
             add(new Color(0x772E25));
             add(new Color(0xF75C03));
-            add(new Color(0x947EB0));
+            add(new Color(0x691AC1));
             add(new Color(0x765379));
-            add(new Color(0xE3B5E3));
+            add(new Color(0xA001A0));
             add(new Color(0xCF1259));
         }
     };
