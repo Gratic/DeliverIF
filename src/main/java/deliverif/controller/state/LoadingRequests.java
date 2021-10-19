@@ -36,7 +36,7 @@ public class LoadingRequests implements State {
             }
         } else {
             //TODO go back to your country
-            controller.setCurrentState(controller.initState);
+            controller.setCurrentState(controller.mapLoaded);
         }
     }
 }

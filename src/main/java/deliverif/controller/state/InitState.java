@@ -21,10 +21,4 @@ public class InitState implements State {
      * @param controller Controller of the application
      * @param gui       View of the application
      */
-
-
-    public void buttonClick(Controller controller, Gui gui) {
-        // change to next state
-        controller.setCurrentState(controller.loadingMap);
-    }
 }
