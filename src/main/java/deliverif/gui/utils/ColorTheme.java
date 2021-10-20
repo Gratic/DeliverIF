@@ -11,6 +11,7 @@ public class ColorTheme {
     // palette 1: base colors for panels
     public static Color MEDIUM_BASE_GREY = new Color(0x616966);
     public static Color LIGHT_BASE_GREY = new Color(0x99968E);
+    public static Color LIGHT_BASE_GREY_ALT = new Color(0xC7C5BE);
     public static Color MEDIUM_BASE_PURPLE = new Color(0x635E65);
 
     public static Color BOX_BG_LIGHT_BASE_GREY = new Color(0x89857A);
@@ -34,8 +35,8 @@ public class ColorTheme {
 
     // general theme settings
     public static Color GENERAL_BASE_BG = LIGHT_BASE_GREY;
-    public static Color PANEL_1_BASE_BG = MEDIUM_BASE_GREY;
-    public static Color PANEL_2_BASE_BG = MEDIUM_BASE_PURPLE;
+    public static Color PANEL_1_BASE_BG = Color.WHITE;
+    public static Color PANEL_2_BASE_BG = Color.WHITE;
 
     public static Color BOX_GENERAL_BASE_BG = BOX_BG_LIGHT_BASE_GREY;
 }

@@ -52,18 +52,20 @@ public class ControlPanel extends GuiPanel implements ActionListener {
 //        loadRequestsButton.setEnabled(false);
         add(loadRequestsButton);
 
-        addRequestButton = new JButton("Add request");
+        addRequestButton = new JButton(new ImageIcon(dye(Assets.addRequestImage, Color.BLACK)));
         addRequestButton.setPreferredSize(
                 new Dimension(50, 50)
         );
         addRequestButton.addActionListener(this);
+        addRequestButton.setEnabled(false);
         add(addRequestButton);
 
-        deleteRequestButton = new JButton("Delete request");
+        deleteRequestButton = new JButton(new ImageIcon(dye(Assets.removeRequestImage, Color.BLACK)));
         deleteRequestButton.setPreferredSize(
                 new Dimension(50, 50)
         );
         deleteRequestButton.addActionListener(this);
+        deleteRequestButton.setEnabled(false);
         add(deleteRequestButton);
     }
 

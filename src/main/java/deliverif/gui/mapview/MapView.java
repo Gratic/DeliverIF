@@ -47,7 +47,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     public MapView(CityMap map, DeliveryTour tour) {
         this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-        this.setBackground(new Color(100, 100, 100));
+        this.setBackground(ColorTheme.LIGHT_BASE_GREY_ALT);
         this.addMouseWheelListener(this);
         this.addMouseMotionListener(this);
         this.addMouseListener(this);
@@ -148,6 +148,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         int x = (int) (normalizedLongitude * MAP_BASE_WIDTH * zoomLevel) + xTranslation;
         return new Point(x, y);
     }
+
+
 
     public void setMap(CityMap map) {
         this.map = map;
