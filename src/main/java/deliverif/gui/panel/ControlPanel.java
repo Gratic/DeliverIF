@@ -14,8 +14,8 @@ public class ControlPanel extends GuiPanel implements ActionListener {
 
     public JButton loadMapButton;
     public JButton loadRequestsButton;
-    JButton addRequestButton;
-    JButton deleteRequestButton;
+    public JButton addRequestButton;
+    public JButton deleteRequestButton;
 
     public ControlPanel(Gui gui) {
         super(gui);

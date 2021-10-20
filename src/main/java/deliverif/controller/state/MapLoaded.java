@@ -11,6 +11,7 @@ public class MapLoaded implements State {
 
     @Override
     public void run(Controller controller, Gui gui) {
+        gui.getControlPanel().loadRequestsButton.setEnabled(true);
         gui.setCurrentViewState(new LoadRequestsView(gui));
     }
 
