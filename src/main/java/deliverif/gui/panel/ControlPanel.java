@@ -9,8 +9,8 @@ import java.awt.event.ActionListener;
 
 public class ControlPanel extends GuiPanel implements ActionListener {
 
-    JButton loadMapButton;
-    JButton loadRequestsButton;
+    public JButton loadMapButton;
+    public JButton loadRequestsButton;
     JButton addRequestButton;
     JButton deleteRequestButton;
 
@@ -65,10 +65,10 @@ public class ControlPanel extends GuiPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         // load action
         if(e.getSource() == loadMapButton) {
-            this.gui.getController().buttonClick(this.gui);
+            this.gui.getController().loadMapButtonClick(this.gui);
         }
         else if (e.getSource()== loadRequestsButton){
-            this.gui.getController().buttonClick(this.gui);
+            this.gui.getController().loadRequestsButtonClick(this.gui);
         }
         else if (e.getSource() == addRequestButton){
 

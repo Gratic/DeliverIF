@@ -30,9 +30,9 @@ public class LoadingMap implements State {
 
                 run(controller, gui);
             }
-        } else {
-            //TODO go back to your country
-            controller.setCurrentState(controller.initState);
+        } else if (option == JFileChooser.CANCEL_OPTION) {
+            State state = controller.getPreviousStates().pop();
+            controller.setCurrentState(state);
         }
     }
 }

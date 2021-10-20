@@ -10,5 +10,7 @@ public interface State {
     public default void redo() {};
     public default void rightClick(Controller controller, Gui gui) {}
     public default void leftClick(Controller controller, Gui gui) {}
-    public default void buttonClick(Controller controller, Gui gui) {}
+
+    public default void loadMapButtonClick(Controller controller, Gui gui) {}
+    public default void loadRequestsButtonClick(Controller controller, Gui gui) {}
 }
