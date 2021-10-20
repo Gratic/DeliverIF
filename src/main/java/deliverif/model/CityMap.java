@@ -1,5 +1,6 @@
 package deliverif.model;
 
+import deliverif.observer.Observable;
 import deliverif.xml.MapXMLHandler;
 import deliverif.xml.RequestsXMLHandler;
 import org.xml.sax.SAXException;
@@ -12,15 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class CityMap {
-    /**
-     * All addresses (address id => Address)
-     */
+public class CityMap extends Observable {
+    /** All addresses (address id => Address) */
     private Map<Long, Address> addresses;
 
-    /**
-     * Neighbors list (address id => Collection of RoadSegment originating from this address)
-     */
+    /** Neighbors list (address id => Collection of RoadSegment originating from this address) */
     private Map<Long, Collection<RoadSegment>> segments;
 
     public CityMap() {
@@ -28,15 +25,20 @@ public class CityMap {
         this.segments = new HashMap<>();
     }
 
-    public void loadMapFromFile(File mapFile) throws SAXException, ParserConfigurationException, IOException {
+    public void loadMapFromFile(File mapFile) {
+        try {
+            this.addresses.clear();
+            this.segments.clear();
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        SAXParser parser = factory.newSAXParser();
-        this.addresses = new HashMap<>();
-        this.segments = new HashMap<>();
-        MapXMLHandler handler = new MapXMLHandler(this);
-        parser.parse(mapFile, handler);
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser parser = factory.newSAXParser();
+            MapXMLHandler handler = new MapXMLHandler(this);
+            parser.parse(mapFile, handler);
 
+            this.notifyObservers(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Map<Long, Address> getAddresses() {
@@ -60,7 +62,7 @@ public class CityMap {
         long id = segment.getOrigin().getId();
         Collection<RoadSegment> roadSegments = segments.get(id);
         if (roadSegments == null) {
-            segments.put(id, new ArrayList<RoadSegment>() {{
+            segments.put(id, new ArrayList<>() {{
                 add(segment);
             }});
         } else {

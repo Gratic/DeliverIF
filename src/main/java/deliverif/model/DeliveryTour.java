@@ -60,6 +60,13 @@ public class DeliveryTour extends Observable {
         return departureTime;
     }
 
+    public Address getDepartureAddress() {
+        if(this.pathAddresses.size() > 0) {
+            return this.pathAddresses.get(0);
+        }
+        return null;
+    }
+
     public void addAddress(Address addr, EnumAddressType type, Request req) {
         this.pathAddresses.add(addr);
         this.addressRequestMetadata.put(addr, Map.entry(req, type));

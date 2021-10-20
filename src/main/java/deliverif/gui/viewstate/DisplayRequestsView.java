@@ -71,6 +71,8 @@ public class DisplayRequestsView extends ViewState {
         panel.setPreferredSize(new Dimension(700,700));
         panel.add(innerPanel);
         panel.setVisible(true);
+
+        panel = this.gui.getMapView();
         panel.repaint();
     }
 }
