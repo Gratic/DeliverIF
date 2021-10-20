@@ -41,7 +41,7 @@ public class Controller {
     public void init() {
         // states, solution 3
         initState = new InitState();
-        currentState = initState;
+        setCurrentState(initState);
         
         gui.init();
     }
