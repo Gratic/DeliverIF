@@ -78,12 +78,11 @@ public class Controller {
     }
 
     public void loadMapButtonClick(Gui gui) {
-        previousStates.push(currentState);
-        this.setCurrentState(loadingMap);
+        this.currentState.loadMapButtonClick(this, gui);
     }
+
     public void loadRequestsButtonClick(Gui gui) {
-        previousStates.push(currentState);
-        this.setCurrentState(loadingRequests);
+        this.currentState.loadRequestsButtonClick(this, gui);
     }
 
 }

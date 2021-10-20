@@ -14,11 +14,9 @@ public class InitState implements State {
 
     }
 
-    /**
-     * Method that gets called when the user validates the paths given
-     * at start of the app to load XML files.
-     *
-     * @param controller Controller of the application
-     * @param gui       View of the application
-     */
+    @Override
+    public void loadMapButtonClick(Controller controller, Gui gui) {
+        controller.getPreviousStates().push(this);
+        controller.setCurrentState(controller.loadingMap);
+    }
 }

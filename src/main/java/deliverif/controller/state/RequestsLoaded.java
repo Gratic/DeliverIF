@@ -11,4 +11,16 @@ public class RequestsLoaded implements State {
     public void run(Controller controller, Gui gui) {
         gui.setCurrentViewState(new DisplayRequestsView(gui));
     }
+
+    @Override
+    public void loadRequestsButtonClick(Controller controller, Gui gui) {
+        controller.getPreviousStates().push(this);
+        controller.setCurrentState(controller.loadingRequests);
+    }
+
+    @Override
+    public void loadMapButtonClick(Controller controller, Gui gui) {
+        controller.getPreviousStates().push(this);
+        controller.setCurrentState(controller.loadingMap);
+    }
 }
