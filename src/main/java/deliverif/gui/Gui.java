@@ -3,6 +3,7 @@ package deliverif.gui;
 import java.awt.*;
 import java.awt.event.*;
 import deliverif.controller.Controller;
+import deliverif.gui.mapview.MapView;
 import deliverif.gui.panel.ControlPanel;
 import deliverif.gui.panel.GraphicalViewPanel;
 import deliverif.gui.panel.MainPanel;
@@ -23,9 +24,11 @@ public class Gui implements ActionListener {
     protected GraphicalViewPanel graphicalViewPanel;
     protected TextualViewPanel textualViewPanel;
 
+    protected MapView mapView;
+
     protected int height = 960;
     protected int width = 1280;
-    
+
     public Gui(Controller controller) {
         this.controller = controller;
 
@@ -51,6 +54,8 @@ public class Gui implements ActionListener {
         frame.getContentPane().add(
                 textualViewPanel, BorderLayout.EAST
         );
+
+        mapView = new MapView(controller.getCityMap(), controller.getTour());
 
         //this.frame.pack(); // resize to fit components
         frame.setVisible(true);
@@ -101,4 +106,5 @@ public class Gui implements ActionListener {
         return frame;
     }
 
+    public MapView getMapView() { return mapView; }
 }
