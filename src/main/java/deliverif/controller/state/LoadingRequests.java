@@ -1,6 +1,7 @@
 package deliverif.controller.state;
 
 import deliverif.controller.Controller;
+import deliverif.exception.RequestsLoadException;
 import deliverif.gui.Gui;
 import deliverif.model.CityMap;
 import deliverif.model.Request;
@@ -30,22 +31,23 @@ public class LoadingRequests implements State {
             try {
                 controller.getTour().loadRequestsFromFile(file, controller.getCityMap(), controller.getTour());
                 controller.setCurrentState(controller.requestsLoaded);
-            } catch (Exception e) {
-                e.printStackTrace();
-                run(controller, gui);
+            } catch (RequestsLoadException exception) {
+                exception.printStackTrace();
+
+                // display error feedback in popup
+                System.out.println("WARN: Error while loading requests!");
+                JOptionPane.showMessageDialog(gui.getFrame(),
+                        "Error: Problem while loading requests. " +
+                                "Please make sure to select a well-formed XML requests file.",
+                        "Load requests failed",
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                run(controller, gui); // rerun current state. WARN: Run after popup!
             }
         } else if (option == JFileChooser.CANCEL_OPTION) {
             State state = controller.getPreviousStates().pop();
             controller.setCurrentState(state);
-
-            // TODO: fix this, find where to run that code
-            System.out.println("WARN: Error while loading requests!");
-            JOptionPane.showMessageDialog(gui.getFrame(),
-                    "Error: Problem while loading requests. " +
-                            "Please make sure to select a well-formed XML request file.",
-                    "Load request failed",
-                    JOptionPane.WARNING_MESSAGE
-            );
         }
     }
 }

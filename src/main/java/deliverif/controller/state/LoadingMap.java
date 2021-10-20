@@ -1,6 +1,7 @@
 package deliverif.controller.state;
 
 import deliverif.controller.Controller;
+import deliverif.exception.MapLoadingException;
 import deliverif.gui.Gui;
 import org.xml.sax.SAXException;
 
@@ -28,12 +29,19 @@ public class LoadingMap implements State {
                 controller.getTour().notifyObservers(controller.getTour());
                 controller.getCityMap().loadMapFromFile(file);
                 controller.setCurrentState(controller.mapLoaded);
-            } catch (SAXException saxeException) {
+            } catch (MapLoadingException exception) {
+                exception.printStackTrace();
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                // display error feedback in popup
+                System.out.println("WARN: Error while loading map!");
+                JOptionPane.showMessageDialog(gui.getFrame(),
+                        "Error: Problem while loading map. " +
+                                "Please make sure to select a well-formed XML map file.",
+                        "Load map failed",
+                        JOptionPane.WARNING_MESSAGE
+                );
 
-                run(controller, gui);
+                run(controller, gui); // rerun current state. WARN: Run after popup!
             }
         } else if (option == JFileChooser.CANCEL_OPTION) {
             State state = controller.getPreviousStates().pop();

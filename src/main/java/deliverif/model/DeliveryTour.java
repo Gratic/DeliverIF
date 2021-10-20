@@ -1,11 +1,15 @@
 package deliverif.model;
 
+import deliverif.exception.RequestsLoadException;
 import deliverif.observer.Observable;
 import deliverif.xml.RequestsXMLHandler;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class DeliveryTour extends Observable {
@@ -78,7 +82,7 @@ public class DeliveryTour extends Observable {
         this.notifyObservers(this);
     }
 
-    public void loadRequestsFromFile(File requestsFile, CityMap map, DeliveryTour tour) {
+    public void loadRequestsFromFile(File requestsFile, CityMap map, DeliveryTour tour) throws RequestsLoadException {
         try {
             this.requests.clear();
 
@@ -88,8 +92,8 @@ public class DeliveryTour extends Observable {
             parser.parse(requestsFile, handler);
 
             this.notifyObservers(this);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SAXException | IOException | ParserConfigurationException exception) {
+            throw new RequestsLoadException(exception);
         }
     }
 
