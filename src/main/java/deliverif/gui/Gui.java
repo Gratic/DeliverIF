@@ -13,7 +13,7 @@ import deliverif.gui.viewstate.*;
 
 import javax.swing.*;
 
-public class Gui implements ActionListener {
+public class Gui {
 
     protected Controller controller;
     protected ViewState currentViewState;
@@ -72,12 +72,6 @@ public class Gui implements ActionListener {
 
     public void setCurrentViewState(ViewState currentViewState) {
         this.currentViewState = currentViewState;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // load action
-        this.controller.buttonClick(this);
     }
 
     // getters & setters
