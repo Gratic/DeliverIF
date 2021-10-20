@@ -37,6 +37,15 @@ public class LoadingRequests implements State {
         } else if (option == JFileChooser.CANCEL_OPTION) {
             State state = controller.getPreviousStates().pop();
             controller.setCurrentState(state);
+
+            // TODO: fix this, find where to run that code
+            System.out.println("WARN: Error while loading requests!");
+            JOptionPane.showMessageDialog(gui.getFrame(),
+                    "Error: Problem while loading requests. " +
+                            "Please make sure to select a well-formed XML request file.",
+                    "Load request failed",
+                    JOptionPane.WARNING_MESSAGE
+            );
         }
     }
 }

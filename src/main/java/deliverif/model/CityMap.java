@@ -1,5 +1,6 @@
 package deliverif.model;
 
+import deliverif.exception.MapLoadingException;
 import deliverif.observer.Observable;
 import deliverif.xml.MapXMLHandler;
 import deliverif.xml.RequestsXMLHandler;
@@ -25,7 +26,7 @@ public class CityMap extends Observable {
         this.segments = new HashMap<>();
     }
 
-    public void loadMapFromFile(File mapFile) {
+    public void loadMapFromFile(File mapFile) throws MapLoadingException {
         try {
             this.addresses.clear();
             this.segments.clear();
@@ -36,8 +37,8 @@ public class CityMap extends Observable {
             parser.parse(mapFile, handler);
 
             this.notifyObservers(this);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SAXException | IOException | ParserConfigurationException exception) {
+            throw new MapLoadingException(exception);
         }
     }
 

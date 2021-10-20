@@ -2,6 +2,7 @@ package deliverif.controller.state;
 
 import deliverif.controller.Controller;
 import deliverif.gui.Gui;
+import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -27,6 +28,8 @@ public class LoadingMap implements State {
                 controller.getTour().notifyObservers(controller.getTour());
                 controller.getCityMap().loadMapFromFile(file);
                 controller.setCurrentState(controller.mapLoaded);
+            } catch (SAXException saxeException) {
+
             } catch (Exception e) {
                 e.printStackTrace();
 
