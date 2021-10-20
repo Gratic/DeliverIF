@@ -63,8 +63,7 @@ public class Gui {
 
     public void init() {
         // load assets
-        Assets.init();
-        frame.setIconImage(Assets.loadMapIcon);
+        frame.setIconImage(Assets.loadMapImage);
 
         // set current ViewState
         this.currentViewState = new InitialView(this);

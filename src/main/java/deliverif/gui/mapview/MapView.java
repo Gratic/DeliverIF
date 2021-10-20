@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import static deliverif.gui.utils.Assets.*;
+import static deliverif.gui.utils.Utils.dye;
 
 public class MapView extends JPanel implements Observer, MouseInputListener, MouseWheelListener {
     private CityMap map;
@@ -64,7 +65,6 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         super.paintComponent(g);
 
 
-
         if (this.isMapLoaded()) {
             g.setColor(new Color(10, 10, 10));
 
@@ -104,14 +104,14 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 Point deliveryPoint = this.latlongToXY(request.getDeliveryAddress().getLatitude(), request.getDeliveryAddress().getLongitude());
 
 
-                g.drawImage(dye(pickupIcon, ColorTheme.REQUEST_PALETTE.get(i % ColorTheme.REQUEST_PALETTE.size())),
+                g.drawImage(dye(pickupImage, ColorTheme.REQUEST_PALETTE.get(i % ColorTheme.REQUEST_PALETTE.size())),
                         pickupPoint.x - (iconsWidth / 2),
                         pickupPoint.y - (iconsHeight),
                         iconsWidth,
                         iconsHeight,
                         this);
 
-                g.drawImage(dye(deliveryIcon, ColorTheme.REQUEST_PALETTE.get(i % ColorTheme.REQUEST_PALETTE.size())),
+                g.drawImage(dye(deliveryImage, ColorTheme.REQUEST_PALETTE.get(i % ColorTheme.REQUEST_PALETTE.size())),
                         deliveryPoint.x - (iconsWidth / 2),
                         deliveryPoint.y - (iconsHeight),
                         iconsWidth,
@@ -126,7 +126,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 Point point = this.latlongToXY(departureAddress.getLatitude(), departureAddress.getLongitude());
 
 
-                g.drawImage(dye(departureIcon, ColorTheme.DEPARTURE_COLOR),
+                g.drawImage(dye(departureImage, ColorTheme.DEPARTURE_COLOR),
                         point.x - (iconsWidth / 2),
                         point.y - (iconsHeight),
                         iconsWidth,
@@ -139,21 +139,6 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         }
     }
 
-
-    //Source: https://stackoverflow.com/a/21385150
-    private static BufferedImage dye(BufferedImage image, Color color) {
-        int w = image.getWidth();
-        int h = image.getHeight();
-        BufferedImage dyed = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = dyed.createGraphics();
-        g.drawImage(image, 0, 0, null);
-        g.setComposite(AlphaComposite.SrcAtop);
-        g.setColor(color);
-        g.fillRect(0, 0, w, h);
-        g.dispose();
-        return dyed;
-    }
-    //Source end
 
     private Point latlongToXY(double latitude, double longitude) {
         double normalizedLatitude = (latitude - latitudeMin) / (latitudeMax - latitudeMin);

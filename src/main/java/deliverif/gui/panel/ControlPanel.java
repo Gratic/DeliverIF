@@ -1,11 +1,14 @@
 package deliverif.gui.panel;
 
 import deliverif.gui.Gui;
+import deliverif.gui.utils.Assets;
 import deliverif.gui.utils.ColorTheme;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import static deliverif.gui.utils.Utils.dye;
 
 public class ControlPanel extends GuiPanel implements ActionListener {
 
@@ -32,18 +35,21 @@ public class ControlPanel extends GuiPanel implements ActionListener {
     }
 
     private void init() {
-        loadMapButton = new JButton("Load Map");
+        loadMapButton = new JButton(new ImageIcon(dye(Assets.loadMapImage, Color.BLACK)));
         loadMapButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        loadMapButton.setToolTipText("Load Map");
         loadMapButton.addActionListener(this);
         add(loadMapButton);
 
-        loadRequestsButton = new JButton("Load Requests");
+        loadRequestsButton = new JButton(new ImageIcon(dye(Assets.loadRequestImage, Color.BLACK)));
         loadRequestsButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        loadRequestsButton.setToolTipText("Load Requests");
         loadRequestsButton.addActionListener(this);
+//        loadRequestsButton.setEnabled(false);
         add(loadRequestsButton);
 
         addRequestButton = new JButton("Add request");
