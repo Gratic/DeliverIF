@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import static deliverif.gui.utils.Assets.*;
+
 public class MapView extends JPanel implements Observer, MouseInputListener, MouseWheelListener {
     private CityMap map;
     private DeliveryTour tour;
@@ -61,16 +63,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        BufferedImage deliveryIcon = null;
-        BufferedImage pickupIcon = null;
-        BufferedImage departureIcon = null;
-        try {
-            deliveryIcon = ImageIO.read(new File("resources/assets/icons/delivery.png"));
-            pickupIcon = ImageIO.read(new File("resources/assets/icons/pickup.png"));
-            departureIcon = ImageIO.read(new File("resources/assets/icons/departure.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
         if (this.isMapLoaded()) {
             g.setColor(new Color(10, 10, 10));

@@ -64,9 +64,11 @@ public class Gui {
     public void init() {
         // load assets
         Assets.init();
+        frame.setIconImage(Assets.loadMapIcon);
 
         // set current ViewState
         this.currentViewState = new InitialView(this);
+
 
     }
 
