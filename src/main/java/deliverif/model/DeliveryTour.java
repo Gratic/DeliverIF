@@ -4,6 +4,7 @@ import deliverif.exception.RequestsLoadException;
 import deliverif.observer.Observable;
 import deliverif.xml.RequestsXMLHandler;
 import org.xml.sax.SAXException;
+import pdtsp.Pair;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -35,12 +36,22 @@ public class DeliveryTour extends Observable {
      */
     private Collection<Request> requests;
 
+    /**
+     * Index of the currently selected element:
+     *      -2 -> none
+     *      -1 -> departureAddress,
+     *      >=0 -> index of the request in the arraylist
+     */
+
+    private int selectedElement;
+
     public DeliveryTour() {
         requests = new ArrayList<>();
         path = new ArrayList<>();
         pathAddresses = new ArrayList<>();
         addressRequestMetadata = new HashMap<>();
         departureTime = new Date();
+        selectedElement = -2;
     }
 
     public List<RoadSegment> getPath() {
@@ -65,10 +76,22 @@ public class DeliveryTour extends Observable {
     }
 
     public Address getDepartureAddress() {
-        if(this.pathAddresses.size() > 0) {
+        if (this.pathAddresses.size() > 0) {
             return this.pathAddresses.get(0);
         }
         return null;
+    }
+
+    public boolean isSelected(Request request) {
+        if (selectedElement >= 0) {
+            return ((ArrayList<Request>) requests).get(selectedElement).equals(request);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isSelected(Address address) {
+        return selectedElement == -1;
     }
 
     public void addAddress(Address addr, EnumAddressType type, Request req) {
@@ -104,5 +127,49 @@ public class DeliveryTour extends Observable {
 
     public Collection<Request> getRequests() {
         return requests;
+    }
+
+    private Pair<Double, Integer> getClosestRequest(double latitude, double longitude) {
+
+        int closest = 0;
+        double minDist = Integer.MAX_VALUE;
+        int i = 0;
+        for (Request request : requests) {
+            if (request.getDeliveryAddress().dist(latitude, longitude) < minDist) {
+                closest = i;
+                minDist = request.getDeliveryAddress().dist(latitude, longitude);
+            }
+            if (request.getPickupAddress().dist(latitude, longitude) < minDist) {
+                closest = i;
+                minDist = request.getPickupAddress().dist(latitude, longitude);
+            }
+            i++;
+        }
+
+
+        return new Pair<>(minDist, closest);
+    }
+
+    private final static double THRESHOLD = 50d;
+
+    public void selectElement(double latitude, double longitude, double threshold) {
+        System.out.println(selectedElement);
+        Pair<Double, Integer> res = getClosestRequest(latitude, longitude);
+        double distDeparture = Double.MAX_VALUE;
+        Address departure = getDepartureAddress();
+        if (departure != null) {
+            distDeparture = departure.dist(latitude, longitude);
+        }
+
+        if (distDeparture < res.getX() && distDeparture < threshold) {
+            selectedElement = selectedElement != -1 ? -1 : -2;
+        } else if (res.getX() < threshold) {
+            selectedElement = selectedElement != res.getY() ? res.getY() : -2;
+        }
+        System.out.println(selectedElement);
+    }
+
+    public void selectElement(double latitude, double longitude) {
+        selectElement(latitude, longitude, THRESHOLD);
     }
 }
