@@ -38,9 +38,9 @@ public class DeliveryTour extends Observable {
 
     /**
      * Index of the currently selected element:
-     *      -2 -> none
-     *      -1 -> departureAddress,
-     *      >=0 -> index of the request in the arraylist
+     * -2 -> none
+     * -1 -> departureAddress,
+     * >=0 -> index of the request in the arraylist
      */
 
     private int selectedElement;
@@ -152,6 +152,10 @@ public class DeliveryTour extends Observable {
 
     private final static double THRESHOLD = 50d;
 
+    private void toggleSelect(int n) {
+        selectedElement = selectedElement != n ? n : -2;
+    }
+
     public void selectElement(double latitude, double longitude, double threshold) {
         System.out.println(selectedElement);
         Pair<Double, Integer> res = getClosestRequest(latitude, longitude);
@@ -162,14 +166,27 @@ public class DeliveryTour extends Observable {
         }
 
         if (distDeparture < res.getX() && distDeparture < threshold) {
-            selectedElement = selectedElement != -1 ? -1 : -2;
+            toggleSelect(-1);
         } else if (res.getX() < threshold) {
-            selectedElement = selectedElement != res.getY() ? res.getY() : -2;
+            toggleSelect(res.getY());
         }
         System.out.println(selectedElement);
     }
 
     public void selectElement(double latitude, double longitude) {
         selectElement(latitude, longitude, THRESHOLD);
+    }
+
+    public void selectDepartureAddress() {
+        toggleSelect(-1);
+    }
+
+    public void selectRequest(Request request) {
+        int index = ((ArrayList<Request>) requests).indexOf(request);
+        if ((index < 0)) {
+            System.err.println("Request not present");
+        } else {
+            toggleSelect(index);
+        }
     }
 }
