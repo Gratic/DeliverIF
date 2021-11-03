@@ -29,7 +29,7 @@ public class LoadingRequests implements State {
         if (option == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try {
-                controller.getTour().loadRequestsFromFile(file, controller.getCityMap(), controller.getTour());
+                controller.getTour().loadRequestsFromFile(file, controller.getCityMap());
                 controller.setCurrentState(controller.requestsLoaded);
             } catch (RequestsLoadException exception) {
                 exception.printStackTrace();
