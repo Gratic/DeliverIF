@@ -124,6 +124,15 @@ public class DeliveryTour extends Observable {
         this.notifyObservers(this);
     }
 
+    // Request modifs from User
+    public void addRequestRecompute(Request request) {
+        // TODO: Need to recompute locally the delivery tour
+    }
+
+    public void deleteRequestRecompute(Request request) {
+        // TODO: Need to recompute locally the delivery tour
+    }
+
     public List<Request> getRequests() {
         return requests;
     }
