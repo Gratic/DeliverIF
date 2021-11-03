@@ -205,7 +205,7 @@ public class RunPDTSP {
 
         DeliveryTour deliveryTour = new DeliveryTour();
 
-        PDTSPWrapper wrapper = new PDTSPWrapper(cityMap, requests, deliveryTour, startPoint, 10000);
+        PDTSPWrapper wrapper = new PDTSPWrapper(cityMap, deliveryTour, 10000);
         wrapper.prepare();
 //        while(!wrapper.isSolutionOptimal())
 //        {
