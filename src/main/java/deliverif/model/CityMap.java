@@ -3,23 +3,24 @@ package deliverif.model;
 import deliverif.exception.MapLoadingException;
 import deliverif.observer.Observable;
 import deliverif.xml.MapXMLHandler;
-import deliverif.xml.RequestsXMLHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CityMap extends Observable {
     /** All addresses (address id => Address) */
-    private Map<Long, Address> addresses;
+    private final Map<Long, Address> addresses;
 
     /** Neighbors list (address id => Collection of RoadSegment originating from this address) */
-    private Map<Long, Collection<RoadSegment>> segments;
+    private final Map<Long, Collection<RoadSegment>> segments;
 
     public CityMap() {
         this.addresses = new HashMap<>();

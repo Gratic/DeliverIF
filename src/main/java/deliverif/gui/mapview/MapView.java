@@ -4,17 +4,14 @@ import deliverif.gui.utils.ColorTheme;
 import deliverif.model.*;
 import deliverif.observer.Observable;
 import deliverif.observer.Observer;
+import pdtsp.Pair;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 
 import static deliverif.gui.utils.Assets.*;
@@ -99,7 +96,12 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             int iconsWidth = (int) (ICON_SIZE * this.zoomLevel);
             int iconsHeight = (int) (ICON_SIZE * this.zoomLevel);
 
+
             for (Request request : this.tour.getRequests()) {
+                if (tour.isSelected(request)) {
+                    iconsHeight *= 2;
+                    iconsWidth *= 2;
+                }
                 Point pickupPoint = this.latlongToXY(request.getPickupAddress().getLatitude(), request.getPickupAddress().getLongitude());
                 Point deliveryPoint = this.latlongToXY(request.getDeliveryAddress().getLatitude(), request.getDeliveryAddress().getLongitude());
 
@@ -118,11 +120,20 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                         iconsHeight,
                         this);
 
+                if (tour.isSelected(request)) {
+                    iconsHeight /= 2;
+                    iconsWidth /= 2;
+                }
                 i++;
+
             }
 
             Address departureAddress = this.tour.getDepartureAddress();
             if (departureAddress != null) {
+                if (tour.isSelected(departureAddress)) {
+                    iconsHeight *= 2;
+                    iconsWidth *= 2;
+                }
                 Point point = this.latlongToXY(departureAddress.getLatitude(), departureAddress.getLongitude());
 
 
@@ -135,7 +146,24 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 );
 
 
+
             }
+//Color map based on dist to points
+//        for (int ik =0;ik<g.getClipBounds().height;ik+=5){
+//            for (int j=0;j<g.getClipBounds().width;j+=5){
+//                Pair<Double,Double> pos = XYToLatLong(new Point(ik,j));
+//                Request res = tour.getClosestRequest(pos.getX(),pos.getY()).getY();
+//                int c = 0;
+//                for (Request r:tour.getRequests()){
+//                    if (r.getPickupAddress()==res.getPickupAddress() && r.getPickupAddress()==res.getPickupAddress()){
+//                        break;
+//                    }
+//                    c++;
+//                }
+//                g.setColor(ColorTheme.REQUEST_PALETTE.get(c % ColorTheme.REQUEST_PALETTE.size()));
+//                g.fillOval(ik,j,3,3);
+//            }
+//        }
         }
     }
 
@@ -149,6 +177,15 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         return new Point(x, y);
     }
 
+    private Pair<Double, Double> XYToLatLong(Point p) {
+        double normalizedX = (p.x - xTranslation) / (MAP_BASE_WIDTH * zoomLevel);
+        double normalizedY = (MAP_BASE_HEIGHT - (p.y - yTranslation)) / (MAP_BASE_HEIGHT * zoomLevel);
+
+        double latitude = normalizedY * (latitudeMax - latitudeMin) + latitudeMin;
+        double longitude = normalizedX * (longitudeMax - longitudeMin) + longitudeMin;
+
+        return new Pair(latitude, longitude);
+    }
 
 
     public void setMap(CityMap map) {
@@ -301,6 +338,12 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             zoomLevel = BASE_ZOOM_LEVEL;
             yTranslation = 0;
             xTranslation = 0;
+            this.repaint();
+        }
+        if (e.getButton() == 1) {
+            Pair<Double, Double> pos = XYToLatLong(e.getPoint());
+            tour.selectElement(pos.getX(), pos.getY());
+
             this.repaint();
         }
     }
