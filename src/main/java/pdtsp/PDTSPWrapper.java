@@ -403,4 +403,6 @@ public class PDTSPWrapper {
     }
 
     public boolean isSolutionOptimal() { return pdtsp.isSolutionOptimal(); }
+
+    public double getSolutionCost() { return pdtsp.getSolutionCost(); }
 }
