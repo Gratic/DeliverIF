@@ -4,7 +4,6 @@ import deliverif.gui.utils.ColorTheme;
 import deliverif.model.*;
 import deliverif.observer.Observable;
 import deliverif.observer.Observer;
-import pdtsp.Pair;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -29,8 +28,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     private final int DEFAULT_WIDTH = 600;
     private final int DEFAULT_HEIGHT = 400;
-    private final int MAP_BASE_WIDTH = 900;
-    private final int MAP_BASE_HEIGHT = 900;
+    private final int MAP_BASE_SIZE = 900;
 
     private final double ICON_SIZE = 35;
 
@@ -67,7 +65,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
             for (Address address : this.map.getAddresses().values()) {
                 if (address.getId() == 190866513) {
-                    Point point = this.latlongToXY(address.getLatitude(), address.getLongitude());
+                    Point point = this.latlongToXY(address.getCoords());
                     g.setColor(new Color(200, 0, 0));
                     g.drawChars("Home".toCharArray(), 0, 4, point.x, point.y);
                     g.setColor(new Color(10, 10, 10));
@@ -76,10 +74,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 Collection<RoadSegment> segments = this.map.getSegmentsOriginatingFrom(address.getId());
                 if (segments != null) {
                     for (RoadSegment segment : segments) {
-                        Point startCoord = this.latlongToXY(segment.getOrigin().getLatitude(),
-                                segment.getOrigin().getLongitude());
-                        Point endCoord = this.latlongToXY(segment.getDestination().getLatitude(),
-                                segment.getDestination().getLongitude());
+                        Point startCoord = this.latlongToXY(segment.getOrigin().getCoords());
+                        Point endCoord = this.latlongToXY(segment.getDestination().getCoords());
 
                         g.drawLine(startCoord.x, startCoord.y, endCoord.x, endCoord.y);
                     }
@@ -96,14 +92,13 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             int iconsWidth = (int) (ICON_SIZE * this.zoomLevel);
             int iconsHeight = (int) (ICON_SIZE * this.zoomLevel);
 
-
             for (Request request : this.tour.getRequests()) {
                 if (tour.isSelected(request)) {
                     iconsHeight *= 2;
                     iconsWidth *= 2;
                 }
-                Point pickupPoint = this.latlongToXY(request.getPickupAddress().getLatitude(), request.getPickupAddress().getLongitude());
-                Point deliveryPoint = this.latlongToXY(request.getDeliveryAddress().getLatitude(), request.getDeliveryAddress().getLongitude());
+                Point pickupPoint = this.latlongToXY(request.getPickupAddress().getCoords());
+                Point deliveryPoint = this.latlongToXY(request.getDeliveryAddress().getCoords());
 
 
                 g.drawImage(dye(pickupImage, ColorTheme.REQUEST_PALETTE.get(i % ColorTheme.REQUEST_PALETTE.size())),
@@ -125,16 +120,15 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                     iconsWidth /= 2;
                 }
                 i++;
-
             }
 
             Address departureAddress = this.tour.getDepartureAddress();
             if (departureAddress != null) {
+                Point point = this.latlongToXY(departureAddress.getCoords());
                 if (tour.isSelected(departureAddress)) {
                     iconsHeight *= 2;
                     iconsWidth *= 2;
                 }
-                Point point = this.latlongToXY(departureAddress.getLatitude(), departureAddress.getLongitude());
 
 
                 g.drawImage(dye(departureImage, ColorTheme.DEPARTURE_COLOR),
@@ -146,47 +140,35 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 );
 
 
-
             }
-//Color map based on dist to points
-//        for (int ik =0;ik<g.getClipBounds().height;ik+=5){
-//            for (int j=0;j<g.getClipBounds().width;j+=5){
-//                Pair<Double,Double> pos = XYToLatLong(new Point(ik,j));
-//                Request res = tour.getClosestRequest(pos.getX(),pos.getY()).getY();
-//                int c = 0;
-//                for (Request r:tour.getRequests()){
-//                    if (r.getPickupAddress()==res.getPickupAddress() && r.getPickupAddress()==res.getPickupAddress()){
-//                        break;
-//                    }
-//                    c++;
-//                }
-//                g.setColor(ColorTheme.REQUEST_PALETTE.get(c % ColorTheme.REQUEST_PALETTE.size()));
-//                g.fillOval(ik,j,3,3);
-//            }
-//        }
         }
     }
 
 
-    private Point latlongToXY(double latitude, double longitude) {
-        double normalizedLatitude = (latitude - latitudeMin) / (latitudeMax - latitudeMin);
-        double normalizedLongitude = (longitude - longitudeMin) / (longitudeMax - longitudeMin);
+    private Point latlongToXY(Coord coord) {
+        Coord normalizedCoord = normalizeCoord(coord);
 
-        int y = MAP_BASE_HEIGHT - (int) (normalizedLatitude * MAP_BASE_HEIGHT * zoomLevel) + yTranslation;
-        int x = (int) (normalizedLongitude * MAP_BASE_WIDTH * zoomLevel) + xTranslation;
+        int y = MAP_BASE_SIZE - (int) (normalizedCoord.lat() * MAP_BASE_SIZE * zoomLevel) + yTranslation;
+        int x = (int) (normalizedCoord.lon() * MAP_BASE_SIZE * zoomLevel) + xTranslation;
         return new Point(x, y);
     }
 
-    private Pair<Double, Double> XYToLatLong(Point p) {
-        double normalizedX = (p.x - xTranslation) / (MAP_BASE_WIDTH * zoomLevel);
-        double normalizedY = (MAP_BASE_HEIGHT - (p.y - yTranslation)) / (MAP_BASE_HEIGHT * zoomLevel);
+    private Coord XYToLatLong(Point p) {
+        double normalizedX = (p.x - xTranslation) / (MAP_BASE_SIZE * zoomLevel);
+        double normalizedY = (MAP_BASE_SIZE - (p.y - yTranslation)) / (MAP_BASE_SIZE * zoomLevel);
 
         double latitude = normalizedY * (latitudeMax - latitudeMin) + latitudeMin;
         double longitude = normalizedX * (longitudeMax - longitudeMin) + longitudeMin;
 
-        return new Pair(latitude, longitude);
+        return new Coord(latitude, longitude);
     }
 
+    private Coord normalizeCoord(Coord coord) {
+        return new Coord(
+                (coord.lat() - latitudeMin) / (latitudeMax - latitudeMin),
+                (coord.lon() - longitudeMin) / (longitudeMax - longitudeMin)
+        );
+    }
 
     public void setMap(CityMap map) {
         this.map = map;
@@ -252,69 +234,35 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        int wheelRotationAbs = Math.abs(e.getWheelRotation());
-        if (e.getWheelRotation() > 0) { // positive is unzoom
-            this.zoomView(-ZOOM_SENSITIVITY * wheelRotationAbs,
-                    (int) (e.getX() * this.zoomLevel) + xTranslation,
-                    (int) (e.getY() * this.zoomLevel) + yTranslation
-            );
-        } else if (e.getWheelRotation() < 0) { // negative is zoom
-            this.zoomView(ZOOM_SENSITIVITY * wheelRotationAbs,
-//                    (int) (e.getX() * this.zoomLevel) + xTranslation,
-//                    (int) (e.getY() * this.zoomLevel) + yTranslation
-                    (int) (e.getX() * this.zoomLevel),
-                    (int) (e.getY() * this.zoomLevel)
-            );
-        }
+        zoomView(e.getPoint(),e.getWheelRotation());
         System.out.println(e.getX() + " " + e.getY());
     }
 
-    public void zoomView(double zoomDelta, int zoomPointX, int zoomPointY) {
-        double prevZoomLevel = this.zoomLevel;
+    public void zoomView(Point zoomPoint, int rotations) {
 
-        this.zoomLevel += zoomDelta;
+        double prevZoom = zoomLevel;
 
+        double zoomDelta = -ZOOM_SENSITIVITY * rotations;
+        Coord zoomPointLatLong = XYToLatLong(zoomPoint);
 
-        if (this.zoomLevel < MIN_ZOOM_LEVEL) {
-            this.zoomLevel = MIN_ZOOM_LEVEL;
-        } else if (this.zoomLevel > MAX_ZOOM_LEVEL) {
-            this.zoomLevel = MAX_ZOOM_LEVEL;
+        zoomLevel += zoomDelta;
+
+        if (zoomLevel < MIN_ZOOM_LEVEL) {
+            zoomLevel = MIN_ZOOM_LEVEL;
+        } else if (zoomLevel > MAX_ZOOM_LEVEL) {
+            zoomLevel = MAX_ZOOM_LEVEL;
         }
 
-//        this.repaint();
+        if (zoomLevel == prevZoom) {
+            return;
+        }
 
-        double absScaleDelta = (1.0 / prevZoomLevel) - (1.0 / this.zoomLevel);
-        /*int zoomPointX = (this.MAP_BASE_WIDTH / 2);
-        int zoomPointY = (this.MAP_BASE_HEIGHT / 2);*/
+        Coord normalizedCoord = normalizeCoord(zoomPointLatLong);
 
-        int xOffset = (int) -(zoomPointX * absScaleDelta);
-        int yOffset = (int) -(zoomPointY * absScaleDelta);
+        int tY = (int) (normalizedCoord.lat() * MAP_BASE_SIZE * zoomDelta);
+        int tX = (int) (-normalizedCoord.lon() * MAP_BASE_SIZE * zoomDelta);
 
-
-        this.translateView(xOffset, yOffset);
-
-/*
-        double absoluteZoomDelta = this.zoomLevel - prevZoomLevel;
-        // double relativeZoomDelta = absoluteZoomDelta / this.zoomLevel;
-        double relativeZoomDelta = this.zoomLevel / prevZoomLevel;
-        System.out.println(relativeZoomDelta);
-        //if(absoluteZoomDelta > 0.0) {
-            Point farthestPoint = this.latlongToXY(this.latitudeMax, this.longitudeMax);
-            System.out.println(absoluteZoomDelta );
-
-            /*int widthDelta = (int) (farthestPoint.x * (absoluteZoomDelta / this.zoomLevel) / 2.0);
-            int heightDelta = (int) (farthestPoint.y * (absoluteZoomDelta / this.zoomLevel) / 2.0);
-
-            int widthDelta = (int)(farthestPoint.x * (relativeZoomDelta - 1.0));
-            int heightDelta = (int)(farthestPoint.y * (relativeZoomDelta - 1.0));
-
-            int widthDeltaAbs = (int)(farthestPoint.x * absoluteZoomDelta);
-            int heightDeltaAbs = (int)(farthestPoint.y * absoluteZoomDelta);
-
-            System.out.println(widthDelta + " " + heightDelta);
-            System.out.println(widthDeltaAbs + " " + heightDeltaAbs);
-            this.translateView(-widthDelta, -heightDelta);
-//        }*/
+        this.translateView(tX, tY);
     }
 
     public void translateView(int deltaX, int deltaY) {
@@ -341,8 +289,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             this.repaint();
         }
         if (e.getButton() == 1) {
-            Pair<Double, Double> pos = XYToLatLong(e.getPoint());
-            tour.selectElement(pos.getX(), pos.getY());
+            Coord pos = XYToLatLong(e.getPoint());
+            tour.selectElement(pos);
 
             this.repaint();
         }

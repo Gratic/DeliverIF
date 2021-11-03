@@ -128,19 +128,19 @@ public class DeliveryTour extends Observable {
         return requests;
     }
 
-    private Pair<Double, Integer> getClosestRequest(double latitude, double longitude) {
+    private Pair<Double, Integer> getClosestRequest(Coord coords) {
 
         int closest = 0;
         double minDist = Integer.MAX_VALUE;
         int i = 0;
         for (Request request : requests) {
-            if (request.getDeliveryAddress().dist(latitude, longitude) < minDist) {
+            if (request.getDeliveryAddress().dist(coords) < minDist) {
                 closest = i;
-                minDist = request.getDeliveryAddress().dist(latitude, longitude);
+                minDist = request.getDeliveryAddress().dist(coords);
             }
-            if (request.getPickupAddress().dist(latitude, longitude) < minDist) {
+            if (request.getPickupAddress().dist(coords) < minDist) {
                 closest = i;
-                minDist = request.getPickupAddress().dist(latitude, longitude);
+                minDist = request.getPickupAddress().dist(coords);
             }
             i++;
         }
@@ -155,13 +155,13 @@ public class DeliveryTour extends Observable {
         selectedElement = selectedElement != n ? n : -2;
     }
 
-    public void selectElement(double latitude, double longitude, double threshold) {
+    public void selectElement(Coord coords, double threshold) {
         System.out.println(selectedElement);
-        Pair<Double, Integer> res = getClosestRequest(latitude, longitude);
+        Pair<Double, Integer> res = getClosestRequest(coords);
         double distDeparture = Double.MAX_VALUE;
         Address departure = getDepartureAddress();
         if (departure != null) {
-            distDeparture = departure.dist(latitude, longitude);
+            distDeparture = departure.dist(coords);
         }
 
         if (distDeparture < res.getX() && distDeparture < threshold) {
@@ -172,8 +172,8 @@ public class DeliveryTour extends Observable {
         System.out.println(selectedElement);
     }
 
-    public void selectElement(double latitude, double longitude) {
-        selectElement(latitude, longitude, THRESHOLD);
+    public void selectElement(Coord coords) {
+        selectElement(coords, THRESHOLD);
     }
 
     public void selectDepartureAddress() {

@@ -5,14 +5,17 @@ import deliverif.utils.Utils;
 import java.util.Objects;
 
 public class Address {
-    private final long id;
-    private final double latitude;
-    private final double longitude;
+    private long id;
+    private Coord coords;
 
     public Address(long id, double latitude, double longitude) {
         this.id = id;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.coords = new Coord(latitude, longitude);
+    }
+
+    public Address(long id, Coord coords) {
+        this.id = id;
+        this.coords = coords;
     }
 
     public long getId() {
@@ -20,11 +23,15 @@ public class Address {
     }
 
     public double getLatitude() {
-        return latitude;
+        return coords.lat();
     }
 
     public double getLongitude() {
-        return longitude;
+        return coords.lon();
+    }
+
+    public Coord getCoords() {
+        return coords;
     }
 
     @Override
@@ -45,7 +52,7 @@ public class Address {
 
     }
 
-    public double dist(double latitude, double longitude){
-        return Utils.dist(this.latitude,this.longitude,latitude,longitude);
+    public double dist(Coord coords){
+        return Utils.dist(this.coords,coords);
     }
 }
