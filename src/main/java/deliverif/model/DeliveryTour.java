@@ -4,6 +4,7 @@ import deliverif.exception.RequestsLoadException;
 import deliverif.observer.Observable;
 import deliverif.xml.RequestsXMLHandler;
 import org.xml.sax.SAXException;
+import pdtsp.Pair;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -26,9 +27,8 @@ public class DeliveryTour extends Observable {
 
     /**
      * Metadata of addresses (basically associated request and address type)
-     * Departure
      */
-    private Map<Address, Map.Entry<Request, EnumAddressType>> addressRequestMetadata;
+    private List<Pair<EnumAddressType, Request>> addressRequestMetadata;
 
     /**
      * List of all requests in tour
@@ -39,7 +39,7 @@ public class DeliveryTour extends Observable {
         requests = new ArrayList<>();
         path = new ArrayList<>();
         pathAddresses = new ArrayList<>();
-        addressRequestMetadata = new HashMap<>();
+        addressRequestMetadata = new ArrayList<>();
         departureTime = new Date();
     }
 
@@ -51,7 +51,7 @@ public class DeliveryTour extends Observable {
         return pathAddresses;
     }
 
-    public Map<Address, Map.Entry<Request, EnumAddressType>> getAddressRequestMetadata() {
+    public List<Pair<EnumAddressType, Request>> getAddressRequestMetadata() {
         return addressRequestMetadata;
     }
 
@@ -73,7 +73,7 @@ public class DeliveryTour extends Observable {
 
     public void addAddress(Address addr, EnumAddressType type, Request req) {
         this.pathAddresses.add(addr);
-        this.addressRequestMetadata.put(addr, Map.entry(req, type));
+        this.addressRequestMetadata.add(new Pair<>(type, req));
         this.notifyObservers(this);
     }
 
@@ -82,13 +82,13 @@ public class DeliveryTour extends Observable {
         this.notifyObservers(this);
     }
 
-    public void loadRequestsFromFile(File requestsFile, CityMap map, DeliveryTour tour) throws RequestsLoadException {
+    public void loadRequestsFromFile(File requestsFile, CityMap map) throws RequestsLoadException {
         try {
             this.requests.clear();
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
-            RequestsXMLHandler handler = new RequestsXMLHandler(tour, map);
+            RequestsXMLHandler handler = new RequestsXMLHandler(this, map);
             parser.parse(requestsFile, handler);
 
             this.notifyObservers(this);

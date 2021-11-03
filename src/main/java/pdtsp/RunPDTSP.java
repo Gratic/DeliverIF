@@ -273,35 +273,53 @@ public class RunPDTSP {
             String type = null;
             Request request = null;
 
-            if(deliveryTour.getAddressRequestMetadata().get(address) != null)
+            if(deliveryTour.getAddressRequestMetadata().get(i) != null)
             {
-                Map.Entry<Request, EnumAddressType> pair = deliveryTour.getAddressRequestMetadata().get(address);
-                request = pair.getKey();
+                Pair<EnumAddressType, Request> pair = deliveryTour.getAddressRequestMetadata().get(i);
+                EnumAddressType typeEnum = pair.getX();
 
-                if(pair.getValue() == EnumAddressType.PICKUP_ADDRESS)
+                if(typeEnum == EnumAddressType.DEPARTURE_ADDRESS)
+                {
+                    type = "start/end";
+                }
+                else if(typeEnum == EnumAddressType.PICKUP_ADDRESS)
                 {
                     type = "pickup";
+                    request = pair.getY();
                 }
-                else if(pair.getValue() == EnumAddressType.DELIVERY_ADDRESS)
+                else if(typeEnum == EnumAddressType.DELIVERY_ADDRESS)
                 {
                     type = "delivery";
+                    request = pair.getY();
+                }
+                else if(typeEnum == EnumAddressType.TRAVERSAL_ADDRESS)
+                {
+                    type = "traversal";
                 }
             }
 
             if(type != null)
             {
-                long pickupAddressId = request.getPickupAddress().getId();
-                long deliveryAddressId = request.getDeliveryAddress().getId();
-
-                if(i != deliveryTour.getPathAddresses().size() - 1)
+                if(type != "start/end" && type != "traversal")
                 {
+                    long pickupAddressId = request.getPickupAddress().getId();
+                    long deliveryAddressId = request.getDeliveryAddress().getId();
+
                     System.out.print(type + " {" + pickupAddressId + ":" + deliveryAddressId + "},");
                 }
                 else
                 {
-                    System.out.print(type + " {" + pickupAddressId + ":" + deliveryAddressId + "}");
+                    if(i != deliveryTour.getPathAddresses().size() - 1)
+                    {
+                        System.out.print(type + ",");
+                    }
+                    else
+                    {
+                        System.out.print(type);
+                    }
                 }
             }
+
 
         }
         System.out.println("]");

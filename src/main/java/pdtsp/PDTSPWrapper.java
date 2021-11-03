@@ -277,7 +277,7 @@ public class PDTSPWrapper {
 
         // Starting node.
         int previous = reevaluationPortalOut.get(distortedPortalOut.get(0));
-        listTypes.add("Start");
+        listTypes.add("start");
         listNodeRequest.add(null);
         realPathInteger.add(previous);
 
@@ -291,7 +291,7 @@ public class PDTSPWrapper {
             List<Integer> tempRealPath = getRealPath(previous, currentNode, shortestPaths);
             for(int j = 0; j < tempRealPath.size() - 1; j++)
             {
-                listTypes.add("Traversal");
+                listTypes.add("traversal");
                 listNodeRequest.add(null);
             }
             listTypes.add(nodeType);
@@ -306,10 +306,10 @@ public class PDTSPWrapper {
         List<Integer> tempRealPath = getRealPath(previous, startPointInteger, shortestPaths);
         for(int j = 0; j < tempRealPath.size() - 1; j++)
         {
-            listTypes.add("Traversal");
+            listTypes.add("traversal");
             listNodeRequest.add(null);
         }
-        listTypes.add("End");
+        listTypes.add("end");
         listNodeRequest.add(null);
 
         realPathInteger.addAll(getRealPath(previous, startPointInteger, shortestPaths));
@@ -334,6 +334,10 @@ public class PDTSPWrapper {
 
             String nodeType = listTypes.get(i);
             switch (nodeType) {
+                case "start", "end" -> {
+                    deliveryTour.addAddress(currentAddress, EnumAddressType.DEPARTURE_ADDRESS, null);
+                    deliveryTour.getPath().add(rsCurrentToNext);
+                }
                 case "pickup" -> {
                     Integer requestNumber = listNodeRequest.get(i);
                     deliveryTour.addAddress(currentAddress, EnumAddressType.PICKUP_ADDRESS, requests.get(requestNumber));
@@ -344,15 +348,16 @@ public class PDTSPWrapper {
                     deliveryTour.addAddress(currentAddress, EnumAddressType.DELIVERY_ADDRESS, requests.get(requestNumber));
                     deliveryTour.getPath().add(rsCurrentToNext);
                 }
-                default -> {
-                    deliveryTour.addAddress(currentAddress);
+                case "traversal" -> {
+                    Integer requestNumber = listNodeRequest.get(i);
+                    deliveryTour.addAddress(currentAddress, EnumAddressType.TRAVERSAL_ADDRESS, null);
                     deliveryTour.getPath().add(rsCurrentToNext);
                 }
             }
         }
 
         // We add the last address.
-        deliveryTour.addAddress(cityMap.getAddressById(realPath.get(realPath.size()-1)));
+        deliveryTour.addAddress(cityMap.getAddressById(realPath.get(realPath.size()-1)), EnumAddressType.DEPARTURE_ADDRESS, null);
     }
 
     /**
