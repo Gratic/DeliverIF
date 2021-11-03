@@ -1,5 +1,6 @@
 package deliverif.controller;
 
+import deliverif.controller.command.ListOfCommands;
 import deliverif.model.CityMap;
 import deliverif.gui.Gui;
 import deliverif.model.DeliveryTour;
@@ -21,6 +22,8 @@ public class Controller {
     protected State currentState;
     protected Stack<State> previousStates;
 
+    private ListOfCommands listOfCommands;
+
     public Controller() {
         cityMap = new CityMap();
         tour = new DeliveryTour();
@@ -35,6 +38,8 @@ public class Controller {
         loadingRequests = new LoadingRequests();
         requestsLoaded = new RequestsLoaded();
 
+        listOfCommands = new ListOfCommands();
+
         init();
     }
     
@@ -48,10 +53,10 @@ public class Controller {
 
     // state functions
     public void undo() {
-        currentState.undo();
+        currentState.undo(listOfCommands);
     }
     public void redo() {
-        currentState.redo();
+        currentState.redo(listOfCommands);
     }
     public void rightClick(Controller controller, Gui gui) {
         currentState.rightClick(this, gui);
@@ -59,6 +64,13 @@ public class Controller {
     public void leftClick(Controller controller, Gui gui) {
         currentState.leftClick(this, gui);
     }
+    public void loadMapButtonClick(Gui gui) {
+        this.currentState.loadMapButtonClick(this, gui);
+    }
+    public void loadRequestsButtonClick(Gui gui) {
+        this.currentState.loadRequestsButtonClick(this, gui);
+    }
+
     // getters & setters
     public void setCurrentState(State state) {
         this.currentState = state;
@@ -75,14 +87,6 @@ public class Controller {
 
     public DeliveryTour getTour() {
         return tour;
-    }
-
-    public void loadMapButtonClick(Gui gui) {
-        this.currentState.loadMapButtonClick(this, gui);
-    }
-
-    public void loadRequestsButtonClick(Gui gui) {
-        this.currentState.loadRequestsButtonClick(this, gui);
     }
 
 }
