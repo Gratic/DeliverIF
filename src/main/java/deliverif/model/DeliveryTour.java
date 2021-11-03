@@ -6,6 +6,7 @@ import deliverif.xml.RequestsXMLHandler;
 import org.xml.sax.SAXException;
 import pdtsp.Pair;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -89,7 +90,7 @@ public class DeliveryTour extends Observable {
         }
     }
 
-    public boolean isSelected(Address address) {
+    public boolean isDepartureSelected() {
         return selectedElement == -1;
     }
 
@@ -162,6 +163,10 @@ public class DeliveryTour extends Observable {
 
     private void toggleSelect(int n) {
         selectedElement = selectedElement != n ? n : -2;
+        System.out.println("coucou");
+
+        this.notifyObservers();
+
     }
 
     public void selectElement(Coord coords, double threshold) {
@@ -175,6 +180,7 @@ public class DeliveryTour extends Observable {
 
         if (distDeparture < res.getX() && distDeparture < threshold) {
             toggleSelect(-1);
+
         } else if (res.getX() < threshold) {
             toggleSelect(res.getY());
         }

@@ -28,6 +28,8 @@ public class DisplayRequestsView extends ViewState {
 
 
         // add text to East panel
+        ////
+        /*
         TextualViewPanel textualViewPanel = gui.getTextualViewPanel();
         textualViewPanel.removeAll();
 
@@ -35,9 +37,31 @@ public class DisplayRequestsView extends ViewState {
         textualViewPanel.add(pleaseLoadRequestsText);
         JButton computeButton = new JButton("Compute");
         textualViewPanel.add(computeButton);
+        textualViewPanel.add(
+                this.gui.getRequestsTextView()
+        );
 
         textualViewPanel.revalidate();
         textualViewPanel.repaint();
+        */
+
+        TextualViewPanel textualViewPanel = gui.getTextualViewPanel();
+        textualViewPanel.removeAll();
+        JLabel pleaseLoadRequestsText = new JLabel("Compute a tour");
+        textualViewPanel.add(pleaseLoadRequestsText);
+        JButton computeButton = new JButton("Compute");
+        textualViewPanel.add(computeButton);
+
+        //TextualViewScrollPanel textualViewScrollPanel = new TextualViewScrollPanel();
+        this.gui.getRequestsTextView().init();
+        textualViewPanel.add(
+                //textualViewScrollPanel
+                this.gui.getRequestsTextView()
+        );
+
+        textualViewPanel.revalidate();
+        textualViewPanel.repaint();
+        ////
     }
 
     private void createGuiComponents() {

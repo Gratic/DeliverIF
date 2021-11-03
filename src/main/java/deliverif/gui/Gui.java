@@ -8,6 +8,7 @@ import deliverif.gui.panel.ControlPanel;
 import deliverif.gui.panel.GraphicalViewPanel;
 import deliverif.gui.panel.MainPanel;
 import deliverif.gui.panel.TextualViewPanel;
+import deliverif.gui.textualview.RequestsTextView;
 import deliverif.gui.utils.Assets;
 import deliverif.gui.viewstate.*;
 
@@ -23,6 +24,8 @@ public class Gui {
     protected ControlPanel controlPanel;
     protected GraphicalViewPanel graphicalViewPanel;
     protected TextualViewPanel textualViewPanel;
+
+    private RequestsTextView requestsTextView;
 
     protected MapView mapView;
 
@@ -56,6 +59,9 @@ public class Gui {
         );
 
         mapView = new MapView(controller.getCityMap(), controller.getTour());
+
+        //this.requestsTextView = new RequestsTextView(controller.getTour());
+        this.requestsTextView = new RequestsTextView(controller.getTour(),controller.getCityMap());
 
         //this.frame.pack(); // resize to fit components
         frame.setVisible(true);
@@ -102,4 +108,7 @@ public class Gui {
     }
 
     public MapView getMapView() { return mapView; }
+    public RequestsTextView getRequestsTextView() {
+        return requestsTextView;
+    }
 }
