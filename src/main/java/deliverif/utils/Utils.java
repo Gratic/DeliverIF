@@ -1,5 +1,7 @@
 package deliverif.utils;
 
+import deliverif.model.Coord;
+
 public class Utils {
 
     public static double dist(double lat1, double long1, double lat2, double long2){
@@ -21,6 +23,10 @@ public class Utils {
         distance = 2.0 * EARTH_RADIUS * Math.asin(Math.sqrt(distance));
 
         return distance*1000; //m value
+    }
+
+    public static double dist(Coord coord1,Coord coord2){
+        return dist(coord1.lat(), coord1.lon(), coord2.lat(), coord2.lon());
     }
 
 }
