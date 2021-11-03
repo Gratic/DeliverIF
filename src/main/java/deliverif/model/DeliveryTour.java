@@ -33,7 +33,7 @@ public class DeliveryTour extends Observable {
     /**
      * List of all requests in tour
      */
-    private Collection<Request> requests;
+    private List<Request> requests;
 
     /**
      * Index of the currently selected element:
@@ -124,7 +124,7 @@ public class DeliveryTour extends Observable {
         this.notifyObservers(this);
     }
 
-    public Collection<Request> getRequests() {
+    public List<Request> getRequests() {
         return requests;
     }
 

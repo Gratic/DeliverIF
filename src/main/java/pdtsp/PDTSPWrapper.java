@@ -33,9 +33,8 @@ public class PDTSPWrapper {
     private final RoadSegment[][] roadSegmentsMatrix;
     private final DeliveryTour deliveryTour;
 
-    public PDTSPWrapper(CityMap cityMap, List<Request> requests, DeliveryTour deliveryTour, Address startPoint, Integer timeLimit)
+    public PDTSPWrapper(CityMap cityMap, DeliveryTour deliveryTour, Integer timeLimit)
     {
-        this.requests = requests;
         this.timeLimit = timeLimit;
 
         this.longToInt = new HashMap<>();
@@ -45,6 +44,9 @@ public class PDTSPWrapper {
 
         this.cityMap = cityMap;
         this.deliveryTour = deliveryTour;
+        this.requests = deliveryTour.getRequests();
+
+        Address startPoint = deliveryTour.getDepartureAddress();
 
         // TASK 1: Re-index long indexes into integer indexes because BasicGraph only takes integer.
         int currentIntegerIndex = 0;
@@ -321,6 +323,10 @@ public class PDTSPWrapper {
         }
 
         // TASK 2: Updating DeliveryTour.
+        deliveryTour.getPath().clear();
+        deliveryTour.getPathAddresses().clear();
+        deliveryTour.getAddressRequestMetadata().clear();
+
         for(int i = 0; i < realPath.size()-1; i++)
         {
             long longCurrentNode = realPath.get(i);
