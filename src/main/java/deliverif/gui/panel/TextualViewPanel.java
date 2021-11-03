@@ -13,7 +13,6 @@ public class TextualViewPanel extends JPanel {
         setPreferredSize(
                 new Dimension(300, 300)
         );
-
         // layout
         FlowLayout verticalFlowLayout = new FlowLayout(
                 FlowLayout.LEADING, 10, 20
@@ -24,10 +23,6 @@ public class TextualViewPanel extends JPanel {
     }
 
     private void init() {
-        JLabel panelTitle = new JLabel(
-                "Textual View (tmp)"
-        );
-        panelTitle.setSize(200, 30);
-        add(panelTitle);
+
     }
 }

@@ -125,7 +125,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             Address departureAddress = this.tour.getDepartureAddress();
             if (departureAddress != null) {
                 Point point = this.latlongToXY(departureAddress.getCoords());
-                if (tour.isSelected(departureAddress)) {
+                if (tour.isDepartureSelected()) {
                     iconsHeight *= 2;
                     iconsWidth *= 2;
                 }
