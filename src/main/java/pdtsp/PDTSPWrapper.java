@@ -70,14 +70,20 @@ public class PDTSPWrapper {
             // Pair<node ID, distance>
             Collection<Pair<Integer, Double>> arcs = new ArrayList<>();
 
-            for(RoadSegment rs : cityMap.getSegments().get(longNodeIndex))
-            {
-                int integerDestinationNodeIndex = longToInt.get(rs.getDestination().getId());
-                double roadSegmentLength = rs.getLength();
+            Collection<RoadSegment> outgoingRoadSegments = cityMap.getSegments().get(longNodeIndex);
 
-                roadSegmentsMatrix[integerOriginNodeIndex][integerDestinationNodeIndex] = rs;
-                arcs.add(new Pair<>(integerDestinationNodeIndex, roadSegmentLength));
+            if(outgoingRoadSegments != null)
+            {
+                for(RoadSegment rs : outgoingRoadSegments)
+                {
+                    int integerDestinationNodeIndex = longToInt.get(rs.getDestination().getId());
+                    double roadSegmentLength = rs.getLength();
+
+                    roadSegmentsMatrix[integerOriginNodeIndex][integerDestinationNodeIndex] = rs;
+                    arcs.add(new Pair<>(integerDestinationNodeIndex, roadSegmentLength));
+                }
             }
+
 
             cityMapInteger.put(integerOriginNodeIndex, arcs);
         }
