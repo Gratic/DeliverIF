@@ -92,6 +92,7 @@ public class Controller {
         currentState.run(this, gui);
     }
 
+
     public Stack<State> getPreviousStates() {
         return previousStates;
     }
