@@ -7,7 +7,7 @@ import deliverif.gui.viewstate.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class MapLoaded implements State {
+public class MapLoadedState implements State {
 
     @Override
     public void run(Controller controller, Gui gui) {
@@ -22,7 +22,7 @@ public class MapLoaded implements State {
 
     @Override
     public void loadMapButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
-        controller.setCurrentState(controller.loadingMap);
+        State state = controller.getPreviousStates().pop();
+        controller.setCurrentState(state);
     }
 }

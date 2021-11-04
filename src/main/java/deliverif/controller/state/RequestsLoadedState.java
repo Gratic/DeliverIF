@@ -3,9 +3,9 @@ package deliverif.controller.state;
 import deliverif.controller.Controller;
 import deliverif.gui.Gui;
 import deliverif.gui.viewstate.DisplayRequestsView;
-import deliverif.gui.viewstate.LoadRequestsView;
 
-public class RequestsLoaded implements State {
+
+public class RequestsLoadedState implements State {
 
     @Override
     public void run(Controller controller, Gui gui) {
@@ -22,5 +22,10 @@ public class RequestsLoaded implements State {
     public void loadMapButtonClick(Controller controller, Gui gui) {
         controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.loadingMap);
+    }
+    @Override
+    public void computingTourButtonClick(Controller controller, Gui gui) {
+        controller.getPreviousStates().push(this);
+        controller.setCurrentState(controller.computingTour);
     }
 }

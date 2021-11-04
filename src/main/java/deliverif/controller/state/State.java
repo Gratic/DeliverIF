@@ -13,4 +13,23 @@ public interface State {
 
     public default void loadMapButtonClick(Controller controller, Gui gui) {}
     public default void loadRequestsButtonClick(Controller controller, Gui gui) {}
+    public default void computingTourButtonClick(Controller controller, Gui gui){}
+    public default void continueComputationButtonClick(Controller controller, Gui gui) {}
+    public default void stopComputationButtonClick(Controller controller, Gui gui) {}
+    public default void optimalTourReached(Controller controller, Gui gui) {}
+    public default void generateRoadMapButtonClick(Controller controller, Gui gui) {}
+    public default void addRequestButtonClick(Controller controller, Gui gui) {}
+    public default void cancelButtonClick(Controller controller, Gui gui) {}
+    public default void addPickupButtonClick(Controller controller, Gui gui) {}
+    public default void addDeliveryButtonClick(Controller controller, Gui gui) {}
+    public default void validateDeliveryButtonClick(Controller controller, Gui gui) {}
+    public default void deleteButtonClick(Controller controller, Gui gui) {}
+    public default void addressClick(Controller controller, Gui gui) {}
+    public default void requestClick(Controller controller, Gui gui) {}
+    public default void validateDeleteRequestButtonClick(Controller controller, Gui gui) {}
+
+
+
+
+
 }
