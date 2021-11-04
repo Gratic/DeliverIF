@@ -1,0 +1,22 @@
+package deliverif.controller.state;
+
+import deliverif.controller.Controller;
+import deliverif.gui.Gui;
+
+public class DeleteRequestState implements State {
+    @Override
+    public void run(Controller controller, Gui gui) {
+
+    }
+
+    @Override
+    public void validateDeleteRequestButtonClick(Controller controller, Gui gui) {
+        controller.getPreviousStates().push(this);
+        controller.setCurrentState(controller.locallyModifyTour);
+    }
+    public void cancelButtonClick(Controller controller, Gui gui) {
+        controller.getPreviousStates().push(this);
+        controller.setCurrentState(controller.tourCompleted);
+    }
+
+}
