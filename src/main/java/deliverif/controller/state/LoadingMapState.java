@@ -3,7 +3,6 @@ package deliverif.controller.state;
 import deliverif.controller.Controller;
 import deliverif.exception.MapLoadingException;
 import deliverif.gui.Gui;
-import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -44,8 +43,7 @@ public class LoadingMapState implements State {
                 run(controller, gui); // rerun current state. WARN: Run after popup!
             }
         } else if (option == JFileChooser.CANCEL_OPTION) {
-            State state = controller.getPreviousStates().pop();
-            controller.setCurrentState(state);
+            controller.popState();
         }
     }
 }

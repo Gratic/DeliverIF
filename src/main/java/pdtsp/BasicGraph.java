@@ -1,6 +1,9 @@
 package pdtsp;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A basic implementation of the interface Graph.
@@ -13,28 +16,23 @@ public class BasicGraph implements Graph {
     private final Map<Integer, Collection<Integer>> adjacencyList;
     private final Integer nbVertices;
 
-    public BasicGraph(int nbVertices, Map<Integer, Collection<Pair<Integer, Double>>> adjacencyListWithCost)
-    {
+    public BasicGraph(int nbVertices, Map<Integer, Collection<Pair<Integer, Double>>> adjacencyListWithCost) {
         this.nbVertices = nbVertices;
         this.adjacencyMatrix = new Double[nbVertices][nbVertices];
         this.adjacencyList = new HashMap<>();
 
         // Initializing the adjacencyMatrix
-        for(int i = 0; i < nbVertices; i++)
-        {
-            for(int j = 0; j < nbVertices; j++)
-            {
+        for (int i = 0; i < nbVertices; i++) {
+            for (int j = 0; j < nbVertices; j++) {
                 this.adjacencyMatrix[i][j] = -1d;
             }
         }
 
         // Building adjacencyList and the adjacencyMatrix
-        for(int i = 0; i < nbVertices; i++)
-        {
+        for (int i = 0; i < nbVertices; i++) {
             Collection<Integer> reachableNodes = new ArrayList<>();
 
-            for(Pair<Integer, Double> pair : adjacencyListWithCost.get(i))
-            {
+            for (Pair<Integer, Double> pair : adjacencyListWithCost.get(i)) {
                 Integer reachableNode = pair.getX();
                 Double cost = pair.getY();
                 this.adjacencyMatrix[i][reachableNode] = cost;
@@ -52,14 +50,14 @@ public class BasicGraph implements Graph {
 
     @Override
     public Double getCost(int i, int j) {
-        if (i<0 || i>=nbVertices || j<0 || j>=nbVertices)
+        if (i < 0 || i >= nbVertices || j < 0 || j >= nbVertices)
             return -1d;
         return adjacencyMatrix[i][j];
     }
 
     @Override
     public boolean isArc(int i, int j) {
-        if (i<0 || i>=nbVertices || j<0 || j>=nbVertices)
+        if (i < 0 || i >= nbVertices || j < 0 || j >= nbVertices)
             return false;
         return adjacencyMatrix[i][j] != -1;
     }
@@ -71,21 +69,16 @@ public class BasicGraph implements Graph {
 
     public static void printGraph(Graph g) {
         System.out.println("number vertices=" + g.getNbVertices());
-        for(int i = 0; i < g.getNbVertices(); i++)
-        {
+        for (int i = 0; i < g.getNbVertices(); i++) {
             ArrayList<Integer> outgoingArcs = new ArrayList<>(g.getOutgoingArcs(i));
             System.out.print(i + " -> [");
-            for(int j = 0; j < outgoingArcs.size(); j++)
-            {
+            for (int j = 0; j < outgoingArcs.size(); j++) {
                 int node = outgoingArcs.get(j);
-                String s = "[" + node +", w=" + g.getCost(i, node) +"]";
-                if(j == outgoingArcs.size()-1)
-                {
+                String s = "[" + node + ", w=" + g.getCost(i, node) + "]";
+                if (j == outgoingArcs.size() - 1) {
                     System.out.print(s);
-                }
-                else
-                {
-                    System.out.print(s+",");
+                } else {
+                    System.out.print(s + ",");
                 }
             }
             System.out.println("]");

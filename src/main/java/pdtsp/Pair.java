@@ -3,21 +3,20 @@ package pdtsp;
 /**
  * Utility class to access two elements that can be of different type.
  * Only the first element must be comparable to compare two pair.
+ *
  * @param <T>
  * @param <K>
  */
-public class Pair<T extends Comparable<T>,K> implements Comparable<Pair<T, K>> {
+public class Pair<T extends Comparable<T>, K> implements Comparable<Pair<T, K>> {
     private T x;
     private K y;
 
-    public Pair()
-    {
+    public Pair() {
         this.x = null;
         this.y = null;
     }
 
-    public Pair(T x, K y)
-    {
+    public Pair(T x, K y) {
         this.x = x;
         this.y = y;
     }

@@ -6,7 +6,7 @@ public class DeliverifException extends Exception {
         super(message);
     }
 
-    public DeliverifException(String message, Throwable cause){
+    public DeliverifException(String message, Throwable cause) {
         super(message, cause);
     }
 

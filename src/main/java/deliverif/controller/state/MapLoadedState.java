@@ -2,10 +2,7 @@ package deliverif.controller.state;
 
 import deliverif.controller.Controller;
 import deliverif.gui.Gui;
-import deliverif.gui.viewstate.*;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
+import deliverif.gui.viewstate.LoadRequestsView;
 
 public class MapLoadedState implements State {
 
@@ -17,13 +14,11 @@ public class MapLoadedState implements State {
 
     @Override
     public void loadRequestsButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.loadingRequests);
     }
 
     @Override
     public void loadMapButtonClick(Controller controller, Gui gui) {
-        State state = controller.getPreviousStates().pop();
-        controller.setCurrentState(state);
+        controller.popState();
     }
 }

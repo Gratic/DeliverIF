@@ -1,13 +1,12 @@
 package pdtsp;
 
 import org.junit.jupiter.api.Assertions;
-import pdtsp.BasicGraph;
-
 import org.junit.jupiter.api.Test;
-import pdtsp.Pair;
-import pdtsp.Graph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestBasicGraph {
 
@@ -40,8 +39,7 @@ public class TestBasicGraph {
 
         Assertions.assertEquals(3, g.getNbVertices());
 
-        for(int i = 0; i < g.getNbVertices(); i++)
-        {
+        for (int i = 0; i < g.getNbVertices(); i++) {
             Collection<Integer> outgoingArcs = g.getOutgoingArcs(i);
 
             Assertions.assertNotNull(outgoingArcs);
@@ -79,32 +77,32 @@ public class TestBasicGraph {
         Map<Integer, Collection<Pair<Integer, Double>>> arcs = new HashMap<>();
 
         Collection<Pair<Integer, Double>> arc0 = new ArrayList<>();
-        arc0.add(new Pair<Integer, Double>(1,1d));
-        arc0.add(new Pair<Integer, Double>(3,2d));
+        arc0.add(new Pair<Integer, Double>(1, 1d));
+        arc0.add(new Pair<Integer, Double>(3, 2d));
 
         Collection<Pair<Integer, Double>> arc1 = new ArrayList<>();
-        arc1.add(new Pair<Integer, Double>(0,1d));
-        arc1.add(new Pair<Integer, Double>(2,3d));
-        arc1.add(new Pair<Integer, Double>(3,1d));
+        arc1.add(new Pair<Integer, Double>(0, 1d));
+        arc1.add(new Pair<Integer, Double>(2, 3d));
+        arc1.add(new Pair<Integer, Double>(3, 1d));
 
         Collection<Pair<Integer, Double>> arc2 = new ArrayList<>();
-        arc2.add(new Pair<Integer, Double>(1,3d));
-        arc2.add(new Pair<Integer, Double>(4,1d));
-        arc2.add(new Pair<Integer, Double>(5,3d));
+        arc2.add(new Pair<Integer, Double>(1, 3d));
+        arc2.add(new Pair<Integer, Double>(4, 1d));
+        arc2.add(new Pair<Integer, Double>(5, 3d));
 
         Collection<Pair<Integer, Double>> arc3 = new ArrayList<>();
-        arc3.add(new Pair<Integer, Double>(0,2d));
-        arc3.add(new Pair<Integer, Double>(1,1d));
-        arc3.add(new Pair<Integer, Double>(4,4d));
+        arc3.add(new Pair<Integer, Double>(0, 2d));
+        arc3.add(new Pair<Integer, Double>(1, 1d));
+        arc3.add(new Pair<Integer, Double>(4, 4d));
 
         Collection<Pair<Integer, Double>> arc4 = new ArrayList<>();
-        arc4.add(new Pair<Integer, Double>(2,1d));
-        arc4.add(new Pair<Integer, Double>(3,4d));
-        arc4.add(new Pair<Integer, Double>(5,1d));
+        arc4.add(new Pair<Integer, Double>(2, 1d));
+        arc4.add(new Pair<Integer, Double>(3, 4d));
+        arc4.add(new Pair<Integer, Double>(5, 1d));
 
         Collection<Pair<Integer, Double>> arc5 = new ArrayList<>();
-        arc5.add(new Pair<Integer, Double>(2,3d));
-        arc5.add(new Pair<Integer, Double>(4,1d));
+        arc5.add(new Pair<Integer, Double>(2, 3d));
+        arc5.add(new Pair<Integer, Double>(4, 1d));
 
         arcs.put(0, arc0);
         arcs.put(1, arc1);

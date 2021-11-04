@@ -3,7 +3,7 @@ package deliverif.controller.command;
 import java.util.LinkedList;
 
 public class ListOfCommands {
-    private LinkedList<Command> commands;
+    private final LinkedList<Command> commands;
     private int lastCommandIndex;
 
     public ListOfCommands() {
@@ -19,7 +19,7 @@ public class ListOfCommands {
     }
 
     public void undo() {
-        if(lastCommandIndex >= 0) {
+        if (lastCommandIndex >= 0) {
             commands.get(lastCommandIndex).undoCommand();
             lastCommandIndex--; // WARN: Decrement after
         }

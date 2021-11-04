@@ -92,7 +92,7 @@ public class DisplayRequestsView extends ViewState {
 
         // main panel settings
         panel.setLayout(new GridBagLayout());
-        panel.setPreferredSize(new Dimension(700,700));
+        panel.setPreferredSize(new Dimension(700, 700));
         panel.add(innerPanel);
         panel.setVisible(true);
 

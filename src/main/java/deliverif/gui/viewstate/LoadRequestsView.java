@@ -1,16 +1,11 @@
 package deliverif.gui.viewstate;
 
 import deliverif.gui.Gui;
-import deliverif.gui.mapview.MapView;
 import deliverif.gui.panel.GraphicalViewPanel;
 import deliverif.gui.panel.TextualViewPanel;
-import deliverif.gui.utils.Assets;
-import deliverif.gui.utils.ColorTheme;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class LoadRequestsView extends ViewState {
 

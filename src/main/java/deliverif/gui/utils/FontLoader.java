@@ -1,7 +1,8 @@
 package deliverif.gui.utils;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 public class FontLoader {

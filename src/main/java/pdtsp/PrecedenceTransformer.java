@@ -12,8 +12,7 @@ public class PrecedenceTransformer implements GraphTransformer {
     private final Map<Integer, Collection<Pair<Integer, Double>>> precedenceWorld;
     private Graph precendenceGraph;
 
-    public PrecedenceTransformer(Integer nbVertices, Collection<Pair<Integer, Integer>> requests)
-    {
+    public PrecedenceTransformer(Integer nbVertices, Collection<Pair<Integer, Integer>> requests) {
         this.nbVertices = nbVertices;
         this.requests = requests;
 
@@ -24,20 +23,17 @@ public class PrecedenceTransformer implements GraphTransformer {
      * This transformation is simple, we take a graph and a list of request and we make an arc
      * between two nodes if there is a request that need both.
      * The arc is oriented : from delivery to pickup.
-     *
+     * <p>
      * This is required for the PDTSP algorithm.
      * Because we don't want a path that deliver packages that are not yet picked up.
      */
-    public void transform()
-    {
-        for(int i = 0; i < nbVertices; i++)
-        {
+    public void transform() {
+        for (int i = 0; i < nbVertices; i++) {
             Collection<Pair<Integer, Double>> temp = new ArrayList<>();
             precedenceWorld.put(i, temp);
         }
 
-        for(Pair<Integer, Integer> distortedRequest : requests)
-        {
+        for (Pair<Integer, Integer> distortedRequest : requests) {
             int distortedPickup = distortedRequest.getX();
             int distortedDelivery = distortedRequest.getY();
 

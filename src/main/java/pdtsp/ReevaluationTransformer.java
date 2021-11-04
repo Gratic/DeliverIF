@@ -8,17 +8,16 @@ public class ReevaluationTransformer implements GraphTransformer, RequestsTransf
     private final int startPoint;
     private final ShortestPath shortestPathAlgorithm;
 
-    private Map<Integer, List<Pair<Double, Integer>>> shortestDistances;
-    private Map<Integer, Collection<Pair<Integer, Double>>> reevaluatedWorld;
-    private List<Integer> concernedIndexes;
-    private Map<Integer, Integer> afterToBeforeIndexes;
-    private Map<Integer, Integer> beforeToAfterIndexes;
-    private List<Pair<Integer, Integer>> reevaluatedRequests;
+    private final Map<Integer, List<Pair<Double, Integer>>> shortestDistances;
+    private final Map<Integer, Collection<Pair<Integer, Double>>> reevaluatedWorld;
+    private final List<Integer> concernedIndexes;
+    private final Map<Integer, Integer> afterToBeforeIndexes;
+    private final Map<Integer, Integer> beforeToAfterIndexes;
+    private final List<Pair<Integer, Integer>> reevaluatedRequests;
 
     private Graph reevaluationGraph;
 
-    public ReevaluationTransformer(Graph map, List<Pair<Integer, Integer>> requests, int startPoint, ShortestPath shortestPathAlgorithm)
-    {
+    public ReevaluationTransformer(Graph map, List<Pair<Integer, Integer>> requests, int startPoint, ShortestPath shortestPathAlgorithm) {
         this.map = map;
         this.requests = requests;
         this.startPoint = startPoint;
@@ -39,17 +38,16 @@ public class ReevaluationTransformer implements GraphTransformer, RequestsTransf
      * - nodes that are concerned by request (as pickup or delivery point)
      * We need to trim the number of nodes to cut down the time it takes for the TSP computation.
      * But the main benefit is that it will be simpler to implement a TSP algorithm.
-     *
+     * <p>
      * Also this step will put the starting node as node 0.
      * This is required for the TSP to run.
      */
     public void transform() {
         // TASK 1: Filter concerned nodes.
 
-        for(Pair<Integer, Integer> request : requests)
-        {
-            if(request.getX() != startPoint) concernedIndexes.add(request.getX());
-            if(request.getY() != startPoint) concernedIndexes.add(request.getY());
+        for (Pair<Integer, Integer> request : requests) {
+            if (request.getX() != startPoint) concernedIndexes.add(request.getX());
+            if (request.getY() != startPoint) concernedIndexes.add(request.getY());
         }
 
         // We make elements unique as the same node can be in multiple requests.
@@ -64,8 +62,7 @@ public class ReevaluationTransformer implements GraphTransformer, RequestsTransf
         beforeToAfterIndexes.put(startPoint, 0);
 
         int reevaluationIndex = 1;
-        for(int index : concernedIndexes)
-        {
+        for (int index : concernedIndexes) {
             afterToBeforeIndexes.put(reevaluationIndex, index);
             beforeToAfterIndexes.put(index, reevaluationIndex);
             reevaluationIndex++;
@@ -73,8 +70,7 @@ public class ReevaluationTransformer implements GraphTransformer, RequestsTransf
 
         // TASK 3: Reevaluating requests
         // Order is (should be) conserved.
-        for(Pair<Integer, Integer> request : requests)
-        {
+        for (Pair<Integer, Integer> request : requests) {
             Pair<Integer, Integer> reevaluatedRequest = new Pair<>();
             reevaluatedRequest.setX(beforeToAfterIndexes.get(request.getX()));
             reevaluatedRequest.setY(beforeToAfterIndexes.get(request.getY()));
@@ -87,23 +83,20 @@ public class ReevaluationTransformer implements GraphTransformer, RequestsTransf
         // TASK 4: Find all shortest distances between each concernedNodes.
 
         // We put results in a map.
-        for(int concernedIndex : concernedIndexes)
-        {
+        for (int concernedIndex : concernedIndexes) {
             shortestDistances.put(concernedIndex, shortestPathAlgorithm.searchShortestPathFrom(concernedIndex, map));
         }
 
         // TASK 5: Building the reevaluated world
 
-        for(int realWorldIndexI : beforeToAfterIndexes.keySet())
-        {
+        for (int realWorldIndexI : beforeToAfterIndexes.keySet()) {
             int reevaluatedWorldIndexI = beforeToAfterIndexes.get(realWorldIndexI);
 
             reevaluatedWorld.put(reevaluatedWorldIndexI, new ArrayList<>());
 
-            for(int realWorldIndexJ : beforeToAfterIndexes.keySet())
-            {
+            for (int realWorldIndexJ : beforeToAfterIndexes.keySet()) {
                 int reevaluatedWorldIndexJ = beforeToAfterIndexes.get(realWorldIndexJ);
-                if(reevaluatedWorldIndexI == reevaluatedWorldIndexJ) continue;
+                if (reevaluatedWorldIndexI == reevaluatedWorldIndexJ) continue;
 
                 Pair<Integer, Double> arc = new Pair<>();
                 arc.setX(reevaluatedWorldIndexJ);
@@ -116,7 +109,9 @@ public class ReevaluationTransformer implements GraphTransformer, RequestsTransf
     }
 
     @Override
-    public Graph getTransformedGraph() { return reevaluationGraph; }
+    public Graph getTransformedGraph() {
+        return reevaluationGraph;
+    }
 
     @Override
     public List<Pair<Integer, Integer>> getTransformedRequests() {
@@ -135,7 +130,9 @@ public class ReevaluationTransformer implements GraphTransformer, RequestsTransf
         return beforeToAfterIndexes;
     }
 
-    public Map<Integer, List<Pair<Double, Integer>>> getShortestDistances() { return shortestDistances; }
+    public Map<Integer, List<Pair<Double, Integer>>> getShortestDistances() {
+        return shortestDistances;
+    }
 
 
 }

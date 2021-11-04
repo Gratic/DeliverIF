@@ -6,8 +6,7 @@ import java.util.*;
 
 public class RunPDTSP {
 
-    public static List<Object> case1()
-    {
+    public static List<Object> case1() {
         // Deux requêtes : une de 1 vers 2 et une de 2 vers 1.
         Collection<Pair<Long, Long>> requests = new ArrayList<>();
         requests.add(new Pair<>(1L, 2L));
@@ -39,8 +38,7 @@ public class RunPDTSP {
         }};
     }
 
-    public static List<Object> case1real()
-    {
+    public static List<Object> case1real() {
         // Définition de la map, forme un triangle entre 0,1,2. Graphe complet.
         // Utilisation d'une ArrayList comme pair : faute de définition
         CityMap cityMap = new CityMap();
@@ -61,8 +59,7 @@ public class RunPDTSP {
         roadSegments.add(new RoadSegment(add2, add0, "20", 3d));
         roadSegments.add(new RoadSegment(add2, add1, "21", 1d));
 
-        for(RoadSegment rd : roadSegments)
-        {
+        for (RoadSegment rd : roadSegments) {
             cityMap.addSegment(rd);
         }
 
@@ -78,8 +75,7 @@ public class RunPDTSP {
         }};
     }
 
-    public static List<Object> case2()
-    {
+    public static List<Object> case2() {
         // Deux requêtes : une de 1 vers 2
         Collection<Pair<Long, Long>> requests = new ArrayList<>();
         requests.add(new Pair<>(1L, 2L));
@@ -110,8 +106,7 @@ public class RunPDTSP {
         }};
     }
 
-    public static List<Object> case3()
-    {
+    public static List<Object> case3() {
         // Deux requêtes : une de 1 vers 2 et une de 2 vers 1.
         Collection<Pair<Long, Long>> requests = new ArrayList<>();
         requests.add(new Pair<>(1L, 2L));
@@ -164,8 +159,7 @@ public class RunPDTSP {
         }};
     }
 
-    public static List<Object> case4()
-    {
+    public static List<Object> case4() {
         // Deux requêtes : une de 1 vers 2
         Collection<Pair<Long, Long>> requests = new ArrayList<>();
         requests.add(new Pair<>(100L, 200L));
@@ -199,9 +193,9 @@ public class RunPDTSP {
     public static void main(String[] args) {
         List<Object> example = case1real();
 
-        CityMap cityMap = (CityMap)example.get(0);
-        List<Request> requests = (List<Request>)example.get(1);
-        Address startPoint = (Address)example.get(2);
+        CityMap cityMap = (CityMap) example.get(0);
+        List<Request> requests = (List<Request>) example.get(1);
+        Address startPoint = (Address) example.get(2);
 
         DeliveryTour deliveryTour = new DeliveryTour();
 
@@ -210,27 +204,22 @@ public class RunPDTSP {
 //        while(!wrapper.isSolutionOptimal())
 //        {
 //            System.out.println("not Optimal");
-            while(!wrapper.isSolutionFound())
-            {
-                System.out.println("computing ...");
-                wrapper.compute();
-            }
+        while (!wrapper.isSolutionFound()) {
+            System.out.println("computing ...");
+            wrapper.compute();
+        }
 //        }
 
         List<Long> realPath = wrapper.getPath();
 
         System.out.println("Realpath:");
         System.out.print("[");
-        for(int i = 0; i < realPath.size(); i++)
-        {
+        for (int i = 0; i < realPath.size(); i++) {
             Long node = realPath.get(i);
-            if(i == realPath.size()-1)
-            {
+            if (i == realPath.size() - 1) {
                 System.out.print(node);
-            }
-            else
-            {
-                System.out.print(node+",");
+            } else {
+                System.out.print(node + ",");
             }
         }
         System.out.println("]");
@@ -238,28 +227,18 @@ public class RunPDTSP {
         wrapper.updateDeliveryTour();
 
         System.out.print("[");
-        for(int i = 0; i < deliveryTour.getPath().size(); i++)
-        {
+        for (int i = 0; i < deliveryTour.getPath().size(); i++) {
             RoadSegment rs = deliveryTour.getPath().get(i);
-            if(i != deliveryTour.getPath().size() - 1)
-            {
-                if(rs == null)
-                {
+            if (i != deliveryTour.getPath().size() - 1) {
+                if (rs == null) {
                     System.out.print("same node,");
-                }
-                else
-                {
+                } else {
                     System.out.print(rs.getOrigin().getId() + "->" + rs.getDestination().getId() + ",");
                 }
-            }
-            else
-            {
-                if(rs == null)
-                {
+            } else {
+                if (rs == null) {
                     System.out.print("same node");
-                }
-                else
-                {
+                } else {
                     System.out.print(rs.getOrigin().getId() + "->" + rs.getDestination().getId());
                 }
             }
@@ -267,54 +246,38 @@ public class RunPDTSP {
         System.out.println("]");
 
         System.out.print("[");
-        for(int i = 0; i < deliveryTour.getPathAddresses().size(); i++)
-        {
+        for (int i = 0; i < deliveryTour.getPathAddresses().size(); i++) {
             Address address = deliveryTour.getPathAddresses().get(i);
             String type = null;
             Request request = null;
 
-            if(deliveryTour.getAddressRequestMetadata().get(i) != null)
-            {
+            if (deliveryTour.getAddressRequestMetadata().get(i) != null) {
                 Pair<EnumAddressType, Request> pair = deliveryTour.getAddressRequestMetadata().get(i);
                 EnumAddressType typeEnum = pair.getX();
 
-                if(typeEnum == EnumAddressType.DEPARTURE_ADDRESS)
-                {
+                if (typeEnum == EnumAddressType.DEPARTURE_ADDRESS) {
                     type = "start/end";
-                }
-                else if(typeEnum == EnumAddressType.PICKUP_ADDRESS)
-                {
+                } else if (typeEnum == EnumAddressType.PICKUP_ADDRESS) {
                     type = "pickup";
                     request = pair.getY();
-                }
-                else if(typeEnum == EnumAddressType.DELIVERY_ADDRESS)
-                {
+                } else if (typeEnum == EnumAddressType.DELIVERY_ADDRESS) {
                     type = "delivery";
                     request = pair.getY();
-                }
-                else if(typeEnum == EnumAddressType.TRAVERSAL_ADDRESS)
-                {
+                } else if (typeEnum == EnumAddressType.TRAVERSAL_ADDRESS) {
                     type = "traversal";
                 }
             }
 
-            if(type != null)
-            {
-                if(type != "start/end" && type != "traversal")
-                {
+            if (type != null) {
+                if (type != "start/end" && type != "traversal") {
                     long pickupAddressId = request.getPickupAddress().getId();
                     long deliveryAddressId = request.getDeliveryAddress().getId();
 
                     System.out.print(type + " {" + pickupAddressId + ":" + deliveryAddressId + "},");
-                }
-                else
-                {
-                    if(i != deliveryTour.getPathAddresses().size() - 1)
-                    {
+                } else {
+                    if (i != deliveryTour.getPathAddresses().size() - 1) {
                         System.out.print(type + ",");
-                    }
-                    else
-                    {
+                    } else {
                         System.out.print(type);
                     }
                 }

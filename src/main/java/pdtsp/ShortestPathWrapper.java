@@ -2,18 +2,17 @@ package pdtsp;
 
 import deliverif.model.Address;
 import deliverif.model.CityMap;
-import deliverif.model.Request;
-import deliverif.model.RoadSegment;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class allows for the easy calculation of the shortest path in a CityMap
  */
 public class ShortestPathWrapper {
-    private BasicGraphWrapper g;
+    private final BasicGraphWrapper g;
     private Integer startingNodeIndex;
-    private ShortestPath sP;
+    private final ShortestPath sP;
 
     public ShortestPathWrapper(CityMap map) {
         this.g = new BasicGraphWrapper(map);

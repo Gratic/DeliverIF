@@ -1,6 +1,5 @@
 package xml;
 
-import deliverif.model.Address;
 import deliverif.model.CityMap;
 import deliverif.model.DeliveryTour;
 import deliverif.model.Request;
@@ -33,7 +32,6 @@ public class TestRequestsXMLHandler {
 
     static CityMap map;
     static DeliveryTour tour;
-
 
 
     @BeforeAll

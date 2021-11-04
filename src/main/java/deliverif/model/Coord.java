@@ -15,4 +15,4 @@ public class Coord extends Pair<Double, Double> {
     public Double lon() {
         return getY();
     }
-};
+}

@@ -6,8 +6,6 @@ import deliverif.gui.utils.ColorTheme;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class InitialView extends ViewState {
 
@@ -47,7 +45,7 @@ public class InitialView extends ViewState {
 
         // main panel settings
         panel.setLayout(new GridBagLayout());
-        panel.setPreferredSize(new Dimension(700,700));
+        panel.setPreferredSize(new Dimension(700, 700));
         panel.add(innerPanel);
         panel.setVisible(true);
     }

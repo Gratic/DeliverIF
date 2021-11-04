@@ -3,15 +3,10 @@ package deliverif.controller.state;
 import deliverif.controller.Controller;
 import deliverif.exception.RequestsLoadException;
 import deliverif.gui.Gui;
-import deliverif.model.CityMap;
-import deliverif.model.Request;
-
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.nio.file.Path;
 
 public class LoadingRequestsState implements State {
@@ -46,8 +41,7 @@ public class LoadingRequestsState implements State {
                 run(controller, gui); // rerun current state. WARN: Run after popup!
             }
         } else if (option == JFileChooser.CANCEL_OPTION) {
-            State state = controller.getPreviousStates().pop();
-            controller.setCurrentState(state);
+            controller.popState();
         }
     }
 }

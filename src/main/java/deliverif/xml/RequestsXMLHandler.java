@@ -7,7 +7,6 @@ import deliverif.model.Request;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -25,11 +24,12 @@ public class RequestsXMLHandler extends org.xml.sax.helpers.DefaultHandler {
 
 
     @Override
-    public void endDocument() throws  SAXException{
-        if (!depotFound){
+    public void endDocument() throws SAXException {
+        if (!depotFound) {
             throw new SAXException("No depot found in file");
         }
     }
+
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
@@ -55,7 +55,6 @@ public class RequestsXMLHandler extends org.xml.sax.helpers.DefaultHandler {
                 } catch (NumberFormatException e) {
                     throw new SAXException("AddressID \"" + addressString + "\" is not a valid number");
                 }
-
 
 
                 SimpleDateFormat sdf = new SimpleDateFormat("h:m:s");
@@ -102,16 +101,17 @@ public class RequestsXMLHandler extends org.xml.sax.helpers.DefaultHandler {
                     throw new SAXException("Address with id " + deliIdAddr + " does not exist");
                 }
 
-                if (deliveryDuration < 0 || pickupDuration <0){
-                    throw  new SAXException("Durations must be positive integers");
+                if (deliveryDuration < 0 || pickupDuration < 0) {
+                    throw new SAXException("Durations must be positive integers");
                 }
 
                 Request req = new Request(pickupAddress, deliveryAddress, pickupDuration, deliveryDuration);
 
                 tour.addRequest(req);
             }
-            case "planningRequest" ->{}
-            default -> throw new SAXException("Tag "+qName+" is not a valid tag");
+            case "planningRequest" -> {
+            }
+            default -> throw new SAXException("Tag " + qName + " is not a valid tag");
         }
     }
 

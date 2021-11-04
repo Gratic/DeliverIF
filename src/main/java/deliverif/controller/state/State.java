@@ -5,29 +5,70 @@ import deliverif.controller.command.ListOfCommands;
 import deliverif.gui.Gui;
 
 public interface State {
-    public void run(Controller c, Gui gui);
-    public default void load() {};
-    public default void undo(ListOfCommands listOfCommands) {};
-    public default void redo(ListOfCommands listOfCommands) {};
-    public default void rightClick(Controller controller, Gui gui) {}
-    public default void leftClick(Controller controller, Gui gui) {}
+    void run(Controller c, Gui gui);
 
-    public default void loadMapButtonClick(Controller controller, Gui gui) {}
-    public default void loadRequestsButtonClick(Controller controller, Gui gui) {}
-    public default void computingTourButtonClick(Controller controller, Gui gui){}
-    public default void continueComputationButtonClick(Controller controller, Gui gui) {}
-    public default void stopComputationButtonClick(Controller controller, Gui gui) {}
-    public default void optimalTourReached(Controller controller, Gui gui) {}
-    public default void generateRoadMapButtonClick(Controller controller, Gui gui) {}
-    public default void addRequestButtonClick(Controller controller, Gui gui) {}
-    public default void cancelButtonClick(Controller controller, Gui gui) {}
-    public default void addPickupButtonClick(Controller controller, Gui gui) {}
-    public default void addDeliveryButtonClick(Controller controller, Gui gui) {}
-    public default void validateDeliveryButtonClick(Controller controller, Gui gui) {}
-    public default void deleteButtonClick(Controller controller, Gui gui) {}
-    public default void addressClick(Controller controller, Gui gui) {}
-    public default void requestClick(Controller controller, Gui gui) {}
-    public default void validateDeleteRequestButtonClick(Controller controller, Gui gui) {}
+    default void load() {
+    }
+
+    default void undo(ListOfCommands listOfCommands) {
+    }
+
+    default void redo(ListOfCommands listOfCommands) {
+    }
+
+    default void rightClick(Controller controller, Gui gui) {
+    }
+
+    default void leftClick(Controller controller, Gui gui) {
+    }
+
+    default void loadMapButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void loadRequestsButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void computingTourButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void continueComputationButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void stopComputationButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void optimalTourReached(Controller controller, Gui gui) {
+    }
+
+    default void generateRoadMapButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void addRequestButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void cancelButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void addPickupButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void addDeliveryButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void validateDeliveryButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void deleteButtonClick(Controller controller, Gui gui) {
+    }
+
+    default void addressClick(Controller controller, Gui gui, boolean overlap) {
+    }
+
+    default void requestClick(Controller controller, Gui gui) {
+    }
+
+    default void validateDeleteRequestButtonClick(Controller controller, Gui gui) {
+    }
 
 
 }

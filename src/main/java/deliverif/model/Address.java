@@ -5,8 +5,8 @@ import deliverif.utils.Utils;
 import java.util.Objects;
 
 public class Address {
-    private long id;
-    private Coord coords;
+    private final long id;
+    private final Coord coords;
 
     public Address(long id, double latitude, double longitude) {
         this.id = id;
@@ -47,12 +47,12 @@ public class Address {
         return Objects.hash(id);
     }
 
-    public static double dist(Address a1, Address a2){
-        return Utils.dist(a1.getLatitude(),a1.getLongitude(),a2.getLatitude(),a2.getLongitude());
+    public static double dist(Address a1, Address a2) {
+        return Utils.dist(a1.getLatitude(), a1.getLongitude(), a2.getLatitude(), a2.getLongitude());
 
     }
 
-    public double dist(Coord coords){
-        return Utils.dist(this.coords,coords);
+    public double dist(Coord coords) {
+        return Utils.dist(this.coords, coords);
     }
 }

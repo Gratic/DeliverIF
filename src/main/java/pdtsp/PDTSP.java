@@ -6,9 +6,10 @@ public interface PDTSP {
      * and obeys the precedence graph <code>p</code>.
      * (returns the best found tour whenever the time limit is reached)
      * Warning: The computed tour always start from vertex 0
+     *
      * @param timeLimit time before automatically stop the algorithm
-     * @param g complete graph
-     * @param p precedence graph
+     * @param g         complete graph
+     * @param p         precedence graph
      */
     void searchSolution(int timeLimit, Graph g, Graph p);
 

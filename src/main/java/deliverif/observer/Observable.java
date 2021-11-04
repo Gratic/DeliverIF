@@ -7,7 +7,7 @@ import java.util.Collection;
  * From Christine Solnon's PlaCo application source code
  */
 public class Observable {
-    private Collection<Observer> obs;
+    private final Collection<Observer> obs;
 
     public Observable() {
         obs = new ArrayList<Observer>();

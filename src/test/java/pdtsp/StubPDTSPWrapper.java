@@ -12,8 +12,7 @@ import java.util.List;
     Stub classes to have predefined CityMap and DeliveryTour.
  */
 public class StubPDTSPWrapper {
-    static List<Object> stub1()
-    {
+    static List<Object> stub1() {
         // Définition de la map, forme un triangle entre 0,1,2. Graphe complet.
 
         List<Object> stub1 = new ArrayList<>();
@@ -38,8 +37,7 @@ public class StubPDTSPWrapper {
         roadSegments.add(new RoadSegment(add2, add0, "20", 3d));
         roadSegments.add(new RoadSegment(add2, add1, "21", 1d));
 
-        for(RoadSegment rd : roadSegments)
-        {
+        for (RoadSegment rd : roadSegments) {
             cityMap.addSegment(rd);
         }
 
@@ -49,8 +47,7 @@ public class StubPDTSPWrapper {
         return stub1;
     }
 
-    static List<Object> stub2()
-    {
+    static List<Object> stub2() {
         //  (0) --3-- (1)
         //   |       / 1
         //   2   2-(2)
@@ -91,8 +88,7 @@ public class StubPDTSPWrapper {
         roadSegments.add(new RoadSegment(add4, add2, "42", 1d));
         roadSegments.add(new RoadSegment(add4, add3, "43", 2d));
 
-        for(RoadSegment rd : roadSegments)
-        {
+        for (RoadSegment rd : roadSegments) {
             cityMap.addSegment(rd);
         }
 
@@ -102,8 +98,7 @@ public class StubPDTSPWrapper {
         return stub2;
     }
 
-    static List<Object> stub3()
-    {
+    static List<Object> stub3() {
         List<Object> stub3 = new ArrayList<>();
         CityMap cityMap = new CityMap();
         DeliveryTour deliveryTour = new DeliveryTour();
@@ -184,8 +179,7 @@ public class StubPDTSPWrapper {
         roadSegments.add(new RoadSegment(add10, add3, "", 1d));
         roadSegments.add(new RoadSegment(add10, add8, "", 3d));
 
-        for(RoadSegment rd : roadSegments)
-        {
+        for (RoadSegment rd : roadSegments) {
             cityMap.addSegment(rd);
         }
 
