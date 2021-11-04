@@ -1,16 +1,20 @@
 package deliverif.controller.state;
 
 import deliverif.controller.Controller;
-import deliverif.exception.MapLoadingException;
+import deliverif.exception.RequestsLoadException;
 import deliverif.gui.Gui;
-import org.xml.sax.SAXException;
+import deliverif.model.CityMap;
+import deliverif.model.Request;
+
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.nio.file.Path;
 
-public class LoadingMap implements State {
+public class LoadingRequestsState implements State {
     /**
      * Method that gets called when the user validates the paths given
      * at start of the app to load XML files.
@@ -20,24 +24,22 @@ public class LoadingMap implements State {
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "XML Files", "xml");
         fileChooser.setFileFilter(filter);
-        fileChooser.setDialogTitle("Open map file");
+        fileChooser.setDialogTitle("Open requests file");
         int option = fileChooser.showOpenDialog(gui.getFrame());
         if (option == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try {
-                controller.getTour().getRequests().clear();
-                controller.getTour().notifyObservers(controller.getTour());
-                controller.getCityMap().loadMapFromFile(file);
-                controller.setCurrentState(controller.mapLoaded);
-            } catch (MapLoadingException exception) {
+                controller.getTour().loadRequestsFromFile(file, controller.getCityMap());
+                controller.setCurrentState(controller.requestsLoaded);
+            } catch (RequestsLoadException exception) {
                 exception.printStackTrace();
 
                 // display error feedback in popup
-                System.out.println("WARN: Error while loading map!");
+                System.out.println("WARN: Error while loading requests!");
                 JOptionPane.showMessageDialog(gui.getFrame(),
-                        "Error: Problem while loading map. " +
-                                "Please make sure to select a well-formed XML map file.",
-                        "Load map failed",
+                        "Error: Problem while loading requests. " +
+                                "Please make sure to select a well-formed XML requests file.",
+                        "Load requests failed",
                         JOptionPane.WARNING_MESSAGE
                 );
 
