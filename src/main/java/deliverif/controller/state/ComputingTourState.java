@@ -2,13 +2,11 @@ package deliverif.controller.state;
 
 import deliverif.controller.Controller;
 import deliverif.gui.Gui;
-import deliverif.gui.viewstate.ComputingTourView;
-import deliverif.gui.viewstate.TourNotOptimalView;
-import deliverif.gui.viewstate.TourCompletedView;
+
 public class ComputingTourState implements State{
     @Override
     public void run(Controller controller, Gui gui) {
-        gui.setCurrentViewState(new ComputingTourView(gui));
+        // at this point, the tour has already been completed
     }
 
     @Override

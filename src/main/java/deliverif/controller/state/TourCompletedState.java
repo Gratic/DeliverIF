@@ -1,6 +1,7 @@
 package deliverif.controller.state;
 
 import deliverif.controller.Controller;
+import deliverif.controller.command.ListOfCommands;
 import deliverif.gui.Gui;
 
 public class TourCompletedState implements State {
@@ -37,12 +38,12 @@ public class TourCompletedState implements State {
     }
 
     @Override
-    public void undo() {
-
+    public void undo(ListOfCommands listOfCommands) {
+        // TODO: add code
     }
 
     @Override
-    public void redo() {
-
+    public void redo(ListOfCommands listOfCommands) {
+        // TODO: add code
     }
 }
