@@ -1,4 +1,4 @@
-package testPdtsp;
+package pdtsp;
 
 import org.junit.jupiter.api.Assertions;
 import pdtsp.BasicGraph;
