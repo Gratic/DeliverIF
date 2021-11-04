@@ -28,7 +28,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     private final int DEFAULT_WIDTH = 600;
     private final int DEFAULT_HEIGHT = 400;
-    private final int MAP_BASE_SIZE = 900;
+    private final int MAP_BASE_SIZE = 1200;
 
     private final double ICON_SIZE = 35;
 
@@ -59,6 +59,9 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        Graphics2D g2d = (Graphics2D) g;
+        float streetSize = (float) (this.zoomLevel * 0.6);
+        g2d.setStroke(new BasicStroke(streetSize));
 
         if (this.isMapLoaded()) {
             g.setColor(new Color(10, 10, 10));
@@ -74,10 +77,17 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 Collection<RoadSegment> segments = this.map.getSegmentsOriginatingFrom(address.getId());
                 if (segments != null) {
                     for (RoadSegment segment : segments) {
+                        // check if road is one-way only
+                        if (this.map.findSegment(segment.getDestination().getId(), segment.getOrigin().getId()) == null) {
+                            g2d.setStroke(new BasicStroke((float) (streetSize)));
+                        } else {
+                            g2d.setStroke(new BasicStroke((float) (streetSize * 2)));
+                        }
+
                         Point startCoord = this.latlongToXY(segment.getOrigin().getCoords());
                         Point endCoord = this.latlongToXY(segment.getDestination().getCoords());
 
-                        g.drawLine(startCoord.x, startCoord.y, endCoord.x, endCoord.y);
+                        g2d.drawLine(startCoord.x, startCoord.y, endCoord.x, endCoord.y);
                     }
                 }
             }
@@ -130,7 +140,6 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                     iconsWidth *= 2;
                 }
 
-
                 g.drawImage(dye(departureImage, ColorTheme.DEPARTURE_COLOR),
                         point.x - (iconsWidth / 2),
                         point.y - (iconsHeight),
@@ -138,9 +147,49 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                         iconsHeight,
                         this
                 );
-
-
             }
+
+            // Display tour path
+            if (this.tour.getPath().size() >= 2) {
+                g.setColor(Color.RED);
+                for (int j = 0; j < this.tour.getPath().size() - 1; j++) {
+                    RoadSegment segment = this.tour.getPath().get(j);
+
+                    Point segStart = this.latlongToXY(segment.getOrigin().getCoords());
+                    Point segEnd = this.latlongToXY(segment.getDestination().getCoords());
+
+                    Point printDelta = new Point(
+                            segEnd.x - segStart.x < 0 ? 1 : -1,
+                            segEnd.y - segStart.y < 0 ? 1 : -1
+                    );
+
+                    Point arrowTip = new Point(
+                            segStart.x + (int) ((segEnd.x - segStart.x) * 0.8),
+                            segStart.y + (int) ((segEnd.y - segStart.y) * 0.8)
+                    );
+
+                    Point segNormal = new Point(
+                            segStart.x - (int) ((segEnd.y - segStart.y) * 0.5),
+                            segStart.y + (int) ((segEnd.x - segStart.x) * 0.5)
+                    );
+
+                    Point arrowVec = new Point(
+                            segNormal.x - arrowTip.x,
+                            segNormal.y - arrowTip.y
+                    );
+                    double arrowVecNorm = Math.sqrt(arrowVec.x * arrowVec.x + arrowVec.y * arrowVec.y);
+
+                    Point arrowBase = new Point(
+                            arrowTip.x + (int) ((segNormal.x - arrowTip.x) / arrowVecNorm * 3 * this.zoomLevel),
+                            arrowTip.y + (int) ((segNormal.y - arrowTip.y) / arrowVecNorm * 3 * this.zoomLevel)
+                    );
+
+                    g2d.setStroke(new BasicStroke(streetSize));
+                    g2d.drawLine(segStart.x + printDelta.x, segStart.y + printDelta.y, segEnd.x + printDelta.x, segEnd.y + printDelta.y);
+                    g2d.drawLine(arrowBase.x, arrowBase.y, arrowTip.x, arrowTip.y);
+                }
+            }
+
         }
     }
 
@@ -234,7 +283,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        zoomView(e.getPoint(),e.getWheelRotation());
+        zoomView(e.getPoint(), e.getWheelRotation());
         System.out.println(e.getX() + " " + e.getY());
     }
 
@@ -282,13 +331,13 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getButton() == 2) {
+        if (SwingUtilities.isMiddleMouseButton(e)) {
             zoomLevel = BASE_ZOOM_LEVEL;
             yTranslation = 0;
             xTranslation = 0;
             this.repaint();
         }
-        if (e.getButton() == 1) {
+        if (SwingUtilities.isLeftMouseButton(e)) {
             Coord pos = XYToLatLong(e.getPoint());
             tour.selectElement(pos);
 

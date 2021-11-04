@@ -60,6 +60,18 @@ public class CityMap extends Observable {
         return this.segments.get(addressId);
     }
 
+    public RoadSegment findSegment(long originAddressId, long destinationAddressId) {
+        Collection<RoadSegment> segments = this.segments.get(originAddressId);
+        if(segments == null) return null;
+
+        for(RoadSegment segment : this.segments.get(originAddressId)) {
+            if(segment.getDestination().getId() == destinationAddressId) {
+                return segment;
+            }
+        }
+        return null;
+    }
+
     public void addSegment(RoadSegment segment) {
         long id = segment.getOrigin().getId();
         Collection<RoadSegment> roadSegments = segments.get(id);
