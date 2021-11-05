@@ -1,8 +1,12 @@
 package pdtsp;
 
-import deliverif.model.*;
+import deliverif.model.CityMap;
+import deliverif.model.RoadSegment;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is the bridge between the model representation of a map and the algorithmic one

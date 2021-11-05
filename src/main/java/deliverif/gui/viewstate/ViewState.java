@@ -1,8 +1,6 @@
 package deliverif.gui.viewstate;
 
 import deliverif.gui.Gui;
-import deliverif.gui.panel.GuiPanel;
-import deliverif.gui.utils.ColorTheme;
 
 import javax.swing.*;
 

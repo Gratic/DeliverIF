@@ -6,35 +6,36 @@ import deliverif.xml.RequestsXMLHandler;
 import org.xml.sax.SAXException;
 import pdtsp.Pair;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class DeliveryTour extends Observable {
     /**
      * Path
      */
-    private List<RoadSegment> path;
+    private final List<RoadSegment> path;
     private Date departureTime;
 
     /**
      * Addresses on the path (departure, delivery, pickup)
      */
-    private List<Address> pathAddresses;
+    private final List<Address> pathAddresses;
 
     /**
      * Metadata of addresses (basically associated request and address type)
      */
-    private List<Pair<EnumAddressType, Request>> addressRequestMetadata;
+    private final List<Pair<EnumAddressType, Request>> addressRequestMetadata;
 
     /**
      * List of all requests in tour
      */
-    private List<Request> requests;
+    private final List<Request> requests;
 
     /**
      * Index of the currently selected element:
@@ -84,7 +85,7 @@ public class DeliveryTour extends Observable {
 
     public boolean isSelected(Request request) {
         if (selectedElement >= 0) {
-            return ((ArrayList<Request>) requests).get(selectedElement).equals(request);
+            return requests.get(selectedElement).equals(request);
         } else {
             return false;
         }
@@ -126,7 +127,7 @@ public class DeliveryTour extends Observable {
     }
 
     // Request modifs from User
-    public void addRequestRecompute(Request request) {
+    public void addRequestRecompute(Request request, int indexPickup, int indexDelivery) {
         // TODO: Need to recompute locally the delivery tour
     }
 
@@ -163,14 +164,12 @@ public class DeliveryTour extends Observable {
 
     private void toggleSelect(int n) {
         selectedElement = selectedElement != n ? n : -2;
-        System.out.println("coucou");
 
         this.notifyObservers();
 
     }
 
     public void selectElement(Coord coords, double threshold) {
-        System.out.println(selectedElement);
         Pair<Double, Integer> res = getClosestRequest(coords);
         double distDeparture = Double.MAX_VALUE;
         Address departure = getDepartureAddress();
@@ -184,7 +183,6 @@ public class DeliveryTour extends Observable {
         } else if (res.getX() < threshold) {
             toggleSelect(res.getY());
         }
-        System.out.println(selectedElement);
     }
 
     public void selectElement(Coord coords) {
@@ -196,7 +194,7 @@ public class DeliveryTour extends Observable {
     }
 
     public void selectRequest(Request request) {
-        int index = ((ArrayList<Request>) requests).indexOf(request);
+        int index = requests.indexOf(request);
         if ((index < 0)) {
             System.err.println("Request not present");
         } else {

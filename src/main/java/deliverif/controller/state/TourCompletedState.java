@@ -13,27 +13,23 @@ public class TourCompletedState implements State {
 
     @Override
     public void addRequestButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.addPickupRequest);
 
     }
 
     @Override
     public void deleteButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.chooseRequestToDelete);
     }
 
     @Override
-    public void addressClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
+    public void addressClick(Controller controller, Gui gui, boolean overlap) {
         controller.setCurrentState(controller.deleteRequest);
 
     }
 
     @Override
     public void generateRoadMapButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.generateRoadMap);
     }
 

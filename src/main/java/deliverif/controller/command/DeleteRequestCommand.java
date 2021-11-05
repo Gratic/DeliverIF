@@ -5,8 +5,8 @@ import deliverif.model.Request;
 
 public class DeleteRequestCommand implements Command {
 
-    private DeliveryTour tour;
-    private Request request;
+    private final DeliveryTour tour;
+    private final Request request;
 
     public DeleteRequestCommand(DeliveryTour tour, Request request) {
         this.request = request;
@@ -20,6 +20,6 @@ public class DeleteRequestCommand implements Command {
 
     @Override
     public void undoCommand() {
-        tour.addRequestRecompute(request);
+        tour.addRequestRecompute(request, 0, 0);
     }
 }

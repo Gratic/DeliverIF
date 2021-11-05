@@ -3,10 +3,6 @@ package deliverif.controller.state;
 import deliverif.controller.Controller;
 import deliverif.gui.Gui;
 
-
-import javax.swing.*;
-import java.io.File;
-
 public class InitState implements State {
 
     @Override
@@ -19,7 +15,6 @@ public class InitState implements State {
 
     @Override
     public void loadMapButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.loadingMap);
     }
 }

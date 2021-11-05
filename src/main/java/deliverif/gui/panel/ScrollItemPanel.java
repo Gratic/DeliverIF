@@ -2,7 +2,6 @@ package deliverif.gui.panel;
 
 import deliverif.gui.utils.ColorTheme;
 import deliverif.model.DeliveryTour;
-import deliverif.model.Request;
 import deliverif.observer.Observable;
 import deliverif.observer.Observer;
 
@@ -11,10 +10,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public abstract class ScrollItemPanel extends JPanel implements MouseListener,Observer {
+public abstract class ScrollItemPanel extends JPanel implements MouseListener, Observer {
     protected Color textColor;
     protected DeliveryTour tour;
-
 
 
     public ScrollItemPanel(DeliveryTour tour) {
@@ -39,8 +37,7 @@ public abstract class ScrollItemPanel extends JPanel implements MouseListener,Ob
     }
 
     @Override
-    protected void paintComponent(Graphics g)
-    {
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
 
@@ -69,20 +66,19 @@ public abstract class ScrollItemPanel extends JPanel implements MouseListener,Ob
 
     public void mouseMoved(MouseEvent me) {
     }
-    
+
     @Override
-    public void update(Observable observed, Object arg){
-        if(selected())
-        {
+    public void update(Observable observed, Object arg) {
+        if (selected()) {
             textColor = Color.ORANGE;
-        }else
-        {
+        } else {
             textColor = Color.WHITE;
         }
         repaint();
     }
 
     protected abstract boolean selected();
+
     protected abstract void select();
 
 

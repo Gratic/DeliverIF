@@ -1,9 +1,14 @@
 package deliverif.gui.mapview;
 
+import deliverif.controller.Controller;
+import deliverif.controller.state.ChooseRequestToDeleteState;
+import deliverif.controller.state.MapLoadedState;
+import deliverif.controller.state.RequestsLoadedState;
 import deliverif.gui.utils.ColorTheme;
 import deliverif.model.*;
 import deliverif.observer.Observable;
 import deliverif.observer.Observer;
+import pdtsp.Pair;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -12,13 +17,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Collection;
+import java.util.List;
 
 import static deliverif.gui.utils.Assets.*;
 import static deliverif.gui.utils.Utils.dye;
 
 public class MapView extends JPanel implements Observer, MouseInputListener, MouseWheelListener {
     private CityMap map;
-    private DeliveryTour tour;
+    private final DeliveryTour tour;
+    private final Controller controller;
 
     private double
             latitudeMin = Double.MAX_VALUE,
@@ -40,18 +47,23 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     private int xTranslation = 0, yTranslation = 0;
 
-    public MapView(CityMap map, DeliveryTour tour) {
+    private Address hoveredAddress;
+    private final int HOVER_SIZE = 10;
+
+    public MapView(Controller controller) {
+        this.controller = controller;
         this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         this.setBackground(ColorTheme.LIGHT_BASE_GREY_ALT);
         this.addMouseWheelListener(this);
         this.addMouseMotionListener(this);
         this.addMouseListener(this);
 
-        this.map = map;
+
+        this.map = controller.getCityMap();
         this.map.addObserver(this);
         this.recomputeMinMaxLatLong();
 
-        this.tour = tour;
+        this.tour = controller.getTour();
         this.tour.addObserver(this);
     }
 
@@ -74,14 +86,18 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                     g.setColor(new Color(10, 10, 10));
                 }
 
+                if (hoveredAddress != null && address == hoveredAddress) {
+                    Point pos = latlongToXY(address.getCoords());
+                    g.fillOval(pos.x - HOVER_SIZE / 2, pos.y - HOVER_SIZE / 2, HOVER_SIZE, HOVER_SIZE);
+                }
                 Collection<RoadSegment> segments = this.map.getSegmentsOriginatingFrom(address.getId());
                 if (segments != null) {
                     for (RoadSegment segment : segments) {
                         // check if road is one-way only
                         if (this.map.findSegment(segment.getDestination().getId(), segment.getOrigin().getId()) == null) {
-                            g2d.setStroke(new BasicStroke((float) (streetSize)));
+                            g2d.setStroke(new BasicStroke(streetSize));
                         } else {
-                            g2d.setStroke(new BasicStroke((float) (streetSize * 2)));
+                            g2d.setStroke(new BasicStroke(streetSize * 2));
                         }
 
                         Point startCoord = this.latlongToXY(segment.getOrigin().getCoords());
@@ -279,12 +295,19 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     @Override
     public void mouseMoved(MouseEvent e) {
         this.lastPointDragged = null;
+
+        if (controller.getCurrentState() instanceof MapLoadedState) {
+            Pair<Double, Address> closestAddr = map.getClosestAddressFrom(XYToLatLong(e.getPoint()));
+            hoveredAddress = closestAddr.getY();
+            repaint();
+        } else {
+            hoveredAddress = null;
+        }
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         zoomView(e.getPoint(), e.getWheelRotation());
-        System.out.println(e.getX() + " " + e.getY());
     }
 
     public void zoomView(Point zoomPoint, int rotations) {
@@ -337,13 +360,22 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             xTranslation = 0;
             this.repaint();
         }
-        if (SwingUtilities.isLeftMouseButton(e)) {
+        if (SwingUtilities.isLeftMouseButton(e) && controller.getCurrentState() instanceof RequestsLoadedState) {
             Coord pos = XYToLatLong(e.getPoint());
             tour.selectElement(pos);
 
             this.repaint();
         }
+
+        if (controller.getCurrentState() instanceof ChooseRequestToDeleteState) {
+            List<Pair<Double, Address>> closestAddresses = map.getClosestAddressesForm(XYToLatLong(e.getPoint()), 50.);
+            for (Pair<Double, Address> p : closestAddresses) {
+                System.out.println(p.getY().getId() + " - " + p.getX());
+            }
+            controller.addressClick(controller.getGui(), closestAddresses.size() > 1);
+        }
     }
+
 
     @Override
     public void mousePressed(MouseEvent e) {

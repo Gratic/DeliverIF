@@ -3,7 +3,7 @@ package deliverif.controller.state;
 import deliverif.controller.Controller;
 import deliverif.gui.Gui;
 
-public class AddDeliveryRequestState implements State{
+public class AddDeliveryRequestState implements State {
     @Override
     public void run(Controller controller, Gui gui) {
 
@@ -11,13 +11,13 @@ public class AddDeliveryRequestState implements State{
 
     @Override
     public void validateDeliveryButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
+
         controller.setCurrentState(controller.locallyModifyTour);
     }
 
     @Override
     public void cancelButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
+
         controller.setCurrentState(controller.tourCompleted);
     }
 }

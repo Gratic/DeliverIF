@@ -3,20 +3,19 @@ package pdtsp;
 import java.util.*;
 
 public class DistortedTransformer implements GraphTransformer, RequestsTransformer {
-    private Graph reevaluated;
-    private List<Pair<Integer, Integer>> reevaluatedRequests;
+    private final Graph reevaluated;
+    private final List<Pair<Integer, Integer>> reevaluatedRequests;
 
-    private Map<Integer, String> nodeTypes;                                     // Map of node types. Node ID's are distorted world ID.
-    private Map<Integer, Integer> nodeRequests;                                  // Map of node with request. Second field is the request index in distortedRequest.
-    private Map<Integer, Integer> afterToBeforeIndexes;                         // Index from distorted world to reevaluated world
-    private Map<Integer, Collection<Integer>> beforeToAfterIndexes;             // Index from reevaluated world to distorted world
-    private Map<Integer, Collection<Pair<Integer, Double>>> distortedWorld;     // Distorted graph, adjacency list. Pair<Node ID, Distance>
-    private List<Pair<Integer, Integer>> distortedRequests;               // Each request with nodes reevaluted in the distorted graph.
+    private final Map<Integer, String> nodeTypes;                                     // Map of node types. Node ID's are distorted world ID.
+    private final Map<Integer, Integer> nodeRequests;                                  // Map of node with request. Second field is the request index in distortedRequest.
+    private final Map<Integer, Integer> afterToBeforeIndexes;                         // Index from distorted world to reevaluated world
+    private final Map<Integer, Collection<Integer>> beforeToAfterIndexes;             // Index from reevaluated world to distorted world
+    private final Map<Integer, Collection<Pair<Integer, Double>>> distortedWorld;     // Distorted graph, adjacency list. Pair<Node ID, Distance>
+    private final List<Pair<Integer, Integer>> distortedRequests;               // Each request with nodes reevaluted in the distorted graph.
 
     private Graph distortedGraph;
 
-    public DistortedTransformer(Graph reevaluated, List<Pair<Integer, Integer>> reevaluatedRequests)
-    {
+    public DistortedTransformer(Graph reevaluated, List<Pair<Integer, Integer>> reevaluatedRequests) {
         this.reevaluated = reevaluated;
         this.reevaluatedRequests = reevaluatedRequests;
 
@@ -36,21 +35,21 @@ public class DistortedTransformer implements GraphTransformer, RequestsTransform
      * The notable side effect is that more nodes can be present than in the reevaluated graph.
      * Resulting in a longer TSP computation.
      */
-    public void transform()
-    {
+    public void transform() {
         // TASK 1: Re-index every nodes AND recompute requests in the distorted world
 
         nodeTypes.put(0, "start");
         afterToBeforeIndexes.put(0, 0);
-        beforeToAfterIndexes.put(0, new ArrayList<>(){{add(0);}});
+        beforeToAfterIndexes.put(0, new ArrayList<>() {{
+            add(0);
+        }});
 
         // Will serve to re-index nodes.
         int currentDistortedWorldIndex = 1;
 
         // The goal of distorted world is to have no overlapping between requests
         // So we loop on reevaluatedRequests to give each node an individual index
-        for(int l = 0; l < reevaluatedRequests.size(); l++)
-        {
+        for (int l = 0; l < reevaluatedRequests.size(); l++) {
             Pair<Integer, Integer> requestPair = reevaluatedRequests.get(l);
 
             int pickupPoint = requestPair.getX();
@@ -63,16 +62,13 @@ public class DistortedTransformer implements GraphTransformer, RequestsTransform
             // Looping on every node of the reevaluated world.
             // Note that this requires that nodes are valued in [1, getNbVertices[.
             // O must be the starting point and we already treated that part.
-            for(int i = 1; i < reevaluated.getNbVertices(); i++)
-            {
-                if(beforeToAfterIndexes.get(i) == null)
-                {
+            for (int i = 1; i < reevaluated.getNbVertices(); i++) {
+                if (beforeToAfterIndexes.get(i) == null) {
                     beforeToAfterIndexes.put(i, new ArrayList<>());
                 }
 
                 // Classification
-                if(pickupPoint == i)
-                {
+                if (pickupPoint == i) {
                     // Adding to the indexes
                     beforeToAfterIndexes.get(i).add(currentDistortedWorldIndex);
                     afterToBeforeIndexes.put(currentDistortedWorldIndex, i);
@@ -82,9 +78,7 @@ public class DistortedTransformer implements GraphTransformer, RequestsTransform
                     nodeRequests.put(currentDistortedWorldIndex, l);
 
                     currentDistortedWorldIndex++;
-                }
-                else if (deliveryPoint == i)
-                {
+                } else if (deliveryPoint == i) {
                     // Adding to the indexes
                     beforeToAfterIndexes.get(i).add(currentDistortedWorldIndex);
                     afterToBeforeIndexes.put(currentDistortedWorldIndex, i);
@@ -113,16 +107,14 @@ public class DistortedTransformer implements GraphTransformer, RequestsTransform
 
         int nbDistortedNodes = afterToBeforeIndexes.size();
 
-        for(int i = 0; i < nbDistortedNodes; i++)
-        {
+        for (int i = 0; i < nbDistortedNodes; i++) {
             int realPointI = afterToBeforeIndexes.get(i);
 
             Collection<Pair<Integer, Double>> distortedArcs = new ArrayList<>();
 
-            for(int j = 0; j < nbDistortedNodes; j++)
-            {
+            for (int j = 0; j < nbDistortedNodes; j++) {
                 // This case is not possible as the goal of TASK 1 is to UNIQUELY differentiate nodes.
-                if(i == j) continue;
+                if (i == j) continue;
 
                 int realPointJ = afterToBeforeIndexes.get(j);
 
@@ -131,12 +123,9 @@ public class DistortedTransformer implements GraphTransformer, RequestsTransform
 
                 // Case of a duplication of same node because there was more than one request (as a pickup or delivery point)
                 // on the same node.
-                if(realPointI == realPointJ)
-                {
+                if (realPointI == realPointJ) {
                     distortedArc.setY(0d);
-                }
-                else
-                {
+                } else {
                     // If it not a duplication, we just copy the cost of the original points.
                     // Also we know that there is a cost because reevaluated is a complete graph.
                     distortedArc.setY(reevaluated.getCost(realPointI, realPointJ));
@@ -169,17 +158,19 @@ public class DistortedTransformer implements GraphTransformer, RequestsTransform
         return beforeToAfterIndexes;
     }
 
-    public Map<Integer, String> getNodeTypes() { return nodeTypes; }
+    public Map<Integer, String> getNodeTypes() {
+        return nodeTypes;
+    }
 
-    public Map<Integer, Integer> getNodeRequests() { return nodeRequests; }
+    public Map<Integer, Integer> getNodeRequests() {
+        return nodeRequests;
+    }
 
-    public Integer getIndexOfRequestOfNode(Integer distortedNodeIndex)
-    {
-        for(int i = 0; i < distortedRequests.size(); i++)
-        {
+    public Integer getIndexOfRequestOfNode(Integer distortedNodeIndex) {
+        for (int i = 0; i < distortedRequests.size(); i++) {
             Pair<Integer, Integer> request = distortedRequests.get(i);
 
-            if(request.getX().equals(distortedNodeIndex) || request.getY().equals(distortedNodeIndex))
+            if (request.getX().equals(distortedNodeIndex) || request.getY().equals(distortedNodeIndex))
                 return i;
         }
 

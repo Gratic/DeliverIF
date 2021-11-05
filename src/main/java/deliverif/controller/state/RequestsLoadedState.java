@@ -16,18 +16,16 @@ public class RequestsLoadedState implements State {
 
     @Override
     public void loadRequestsButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.loadingRequests);
     }
 
     @Override
     public void loadMapButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.loadingMap);
     }
+
     @Override
     public void computingTourButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.computingTour);
     }
 }

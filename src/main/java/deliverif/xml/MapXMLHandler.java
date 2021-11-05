@@ -74,22 +74,22 @@ public class MapXMLHandler extends org.xml.sax.helpers.DefaultHandler {
                 Address destination = cityMap.getAddressById(destId);
                 Address origin = cityMap.getAddressById(origId);
 
-                if (destination==null){
-                    throw new SAXException("Address with id " + destId+"does not exist");
+                if (destination == null) {
+                    throw new SAXException("Address with id " + destId + "does not exist");
                 }
-                if (origin==null){
-                    throw new SAXException("Address with id " + origId+"does not exist");
+                if (origin == null) {
+                    throw new SAXException("Address with id " + origId + "does not exist");
                 }
 
                 double length;
                 try {
                     length = Double.parseDouble(lenString);
-                }catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     e.printStackTrace();
-                    throw new SAXException("Length "+lenString+" is not a valid floating point number");
+                    throw new SAXException("Length " + lenString + " is not a valid floating point number");
                 }
 
-                RoadSegment segment = new RoadSegment(origin,destination,name,length);
+                RoadSegment segment = new RoadSegment(origin, destination, name, length);
                 cityMap.addSegment(segment);
 
                 break;

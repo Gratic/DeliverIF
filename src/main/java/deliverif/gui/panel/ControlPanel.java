@@ -3,6 +3,7 @@ package deliverif.gui.panel;
 import deliverif.gui.Gui;
 import deliverif.gui.utils.Assets;
 import deliverif.gui.utils.ColorTheme;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -72,16 +73,13 @@ public class ControlPanel extends GuiPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // load action
-        if(e.getSource() == loadMapButton) {
+        if (e.getSource() == loadMapButton) {
             this.gui.getController().loadMapButtonClick(this.gui);
-        }
-        else if (e.getSource()== loadRequestsButton){
+        } else if (e.getSource() == loadRequestsButton) {
             this.gui.getController().loadRequestsButtonClick(this.gui);
-        }
-        else if (e.getSource() == addRequestButton){
+        } else if (e.getSource() == addRequestButton) {
 
-        }
-        else if (e.getSource()== deleteRequestButton){
+        } else if (e.getSource() == deleteRequestButton) {
 
         }
 

@@ -1,24 +1,14 @@
 package pdtsp;
 
 import org.junit.jupiter.api.Assertions;
-import pdtsp.BasicGraph;
-import pdtsp.Dijkstra;
-
 import org.junit.jupiter.api.Test;
-import pdtsp.Pair;
-import pdtsp.ShortestPath;
-import pdtsp.Graph;
-
 
 import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestDijkstra {
 
     @Test
-    void simpleGraph1()
-    {
+    void simpleGraph1() {
         /*
                     (0)
                  2 /   \ 3
@@ -53,9 +43,21 @@ public class TestDijkstra {
         List<Pair<Double, Integer>> distFrom2 = dijkstra.searchShortestPathFrom(2, g);
 
         // Résultats attendus
-        List<Double> expectFrom0 = new ArrayList<>(){{ add(0d); add(2d); add(3d);}};
-        List<Double> expectFrom1 = new ArrayList<>(){{ add(2d); add(0d); add(2d);}};
-        List<Double> expectFrom2 = new ArrayList<>(){{ add(3d); add(2d); add(0d);}};
+        List<Double> expectFrom0 = new ArrayList<>() {{
+            add(0d);
+            add(2d);
+            add(3d);
+        }};
+        List<Double> expectFrom1 = new ArrayList<>() {{
+            add(2d);
+            add(0d);
+            add(2d);
+        }};
+        List<Double> expectFrom2 = new ArrayList<>() {{
+            add(3d);
+            add(2d);
+            add(0d);
+        }};
 
         // Assertions
         Assertions.assertNotNull(distFrom0, "Erreur les résultat des distances à partir du sommet 0 sont null !");
@@ -74,8 +76,7 @@ public class TestDijkstra {
     }
 
     @Test
-    void simpleGraph2()
-    {
+    void simpleGraph2() {
         /*
                     (0)
                  2 /   \ 3
@@ -110,9 +111,21 @@ public class TestDijkstra {
         List<Pair<Double, Integer>> distFrom2 = dijkstra.searchShortestPathFrom(2, g);
 
         // Résultats attendus
-        List<Double> expectFrom0 = new ArrayList<Double>(){{ add(0d); add(2d); add(3d);}};
-        List<Double> expectFrom1 = new ArrayList<Double>(){{ add(2d); add(0d); add(1d);}};
-        List<Double> expectFrom2 = new ArrayList<Double>(){{ add(3d); add(1d); add(0d);}};
+        List<Double> expectFrom0 = new ArrayList<Double>() {{
+            add(0d);
+            add(2d);
+            add(3d);
+        }};
+        List<Double> expectFrom1 = new ArrayList<Double>() {{
+            add(2d);
+            add(0d);
+            add(1d);
+        }};
+        List<Double> expectFrom2 = new ArrayList<Double>() {{
+            add(3d);
+            add(1d);
+            add(0d);
+        }};
 
         // Assertions
         Assertions.assertNotNull(distFrom0, "Erreur les résultat des distances à partir du sommet 0 sont null !");
@@ -131,38 +144,37 @@ public class TestDijkstra {
     }
 
     @Test
-    void mediumGraph1()
-    {
+    void mediumGraph1() {
         // Création du graphe
         Map<Integer, Collection<Pair<Integer, Double>>> arcs = new HashMap<>();
 
         Collection<Pair<Integer, Double>> arc0 = new ArrayList<>();
-        arc0.add(new Pair<Integer, Double>(1,1d));
-        arc0.add(new Pair<Integer, Double>(3,2d));
+        arc0.add(new Pair<Integer, Double>(1, 1d));
+        arc0.add(new Pair<Integer, Double>(3, 2d));
 
         Collection<Pair<Integer, Double>> arc1 = new ArrayList<>();
-        arc1.add(new Pair<Integer, Double>(0,1d));
-        arc1.add(new Pair<Integer, Double>(2,3d));
-        arc1.add(new Pair<Integer, Double>(3,1d));
+        arc1.add(new Pair<Integer, Double>(0, 1d));
+        arc1.add(new Pair<Integer, Double>(2, 3d));
+        arc1.add(new Pair<Integer, Double>(3, 1d));
 
         Collection<Pair<Integer, Double>> arc2 = new ArrayList<>();
-        arc2.add(new Pair<Integer, Double>(1,3d));
-        arc2.add(new Pair<Integer, Double>(4,1d));
-        arc2.add(new Pair<Integer, Double>(5,3d));
+        arc2.add(new Pair<Integer, Double>(1, 3d));
+        arc2.add(new Pair<Integer, Double>(4, 1d));
+        arc2.add(new Pair<Integer, Double>(5, 3d));
 
         Collection<Pair<Integer, Double>> arc3 = new ArrayList<>();
-        arc3.add(new Pair<Integer, Double>(0,2d));
-        arc3.add(new Pair<Integer, Double>(1,1d));
-        arc3.add(new Pair<Integer, Double>(4,4d));
+        arc3.add(new Pair<Integer, Double>(0, 2d));
+        arc3.add(new Pair<Integer, Double>(1, 1d));
+        arc3.add(new Pair<Integer, Double>(4, 4d));
 
         Collection<Pair<Integer, Double>> arc4 = new ArrayList<>();
-        arc4.add(new Pair<Integer, Double>(2,1d));
-        arc4.add(new Pair<Integer, Double>(3,4d));
-        arc4.add(new Pair<Integer, Double>(5,1d));
+        arc4.add(new Pair<Integer, Double>(2, 1d));
+        arc4.add(new Pair<Integer, Double>(3, 4d));
+        arc4.add(new Pair<Integer, Double>(5, 1d));
 
         Collection<Pair<Integer, Double>> arc5 = new ArrayList<>();
-        arc5.add(new Pair<Integer, Double>(2,3d));
-        arc5.add(new Pair<Integer, Double>(4,1d));
+        arc5.add(new Pair<Integer, Double>(2, 3d));
+        arc5.add(new Pair<Integer, Double>(4, 1d));
 
         arcs.put(0, arc0);
         arcs.put(1, arc1);
@@ -181,9 +193,30 @@ public class TestDijkstra {
         List<Pair<Double, Integer>> distFrom3 = dijkstra.searchShortestPathFrom(3, g);
 
         // Résultats attendus
-        List<Double> expectFrom0 = new ArrayList<>(){{ add(0d); add(1d); add(4d); add(2d); add(5d); add(6d);}};
-        List<Double> expectFrom1 = new ArrayList<>(){{ add(1d); add(0d); add(3d); add(1d); add(4d); add(5d);}};
-        List<Double> expectFrom3 = new ArrayList<>(){{ add(2d); add(1d); add(4d); add(0d); add(4d); add(5d);}};
+        List<Double> expectFrom0 = new ArrayList<>() {{
+            add(0d);
+            add(1d);
+            add(4d);
+            add(2d);
+            add(5d);
+            add(6d);
+        }};
+        List<Double> expectFrom1 = new ArrayList<>() {{
+            add(1d);
+            add(0d);
+            add(3d);
+            add(1d);
+            add(4d);
+            add(5d);
+        }};
+        List<Double> expectFrom3 = new ArrayList<>() {{
+            add(2d);
+            add(1d);
+            add(4d);
+            add(0d);
+            add(4d);
+            add(5d);
+        }};
 
         // Assertions
         Assertions.assertNotNull(distFrom0, "Erreur les résultat des distances à partir du sommet 0 sont null !");

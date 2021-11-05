@@ -1,11 +1,11 @@
 package deliverif.model;
 
 public class RoadSegment {
-    private Address origin;
-    private Address destination;
+    private final Address origin;
+    private final Address destination;
 
-    private String name;
-    private double length;
+    private final String name;
+    private final double length;
 
     public RoadSegment(Address origin, Address destination, String name, double length) {
         this.origin = origin;

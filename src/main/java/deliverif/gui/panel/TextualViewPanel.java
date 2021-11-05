@@ -1,8 +1,9 @@
 package deliverif.gui.panel;
 
-        import deliverif.gui.utils.ColorTheme;
-        import javax.swing.*;
-        import java.awt.*;
+import deliverif.gui.utils.ColorTheme;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class TextualViewPanel extends JPanel {
 

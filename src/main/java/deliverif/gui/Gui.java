@@ -1,7 +1,5 @@
 package deliverif.gui;
 
-import java.awt.*;
-import java.awt.event.*;
 import deliverif.controller.Controller;
 import deliverif.gui.mapview.MapView;
 import deliverif.gui.panel.ControlPanel;
@@ -10,9 +8,11 @@ import deliverif.gui.panel.MainPanel;
 import deliverif.gui.panel.TextualViewPanel;
 import deliverif.gui.textualview.RequestsTextView;
 import deliverif.gui.utils.Assets;
-import deliverif.gui.viewstate.*;
+import deliverif.gui.viewstate.InitialView;
+import deliverif.gui.viewstate.ViewState;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Gui {
 
@@ -25,7 +25,7 @@ public class Gui {
     protected GraphicalViewPanel graphicalViewPanel;
     protected TextualViewPanel textualViewPanel;
 
-    private RequestsTextView requestsTextView;
+    private final RequestsTextView requestsTextView;
 
     protected MapView mapView;
 
@@ -58,10 +58,10 @@ public class Gui {
                 textualViewPanel, BorderLayout.EAST
         );
 
-        mapView = new MapView(controller.getCityMap(), controller.getTour());
+        mapView = new MapView(controller);
 
         //this.requestsTextView = new RequestsTextView(controller.getTour());
-        this.requestsTextView = new RequestsTextView(controller.getTour(),controller.getCityMap());
+        this.requestsTextView = new RequestsTextView(controller.getTour(), controller.getCityMap());
 
         //this.frame.pack(); // resize to fit components
         frame.setVisible(true);
@@ -85,29 +85,39 @@ public class Gui {
     public Controller getController() {
         return this.controller;
     }
+
     public ViewState getCurrentViewState() {
         return this.currentViewState;
     }
+
     public int getHeight() {
         return this.height;
     }
+
     public int getWidth() {
         return this.width;
     }
+
     public ControlPanel getControlPanel() {
         return controlPanel;
     }
+
     public GraphicalViewPanel getGraphicalViewPanel() {
         return graphicalViewPanel;
     }
+
     public TextualViewPanel getTextualViewPanel() {
         return textualViewPanel;
     }
+
     public JFrame getFrame() {
         return frame;
     }
 
-    public MapView getMapView() { return mapView; }
+    public MapView getMapView() {
+        return mapView;
+    }
+
     public RequestsTextView getRequestsTextView() {
         return requestsTextView;
     }

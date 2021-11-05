@@ -16,7 +16,7 @@ public class ColorTheme {
 
     public static Color BOX_BG_LIGHT_BASE_GREY = new Color(0x89857A);
 
-    public static List<Color> REQUEST_PALETTE = new ArrayList<>(){
+    public static List<Color> REQUEST_PALETTE = new ArrayList<>() {
         {
             add(new Color(0x197278));
             add(new Color(0x5CE9FF));
@@ -31,7 +31,7 @@ public class ColorTheme {
         }
     };
 
-    public static  Color DEPARTURE_COLOR = new Color(255, 0, 0);
+    public static Color DEPARTURE_COLOR = new Color(255, 0, 0);
 
     // general theme settings
     public static Color GENERAL_BASE_BG = LIGHT_BASE_GREY;

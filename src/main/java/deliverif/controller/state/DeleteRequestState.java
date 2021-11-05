@@ -11,11 +11,10 @@ public class DeleteRequestState implements State {
 
     @Override
     public void validateDeleteRequestButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.locallyModifyTour);
     }
+
     public void cancelButtonClick(Controller controller, Gui gui) {
-        controller.getPreviousStates().push(this);
         controller.setCurrentState(controller.tourCompleted);
     }
 

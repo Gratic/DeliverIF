@@ -1,16 +1,14 @@
 package deliverif.gui.textualview;
 
+import deliverif.gui.panel.TextualViewScrollPanel;
 import deliverif.gui.utils.ColorTheme;
 import deliverif.model.CityMap;
 import deliverif.model.DeliveryTour;
-import deliverif.model.Request;
 import deliverif.observer.Observable;
 import deliverif.observer.Observer;
-import deliverif.gui.panel.TextualViewScrollPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class RequestsTextView extends JPanel implements Observer {
     private final DeliveryTour tour;
