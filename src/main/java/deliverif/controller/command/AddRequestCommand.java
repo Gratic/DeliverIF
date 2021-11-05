@@ -15,7 +15,7 @@ public class AddRequestCommand implements Command {
 
     @Override
     public void doCommand() {
-        tour.addRequestRecompute(request,0,0);
+        tour.addRequestRecompute(request, 0, 0);
     }
 
     @Override

@@ -58,7 +58,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
                 new Dimension(50, 50)
         );
         addRequestButton.addActionListener(this);
-        addRequestButton.setEnabled(false);
+//        addRequestButton.setEnabled(false);
         add(addRequestButton);
 
         deleteRequestButton = new JButton(new ImageIcon(dye(Assets.removeRequestImage, Color.BLACK)));
@@ -78,7 +78,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         } else if (e.getSource() == loadRequestsButton) {
             this.gui.getController().loadRequestsButtonClick(this.gui);
         } else if (e.getSource() == addRequestButton) {
-
+            this.gui.getController().addRequestButtonClick(this.gui);
         } else if (e.getSource() == deleteRequestButton) {
 
         }

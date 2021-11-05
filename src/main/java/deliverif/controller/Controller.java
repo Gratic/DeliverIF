@@ -10,18 +10,19 @@ import java.util.Stack;
 
 public class Controller {
 
-    private ListOfCommands listOfCommands;
+    private final ListOfCommands listOfCommands;
 
 
-    private Gui gui;
-    private CityMap cityMap;
-    private DeliveryTour tour;
+    private final Gui gui;
+    private final CityMap cityMap;
+    private final DeliveryTour tour;
 
     public State initState;
     public State loadingMap;
     public State mapLoaded;
     public State loadingRequests;
     public State requestsLoaded;
+    public State popupDuration;
     public State computingTour;
     public State tourCompleted;
     public State generateRoadMap;
@@ -44,28 +45,30 @@ public class Controller {
 
         stateStack = new Stack<State>();
 
+        initState = new InitState();
         loadingMap = new LoadingMapState();
         mapLoaded = new MapLoadedState();
         loadingRequests = new LoadingRequestsState();
         requestsLoaded = new RequestsLoadedState();
 
-        computingTour = (State) new ComputingTourState();
-        locallyModifyTour = (State) new LocallyModifyTourState();
-        tourCompleted = (State) new TourCompletedState();
-        generateRoadMap = (State) new GenerateRoadMapState();
-        tourNotOptimal = (State) new TourNotOptimalState();
-        addDeliveryRequest = (State) new AddDeliveryRequestState();
-        addPickupRequest = (State) new AddPickupRequestState();
-        chooseRequestToDelete = (State) new ChooseRequestToDeleteState();
-        chooseAssociatedRequest = (State) new ChooseAssociatedRequestState();
-        deleteRequest = (State) new DeleteRequestState();
+        computingTour = new ComputingTourState();
+        locallyModifyTour = new LocallyModifyTourState();
+        tourCompleted = new TourCompletedState();
+        generateRoadMap = new GenerateRoadMapState();
+        tourNotOptimal = new TourNotOptimalState();
+        addDeliveryRequest = new AddDeliveryRequestState();
+        addPickupRequest = new AddPickupRequestState();
+        chooseRequestToDelete = new ChooseRequestToDeleteState();
+        chooseAssociatedRequest = new ChooseAssociatedRequestState();
+        deleteRequest = new DeleteRequestState();
+        popupDuration = new StatePopupDuration();
 
         init();
     }
 
     public void init() {
         // states, solution 3
-        initState = new InitState();
+
         setCurrentState(initState);
 
         gui.init();

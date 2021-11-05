@@ -11,14 +11,4 @@ public class MapLoadedState implements State {
         gui.getControlPanel().loadRequestsButton.setEnabled(true);
         gui.setCurrentViewState(new LoadRequestsView(gui));
     }
-
-    @Override
-    public void loadRequestsButtonClick(Controller controller, Gui gui) {
-        controller.setCurrentState(controller.loadingRequests);
-    }
-
-    @Override
-    public void loadMapButtonClick(Controller controller, Gui gui) {
-        controller.popState();
-    }
 }
