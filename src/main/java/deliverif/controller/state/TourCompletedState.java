@@ -8,22 +8,14 @@ public class TourCompletedState implements State {
 
     @Override
     public void run(Controller controller, Gui gui) {
+        gui.getControlPanel().addRequestButton.setEnabled(true);
 
     }
 
-    @Override
-    public void addRequestButtonClick(Controller controller, Gui gui) {
-        controller.setCurrentState(controller.addPickupRequest);
-
-    }
-
-    @Override
-    public void deleteButtonClick(Controller controller, Gui gui) {
-        controller.setCurrentState(controller.chooseRequestToDelete);
-    }
 
     @Override
     public void addressClick(Controller controller, Gui gui, boolean overlap) {
+
         controller.setCurrentState(controller.deleteRequest);
 
     }

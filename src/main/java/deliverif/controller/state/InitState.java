@@ -12,9 +12,4 @@ public class InitState implements State {
         gui.getControlPanel().addRequestButton.setEnabled(false);
         gui.getControlPanel().deleteRequestButton.setEnabled(false);
     }
-
-    @Override
-    public void loadMapButtonClick(Controller controller, Gui gui) {
-        controller.setCurrentState(controller.loadingMap);
-    }
 }

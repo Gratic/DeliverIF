@@ -7,6 +7,7 @@ import deliverif.gui.Gui;
 public interface State {
     void run(Controller c, Gui gui);
 
+
     default void load() {
     }
 
@@ -23,9 +24,19 @@ public interface State {
     }
 
     default void loadMapButtonClick(Controller controller, Gui gui) {
+        controller.setCurrentState(controller.loadingMap);
     }
 
     default void loadRequestsButtonClick(Controller controller, Gui gui) {
+        controller.setCurrentState(controller.loadingRequests);
+    }
+
+    default void addRequestButtonClick(Controller controller, Gui gui) {
+        controller.setCurrentState(controller.popupDuration);
+    }
+
+    default void deleteButtonClick(Controller controller, Gui gui) {
+        controller.setCurrentState(controller.chooseRequestToDelete);
     }
 
     default void computingTourButtonClick(Controller controller, Gui gui) {
@@ -43,8 +54,6 @@ public interface State {
     default void generateRoadMapButtonClick(Controller controller, Gui gui) {
     }
 
-    default void addRequestButtonClick(Controller controller, Gui gui) {
-    }
 
     default void cancelButtonClick(Controller controller, Gui gui) {
     }
@@ -58,8 +67,6 @@ public interface State {
     default void validateDeliveryButtonClick(Controller controller, Gui gui) {
     }
 
-    default void deleteButtonClick(Controller controller, Gui gui) {
-    }
 
     default void addressClick(Controller controller, Gui gui, boolean overlap) {
     }
