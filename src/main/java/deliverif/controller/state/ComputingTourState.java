@@ -6,7 +6,7 @@ import pdtsp.PDTSPWrapper;
 
 public class ComputingTourState implements State {
     private boolean optimal;
-    private final int TIMELIMIT = 120;
+    private final int TIMELIMIT = 120000;
 
     @Override
     public void run(Controller controller, Gui gui) {
