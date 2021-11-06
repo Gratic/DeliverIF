@@ -313,7 +313,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        zoomView(e.getPoint(), e.getWheelRotation());
+        zoomView(e.getPoint(),e.getWheelRotation());
+        System.out.println(e.getX() + " " + e.getY());
     }
 
     public void zoomView(Point zoomPoint, int rotations) {

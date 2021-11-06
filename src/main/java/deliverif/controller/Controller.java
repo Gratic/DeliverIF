@@ -5,12 +5,15 @@ import deliverif.controller.state.*;
 import deliverif.gui.Gui;
 import deliverif.model.CityMap;
 import deliverif.model.DeliveryTour;
+import deliverif.controller.state.*;
 
 import java.util.Stack;
 
 public class Controller {
-
-    private final ListOfCommands listOfCommands;
+    
+    private Gui gui;
+    private CityMap cityMap;
+    private DeliveryTour tour;
 
 
     private final Gui gui;
@@ -34,7 +37,7 @@ public class Controller {
     public State addPickupRequest;
     public State deleteRequest;
 
-    protected Stack<State> stateStack;
+    private ListOfCommands listOfCommands;
 
     public Controller() {
         listOfCommands = new ListOfCommands();
@@ -43,7 +46,8 @@ public class Controller {
         tour = new DeliveryTour();
         gui = new Gui(this);
 
-        stateStack = new Stack<State>();
+        currentState = new InitState();
+        previousStates = new Stack<State>();
 
         initState = new InitState();
         loadingMap = new LoadingMapState();
@@ -63,6 +67,7 @@ public class Controller {
         deleteRequest = new DeleteRequestState();
         popupDuration = new StatePopupDuration();
 
+
         init();
     }
 
@@ -72,6 +77,8 @@ public class Controller {
         setCurrentState(initState);
 
         gui.init();
+        roadmap.createFile();
+        roadmap.WriteInFile();
     }
 
     // state functions

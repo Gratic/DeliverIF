@@ -209,4 +209,26 @@ public class DeliveryTour extends Observable {
             toggleSelect(index);
         }
     }
+
+
+    public List<RoadSegment> getSubPathBetweenPoints(Address a1, Address a2) {
+        List<Address> addresses = this.pathAddresses;
+        int indexAddress1 = getIndexOfAddress(a1);
+        int indexAddress2 = getIndexOfAddress(a2);
+        List<RoadSegment> roadSegmentsBetweenA1AndA2 = path.subList(indexAddress1, indexAddress2 - 1);
+        return roadSegmentsBetweenA1AndA2;
+    }
+
+    public int getIndexOfAddress(Address address) {
+        List<Address> addresses = this.pathAddresses;
+        int index = 0;
+        for (int i = 0; i < addresses.size(); i++) {
+            if (addresses.get(i).equals(address)) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
+
 }
