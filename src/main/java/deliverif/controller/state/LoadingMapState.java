@@ -24,8 +24,7 @@ public class LoadingMapState implements State {
         if (option == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try {
-                controller.getTour().getRequests().clear();
-                controller.getTour().notifyObservers(controller.getTour());
+                controller.getTour().clear();
                 controller.getCityMap().loadMapFromFile(file);
                 controller.setCurrentState(controller.mapLoaded);
             } catch (MapLoadingException exception) {

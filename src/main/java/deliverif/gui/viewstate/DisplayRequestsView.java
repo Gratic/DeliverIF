@@ -8,8 +8,13 @@ import deliverif.gui.utils.ColorTheme;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class DisplayRequestsView extends ViewState {
+public class DisplayRequestsView extends ViewState implements ActionListener {
+
+    private final JButton computeButton;
+
     public DisplayRequestsView(Gui gui) {
         super(gui);
 
@@ -49,8 +54,9 @@ public class DisplayRequestsView extends ViewState {
         textualViewPanel.removeAll();
         JLabel pleaseLoadRequestsText = new JLabel("Compute a tour");
         textualViewPanel.add(pleaseLoadRequestsText);
-        JButton computeButton = new JButton("Compute");
+        computeButton = new JButton("Compute");
         textualViewPanel.add(computeButton);
+        computeButton.addActionListener(this);
 
         //TextualViewScrollPanel textualViewScrollPanel = new TextualViewScrollPanel();
         this.gui.getRequestsTextView().init();
@@ -98,5 +104,12 @@ public class DisplayRequestsView extends ViewState {
 
         panel = this.gui.getMapView();
         panel.repaint();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == this.computeButton) {
+            this.gui.getController().computingTourButtonClick(gui);
+        }
     }
 }

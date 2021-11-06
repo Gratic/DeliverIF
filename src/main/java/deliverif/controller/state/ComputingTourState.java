@@ -2,6 +2,7 @@ package deliverif.controller.state;
 
 import deliverif.controller.Controller;
 import deliverif.gui.Gui;
+import pdtsp.PDTSPWrapper;
 
 public class ComputingTourState implements State {
     private boolean optimal;
@@ -9,15 +10,14 @@ public class ComputingTourState implements State {
 
     @Override
     public void run(Controller controller, Gui gui) {
+        System.out.println("Computing");
         optimal = false;
         // Start calculation
-
-        try {
-            wait(TIMELIMIT);
-            computingTourButtonClick(controller, gui);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        PDTSPWrapper wrapper = new PDTSPWrapper(controller.getCityMap(), controller.getTour(), TIMELIMIT);
+        wrapper.prepare();
+        wrapper.compute();
+        wrapper.updateDeliveryTour();
+        controller.setCurrentState(controller.tourCompleted);
     }
 
     @Override

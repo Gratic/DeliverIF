@@ -108,7 +108,7 @@ public class DeliveryTour extends Observable {
 
     public void loadRequestsFromFile(File requestsFile, CityMap map) throws RequestsLoadException {
         try {
-            this.requests.clear();
+            this.clear();
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
@@ -119,6 +119,14 @@ public class DeliveryTour extends Observable {
         } catch (SAXException | IOException | ParserConfigurationException exception) {
             throw new RequestsLoadException(exception);
         }
+    }
+
+    public void clear() {
+        requests.clear();
+        path.clear();
+        pathAddresses.clear();
+        addressRequestMetadata.clear();
+        this.notifyObservers(this);
     }
 
     public void addRequest(Request request) {

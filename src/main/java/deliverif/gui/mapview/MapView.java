@@ -27,28 +27,34 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private final DeliveryTour tour;
     private final Controller controller;
 
+    private final int DEFAULT_WIDTH = 600;
+    private final int DEFAULT_HEIGHT = 400;
+    private final int MAP_BASE_SIZE = 1200;
+
+    private final double ICON_SIZE = 35;
+    private final double ICON_SELECTED_MULT = 1.5;
+
+    private final double MAX_ZOOM_LEVEL = 6.0;
+    private final double MIN_ZOOM_LEVEL = .1;
+    private final double BASE_ZOOM_LEVEL = 1.0;
+    private final double ZOOM_SENSITIVITY = 0.2;
+
+    private final float BASE_STREET_SIZE = 1.f;
+    private final float PATH_SIZE_MULT = 1.75f;
+    private final float BOTH_WAY_MULT = 1.25f;
+
+    private final int HOVER_SIZE = 10;
+
     private double
             latitudeMin = Double.MAX_VALUE,
             latitudeMax = Double.MIN_VALUE,
             longitudeMin = Double.MAX_VALUE,
             longitudeMax = Double.MIN_VALUE;
 
-    private final int DEFAULT_WIDTH = 600;
-    private final int DEFAULT_HEIGHT = 400;
-    private final int MAP_BASE_SIZE = 1200;
-
-    private final double ICON_SIZE = 35;
-
-    private final double MAX_ZOOM_LEVEL = 6.0;
-    private final double MIN_ZOOM_LEVEL = .1;
-    private final double BASE_ZOOM_LEVEL = 1.0;
-    private final double ZOOM_SENSITIVITY = 0.2;
     private double zoomLevel = BASE_ZOOM_LEVEL;
-
     private int xTranslation = 0, yTranslation = 0;
 
     private Address hoveredAddress;
-    private final int HOVER_SIZE = 10;
 
     public MapView(Controller controller) {
         this.controller = controller;
@@ -72,7 +78,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
-        float streetSize = (float) (this.zoomLevel * 0.6);
+        float streetSize = (float) (this.zoomLevel * BASE_STREET_SIZE);
         g2d.setStroke(new BasicStroke(streetSize));
 
         if (this.isMapLoaded()) {
@@ -97,7 +103,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                         if (this.map.findSegment(segment.getDestination().getId(), segment.getOrigin().getId()) == null) {
                             g2d.setStroke(new BasicStroke(streetSize));
                         } else {
-                            g2d.setStroke(new BasicStroke(streetSize * 2));
+                            g2d.setStroke(new BasicStroke(streetSize * BOTH_WAY_MULT));
                         }
 
                         Point startCoord = this.latlongToXY(segment.getOrigin().getCoords());
@@ -120,8 +126,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
             for (Request request : this.tour.getRequests()) {
                 if (tour.isSelected(request)) {
-                    iconsHeight *= 2;
-                    iconsWidth *= 2;
+                    iconsHeight *= ICON_SELECTED_MULT;
+                    iconsWidth *= ICON_SELECTED_MULT;
                 }
                 Point pickupPoint = this.latlongToXY(request.getPickupAddress().getCoords());
                 Point deliveryPoint = this.latlongToXY(request.getDeliveryAddress().getCoords());
@@ -142,8 +148,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                         this);
 
                 if (tour.isSelected(request)) {
-                    iconsHeight /= 2;
-                    iconsWidth /= 2;
+                    iconsHeight /= ICON_SELECTED_MULT;
+                    iconsWidth /= ICON_SELECTED_MULT;
                 }
                 i++;
             }
@@ -152,8 +158,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             if (departureAddress != null) {
                 Point point = this.latlongToXY(departureAddress.getCoords());
                 if (tour.isDepartureSelected()) {
-                    iconsHeight *= 2;
-                    iconsWidth *= 2;
+                    iconsHeight *= ICON_SELECTED_MULT;
+                    iconsWidth *= ICON_SELECTED_MULT;
                 }
 
                 g.drawImage(dye(departureImage, ColorTheme.DEPARTURE_COLOR),
@@ -200,7 +206,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                             arrowTip.y + (int) ((segNormal.y - arrowTip.y) / arrowVecNorm * 3 * this.zoomLevel)
                     );
 
-                    g2d.setStroke(new BasicStroke(streetSize));
+                    g2d.setStroke(new BasicStroke((streetSize * PATH_SIZE_MULT)));
                     g2d.drawLine(segStart.x + printDelta.x, segStart.y + printDelta.y, segEnd.x + printDelta.x, segEnd.y + printDelta.y);
                     g2d.drawLine(arrowBase.x, arrowBase.y, arrowTip.x, arrowTip.y);
                 }
