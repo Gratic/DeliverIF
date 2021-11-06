@@ -8,6 +8,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -41,12 +43,12 @@ public class Roadmap {
         }
     }
 
-    public void WriteInFile() {
+    public void WriteInFile(File file) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("resources/roadmap/roadmap.txt", false));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             Date departureTime = tour.getDepartureTime();
             writer.write("Departure time: ");
-            writer.write(departureTime.toString());
+            writer.write(getDateFormated(departureTime));
             writer.newLine();
             writer.write("RoadSegments : ");
             List<Address> addresses = tour.getPathAddresses();
@@ -58,11 +60,15 @@ public class Roadmap {
                     Address lastRequestAddress = findLastRequest(addresses.get(i));
                     currentDate = computeArrivalTimeOnPoint(currentDate, lastRequestAddress, addresses.get(i));
                     writer.newLine();
-                    writer.write("Estimated arrival time : " + currentDate);
+                    writer.write("Estimated arrival time : " + getDateFormated(currentDate));
                     writer.newLine();
                     writer.write("Pick the parcel (duration : ");
                     writer.write(String.valueOf(addressRequestMetadata.get(i).getY().getPickupDuration()/60));
-                    writer.write(" minutes )");
+                    writer.write(" minutes)");
+                    writer.newLine();
+                    writer.write("Estimated departure time : " + getDateFormated(
+                            computeDepartureTimeOnPoint(currentDate, addressRequestMetadata.get(i).getY().getDeliveryDuration())));
+                    writer.newLine();
                     writer.newLine();
 
 
@@ -78,11 +84,15 @@ public class Roadmap {
                     Address lastRequestAddress = findLastRequest(addresses.get(i));
                     currentDate = computeArrivalTimeOnPoint(currentDate, lastRequestAddress, addresses.get(i));
                     writer.newLine();
-                    writer.write("Estimated arrival time : " + currentDate);
+                    writer.write("Estimated arrival time : " + getDateFormated(currentDate));
                     writer.newLine();
                     writer.write("Deliver the parcel of the request (duration : ");
                     writer.write(String.valueOf(addressRequestMetadata.get(i).getY().getDeliveryDuration()/60));
-                    writer.write(" )");
+                    writer.write(" minutes)");
+                    writer.newLine();
+                    writer.write("Estimated departure time : " +getDateFormated(
+                            computeDepartureTimeOnPoint(currentDate, addressRequestMetadata.get(i).getY().getDeliveryDuration())));
+                    writer.newLine();
                     writer.newLine();
                     writer.write("Then go on : ");
                     RoadSegment roadSegment = getRoadsegmentBetweenAdresses(addresses.get(i), addresses.get(i + 1));
@@ -101,6 +111,13 @@ public class Roadmap {
 
                 }
             }
+            writer.newLine();
+            Address lastRequestAddress = findLastRequest(addresses.get(addresses.size()-1));
+            currentDate = computeArrivalTimeOnPoint(currentDate, lastRequestAddress, addresses.get(0));
+            writer.write("Arrival time : " + getDateFormated(currentDate));
+
+
+            writer.newLine();
             writer.close();
             System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
@@ -153,10 +170,21 @@ public class Roadmap {
         } else if (addressRequestMetadata.get(indexA1).getX().equals(EnumAddressType.PICKUP_ADDRESS)) {
             duration += addressRequestMetadata.get(indexA1).getY().getPickupDuration();
         }
-        Date afterAddingMins = new Date(timeInMSecs
-                + (int) duration * ONE_SECOND_IN_MILLIS);
 
-        return afterAddingMins;
+        return new Date(timeInMSecs
+                + (int) duration * ONE_SECOND_IN_MILLIS);
+    }
+
+    public Date computeDepartureTimeOnPoint(Date previousDate, double duration) {
+        long timeInMSecs = previousDate.getTime();
+        return new Date(timeInMSecs
+                + (int) duration * ONE_SECOND_IN_MILLIS);
+    }
+
+    public String getDateFormated(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+        return sdf.format(date);
+        // date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
     }
 
     public RoadSegment getRoadsegmentBetweenAdresses(Address a1, Address a2) {

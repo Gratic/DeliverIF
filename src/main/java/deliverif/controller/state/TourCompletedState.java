@@ -25,8 +25,6 @@ public class TourCompletedState implements State {
     @Override
     public void generateRoadMapButtonClick(Controller controller, Gui gui) {
         controller.setCurrentState(controller.generateRoadMap);
-        controller.getRoadmap().createFile();
-        controller.getRoadmap().WriteInFile();
     }
 
     @Override
