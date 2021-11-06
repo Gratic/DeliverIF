@@ -11,7 +11,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DeparturePointPanel extends ScrollItemPanel implements MouseListener, Observer {
+public class DeparturePointPanel extends ScrollItemPanel implements MouseListener {
 
 
     private final CityMap map;
@@ -28,7 +28,7 @@ public class DeparturePointPanel extends ScrollItemPanel implements MouseListene
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(textColor);
+        setColor(g);
         g.drawString("Departure Point : ", 10, 15);
         long idDeparturePointAdress = tour.getDepartureAddress().getId();
         int placeDeparture = 30;
@@ -49,10 +49,7 @@ public class DeparturePointPanel extends ScrollItemPanel implements MouseListene
     }
 
 
-    @Override
-    public void update(Observable observed, Object arg) {
-        super.update(observed, arg);
-    }
+
 
     public boolean selected() {
         return this.tour.isDepartureSelected();

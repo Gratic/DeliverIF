@@ -260,9 +260,7 @@ public class PDTSPWrapper {
         }
 
         // TASK 2: Updating DeliveryTour.
-        deliveryTour.getPath().clear();
-        deliveryTour.getPathAddresses().clear();
-        deliveryTour.getAddressRequestMetadata().clear();
+        deliveryTour.clear(false);
 
         for (int i = 0; i < realPath.size() - 1; i++) {
             long longCurrentNode = realPath.get(i);
@@ -277,29 +275,30 @@ public class PDTSPWrapper {
             String nodeType = listTypes.get(i);
             switch (nodeType) {
                 case "start", "end" -> {
-                    deliveryTour.addAddress(currentAddress, EnumAddressType.DEPARTURE_ADDRESS, null);
+                    deliveryTour.addAddressNoNotify(currentAddress, EnumAddressType.DEPARTURE_ADDRESS, null);
                     deliveryTour.getPath().add(rsCurrentToNext);
                 }
                 case "pickup" -> {
                     Integer requestNumber = listNodeRequest.get(i);
-                    deliveryTour.addAddress(currentAddress, EnumAddressType.PICKUP_ADDRESS, requests.get(requestNumber));
+                    deliveryTour.addAddressNoNotify(currentAddress, EnumAddressType.PICKUP_ADDRESS, requests.get(requestNumber));
                     deliveryTour.getPath().add(rsCurrentToNext);
                 }
                 case "delivery" -> {
                     Integer requestNumber = listNodeRequest.get(i);
-                    deliveryTour.addAddress(currentAddress, EnumAddressType.DELIVERY_ADDRESS, requests.get(requestNumber));
+                    deliveryTour.addAddressNoNotify(currentAddress, EnumAddressType.DELIVERY_ADDRESS, requests.get(requestNumber));
                     deliveryTour.getPath().add(rsCurrentToNext);
                 }
                 case "traversal" -> {
                     Integer requestNumber = listNodeRequest.get(i);
-                    deliveryTour.addAddress(currentAddress, EnumAddressType.TRAVERSAL_ADDRESS, null);
+                    deliveryTour.addAddressNoNotify(currentAddress, EnumAddressType.TRAVERSAL_ADDRESS, null);
                     deliveryTour.getPath().add(rsCurrentToNext);
                 }
             }
         }
 
         // We add the last address.
-        deliveryTour.addAddress(graphWrapper.getMap().getAddressById(realPath.get(realPath.size() - 1)), EnumAddressType.DEPARTURE_ADDRESS, null);
+        deliveryTour.addAddressNoNotify(graphWrapper.getMap().getAddressById(realPath.get(realPath.size() - 1)), EnumAddressType.DEPARTURE_ADDRESS, null);
+        deliveryTour.notifyObservers(deliveryTour);
     }
 
     /**

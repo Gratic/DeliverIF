@@ -4,17 +4,15 @@ package deliverif.gui.panel;
 import deliverif.gui.utils.ColorTheme;
 import deliverif.model.CityMap;
 import deliverif.model.DeliveryTour;
-import deliverif.model.Request;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class TextualViewScrollPanel extends JScrollPane {
 
-    private ArrayList<Request> requests;
     private final CityMap map;
     private final DeliveryTour tour;
+    RequestContainerPanel requestContainerPanel;
 
     public TextualViewScrollPanel(CityMap map, DeliveryTour tour) {
         super();
@@ -33,10 +31,10 @@ public class TextualViewScrollPanel extends JScrollPane {
     }
 
     private void init() {
-        RequestContainerPanel requestContainerPanel = new RequestContainerPanel(map, tour);
+        requestContainerPanel = new RequestContainerPanel(map, tour);
         this.setViewportView(requestContainerPanel);
-
-
     }
+
+
 }
 

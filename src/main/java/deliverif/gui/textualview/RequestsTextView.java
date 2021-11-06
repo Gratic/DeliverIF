@@ -19,7 +19,6 @@ public class RequestsTextView extends JPanel implements Observer {
         this.setBackground(ColorTheme.PANEL_2_BASE_BG);
         this.map = map;
         this.tour = tour;
-        this.tour.addObserver(this);
         this.setPreferredSize(new Dimension(280, 900));
         //this.setLayout(new BorderLayout());
         this.setLayout(new FlowLayout());
@@ -36,7 +35,7 @@ public class RequestsTextView extends JPanel implements Observer {
             System.out.println("No request loaded");
         } else {
             removeAll();
-            TextualViewScrollPanel textualViewScrollPanel = new TextualViewScrollPanel(map, tour);
+            textualViewScrollPanel = new TextualViewScrollPanel(map, tour);
             add(textualViewScrollPanel);
             revalidate();
             repaint();

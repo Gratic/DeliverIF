@@ -31,7 +31,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private final int DEFAULT_HEIGHT = 400;
     private final int MAP_BASE_SIZE = 1200;
 
-    private final double ICON_SIZE = 35;
+    private final double ICON_SIZE = 34;
     private final double ICON_SELECTED_MULT = 1.5;
 
     private final double MAX_ZOOM_LEVEL = 6.0;

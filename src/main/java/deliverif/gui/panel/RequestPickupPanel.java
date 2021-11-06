@@ -28,7 +28,7 @@ public class RequestPickupPanel extends RequestItemPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(textColor);
+        setColor(g);
 
         long idPickupAdress = request.getPickupAddress().getId();
 

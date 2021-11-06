@@ -69,7 +69,7 @@ public class DeliveryTour extends Observable {
 
     public void setDepartureTime(Date departureTime) {
         this.departureTime = departureTime;
-        this.notifyObservers(this);
+        this.notifyObservers();
     }
 
     public Date getDepartureTime() {
@@ -96,14 +96,22 @@ public class DeliveryTour extends Observable {
     }
 
     public void addAddress(Address addr, EnumAddressType type, Request req) {
+        this.addAddressNoNotify(addr, type, req);
+        this.notifyObservers();
+    }
+
+    public void addAddressNoNotify(Address addr, EnumAddressType type, Request req) {
         this.pathAddresses.add(addr);
         this.addressRequestMetadata.add(new Pair<>(type, req));
-        this.notifyObservers(this);
+    }
+
+    public void addAddressNoNotify(Address addr) {
+        this.pathAddresses.add(addr);
     }
 
     public void addAddress(Address addr) {
-        this.pathAddresses.add(addr);
-        this.notifyObservers(this);
+        this.addAddressNoNotify(addr);
+        this.notifyObservers();
     }
 
     public void loadRequestsFromFile(File requestsFile, CityMap map) throws RequestsLoadException {
@@ -115,23 +123,29 @@ public class DeliveryTour extends Observable {
             RequestsXMLHandler handler = new RequestsXMLHandler(this, map);
             parser.parse(requestsFile, handler);
 
-            this.notifyObservers(this);
+            this.notifyObservers("requests");
         } catch (SAXException | IOException | ParserConfigurationException exception) {
             throw new RequestsLoadException(exception);
         }
     }
 
-    public void clear() {
-        requests.clear();
+    public void clear(boolean clearRequests) {
+        if (clearRequests) {
+            requests.clear();
+            selectedElement = -2;
+        }
         path.clear();
         pathAddresses.clear();
         addressRequestMetadata.clear();
-        this.notifyObservers(this);
+    }
+
+    public void clear() {
+        clear(true);
     }
 
     public void addRequest(Request request) {
         requests.add(request);
-        this.notifyObservers(this);
+        this.notifyObservers();
     }
 
     // Request modifs from User

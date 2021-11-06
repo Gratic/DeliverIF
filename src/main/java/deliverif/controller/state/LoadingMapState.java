@@ -26,6 +26,7 @@ public class LoadingMapState implements State {
             try {
                 controller.getTour().clear();
                 controller.getCityMap().loadMapFromFile(file);
+                controller.getTour().notifyObservers();
                 controller.setCurrentState(controller.mapLoaded);
             } catch (MapLoadingException exception) {
                 exception.printStackTrace();

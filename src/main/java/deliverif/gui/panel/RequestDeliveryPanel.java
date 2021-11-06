@@ -22,7 +22,7 @@ public class RequestDeliveryPanel extends RequestItemPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(textColor);
+        setColor(g);
 
 
         long idDeliveryAdress = request.getDeliveryAddress().getId();
