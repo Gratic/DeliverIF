@@ -95,6 +95,10 @@ public class Roadmap {
         }
     }
 
+    /**
+     * @param roadSegment the roadSegment for which we want to know the travel time
+     * @return The duration it will take the cyclist to cover this segment (in minutes)
+     */
 
     public double computeDurationOnARoadSegment(RoadSegment roadSegment) {
         double duration = roadSegment.getLength() * 0.001 / SPEED;
@@ -102,6 +106,12 @@ public class Roadmap {
 
     }
 
+    /**
+     *
+     * @param a1 the start address of the subpath we want to know the travel time of
+     * @param a2 the stop address of the subpath
+     * @return The duration it will take the cyclist to cover this segment (in minutes).
+     */
     public double computeDurationOnSubPath(Address a1, Address a2) {
         List<RoadSegment> roadSegmentsSubPath = tour.getSubPathBetweenPoints(a1, a2);
         double duration = 0;
@@ -111,6 +121,14 @@ public class Roadmap {
         return duration;
     }
 
+    /**
+     * Computes the arrival time at a specific address, knowing the arrival time at a previous address and the
+     * pickup or delivery duration if the previous address is a pickup or delivery point.
+     * @param previousDate the arrival time at address a1.
+     * @param a1 the previous address.
+     * @param a2 the address we want to know the arrival time at.
+     * @return the arrival time on the address a2.
+     */
     public Date computeArrivalTimeOnPoint(Date previousDate, Address a1, Address a2) {
         long timeInMSecs = previousDate.getTime();
         double duration = computeDurationOnSubPath(a1, a2);
@@ -138,6 +156,11 @@ public class Roadmap {
         return finalRoadSegment;
     }
 
+    /**
+     * Find the address of the last processed request of the tour, compared to a current request.
+     * @param currentAddress the address of the current request.
+     * @return the address of the last processed request compared to currentAddress.
+     */
     public Address findLastRequest(Address currentAddress) {
         List<Address> addresses = tour.getPathAddresses();
         List<Pair<EnumAddressType, Request>> addressRequestMetadata = tour.getAddressRequestMetadata();
