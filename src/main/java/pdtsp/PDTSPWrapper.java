@@ -147,7 +147,7 @@ public class PDTSPWrapper {
 
         for(int node : realPathInteger)
         {
-            realPath.add(intToLong.get(node));
+            realPath.add(graphWrapper.idConvert(node));
         }
 
         if (DEBUG) {

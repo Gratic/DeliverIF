@@ -18,7 +18,7 @@ public class Roadmap {
     private final DeliveryTour tour;
     private final CityMap map;
     private final int SPEED = 15;
-    static final long ONE_MINUTE_IN_MILLIS = 60000;
+    static final long ONE_SECOND_IN_MILLIS = 1000;
 
     public Roadmap(Controller controller) {
         this.controller = controller;
@@ -52,39 +52,53 @@ public class Roadmap {
             List<Address> addresses = tour.getPathAddresses();
             List<Pair<EnumAddressType, Request>> addressRequestMetadata = tour.getAddressRequestMetadata();
             Date currentDate = departureTime;
+            RoadSegment previousRoadSegment = null;
             for (int i = 1; i < addressRequestMetadata.size(); i++) {
                 if (addressRequestMetadata.get(i).getX().equals(EnumAddressType.PICKUP_ADDRESS)) {
                     Address lastRequestAddress = findLastRequest(addresses.get(i));
                     currentDate = computeArrivalTimeOnPoint(currentDate, lastRequestAddress, addresses.get(i));
+                    writer.newLine();
                     writer.write("Estimated arrival time : " + currentDate);
                     writer.newLine();
                     writer.write("Pick the parcel (duration : ");
+                    writer.write(String.valueOf(addressRequestMetadata.get(i).getY().getPickupDuration()/60));
+                    writer.write(" minutes )");
                     writer.newLine();
-                    writer.write(addressRequestMetadata.get(i).getY().getPickupDuration());
-                    writer.write(" )");
-                    writer.newLine();
-                    writer.write("Then go on : ");
+
+
                     RoadSegment roadSegment = getRoadsegmentBetweenAdresses(addresses.get(i), addresses.get(i + 1));
+
+                    writer.write("Then go on : ");
                     writer.write(roadSegment.getName());
+                    writer.newLine();
+
+                    previousRoadSegment = roadSegment;
+
                 } else if (addressRequestMetadata.get(i).getX().equals(EnumAddressType.DELIVERY_ADDRESS)) {
                     Address lastRequestAddress = findLastRequest(addresses.get(i));
                     currentDate = computeArrivalTimeOnPoint(currentDate, lastRequestAddress, addresses.get(i));
+                    writer.newLine();
                     writer.write("Estimated arrival time : " + currentDate);
                     writer.newLine();
                     writer.write("Deliver the parcel of the request (duration : ");
-                    writer.newLine();
-                    writer.write(addressRequestMetadata.get(i).getY().getDeliveryDuration());
+                    writer.write(String.valueOf(addressRequestMetadata.get(i).getY().getDeliveryDuration()/60));
                     writer.write(" )");
                     writer.newLine();
                     writer.write("Then go on : ");
                     RoadSegment roadSegment = getRoadsegmentBetweenAdresses(addresses.get(i), addresses.get(i + 1));
                     writer.write(roadSegment.getName());
                     writer.newLine();
+
+                    previousRoadSegment = roadSegment;
                 } else if (addressRequestMetadata.get(i).getX().equals(EnumAddressType.TRAVERSAL_ADDRESS)) {
                     RoadSegment roadSegment = getRoadsegmentBetweenAdresses(addresses.get(i), addresses.get(i + 1));
-                    writer.write("Turn on ");
-                    writer.write(roadSegment.getName());
-                    writer.newLine();
+                    if(previousRoadSegment!=null && !previousRoadSegment.getName().equals(roadSegment.getName())&& !roadSegment.getName().equals("")) {
+                        writer.write("Then turn on : ");
+                        writer.write(roadSegment.getName());
+                        writer.newLine();
+                    }
+                    previousRoadSegment = roadSegment;
+
                 }
             }
             writer.close();
@@ -97,12 +111,12 @@ public class Roadmap {
 
     /**
      * @param roadSegment the roadSegment for which we want to know the travel time
-     * @return The duration it will take the cyclist to cover this segment (in minutes)
+     * @return The duration it will take the cyclist to cover this segment (in seconds)
      */
 
     public double computeDurationOnARoadSegment(RoadSegment roadSegment) {
         double duration = roadSegment.getLength() * 0.001 / SPEED;
-        return duration * 60; //Return duration in minutes
+        return duration * 60 * 60;
 
     }
 
@@ -110,7 +124,7 @@ public class Roadmap {
      *
      * @param a1 the start address of the subpath we want to know the travel time of
      * @param a2 the stop address of the subpath
-     * @return The duration it will take the cyclist to cover this segment (in minutes).
+     * @return The duration it will take the cyclist to cover this segment (in seconds).
      */
     public double computeDurationOnSubPath(Address a1, Address a2) {
         List<RoadSegment> roadSegmentsSubPath = tour.getSubPathBetweenPoints(a1, a2);
@@ -140,7 +154,7 @@ public class Roadmap {
             duration += addressRequestMetadata.get(indexA1).getY().getPickupDuration();
         }
         Date afterAddingMins = new Date(timeInMSecs
-                + ((int) duration * ONE_MINUTE_IN_MILLIS));
+                + (int) duration * ONE_SECOND_IN_MILLIS);
 
         return afterAddingMins;
     }

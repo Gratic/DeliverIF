@@ -6,14 +6,12 @@ import deliverif.gui.Gui;
 import deliverif.model.CityMap;
 import deliverif.model.DeliveryTour;
 import deliverif.controller.state.*;
+import deliverif.roadmap.Roadmap;
 
 import java.util.Stack;
 
 public class Controller {
-    
-    private Gui gui;
-    private CityMap cityMap;
-    private DeliveryTour tour;
+
 
 
     private final Gui gui;
@@ -37,7 +35,11 @@ public class Controller {
     public State addPickupRequest;
     public State deleteRequest;
 
+    private Roadmap roadmap;
+
     private ListOfCommands listOfCommands;
+
+    private Stack<State> stateStack;
 
     public Controller() {
         listOfCommands = new ListOfCommands();
@@ -46,8 +48,7 @@ public class Controller {
         tour = new DeliveryTour();
         gui = new Gui(this);
 
-        currentState = new InitState();
-        previousStates = new Stack<State>();
+        stateStack = new Stack<>();
 
         initState = new InitState();
         loadingMap = new LoadingMapState();
@@ -67,6 +68,8 @@ public class Controller {
         deleteRequest = new DeleteRequestState();
         popupDuration = new StatePopupDuration();
 
+        roadmap = new Roadmap(this);
+
 
         init();
     }
@@ -77,8 +80,7 @@ public class Controller {
         setCurrentState(initState);
 
         gui.init();
-        roadmap.createFile();
-        roadmap.WriteInFile();
+
     }
 
     // state functions
@@ -127,6 +129,10 @@ public class Controller {
 
     public void computingTourButtonClick(Gui gui) {
         this.getCurrentState().computingTourButtonClick(this, gui);
+    }
+
+    public void generateRoadmap(Gui gui){
+        this.getCurrentState().generateRoadMapButtonClick(this, gui);
     }
 
     public void continueComputationButtonClick(Gui gui) {
@@ -199,5 +205,9 @@ public class Controller {
 
     public Gui getGui() {
         return gui;
+    }
+
+    public Roadmap getRoadmap() {
+        return roadmap;
     }
 }

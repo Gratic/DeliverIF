@@ -81,7 +81,7 @@ public class BasicGraphWrapper {
         return longToInt.get(id);
     }
 
-    public long idConvert(Integer id) {
+    public long idConvert(int id) {
         return intToLong.get(id);
     }
 
