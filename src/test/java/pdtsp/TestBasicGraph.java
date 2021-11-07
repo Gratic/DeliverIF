@@ -20,16 +20,16 @@ public class TestBasicGraph {
          */
         Map<Integer, Collection<Pair<Integer, Double>>> map = new HashMap<>();
         Collection<Pair<Integer, Double>> arcs0 = new ArrayList<>();
-        arcs0.add(new Pair<Integer, Double>(1, 2d));
-        arcs0.add(new Pair<Integer, Double>(2, 3d));
+        arcs0.add(new Pair<>(1, 2d));
+        arcs0.add(new Pair<>(2, 3d));
 
         Collection<Pair<Integer, Double>> arcs1 = new ArrayList<>();
-        arcs1.add(new Pair<Integer, Double>(0, 2d));
-        arcs1.add(new Pair<Integer, Double>(2, 2d));
+        arcs1.add(new Pair<>(0, 2d));
+        arcs1.add(new Pair<>(2, 2d));
 
         Collection<Pair<Integer, Double>> arcs2 = new ArrayList<>();
-        arcs2.add(new Pair<Integer, Double>(0, 3d));
-        arcs2.add(new Pair<Integer, Double>(1, 2d));
+        arcs2.add(new Pair<>(0, 3d));
+        arcs2.add(new Pair<>(1, 2d));
 
         map.put(0, arcs0);
         map.put(1, arcs1);
@@ -77,32 +77,32 @@ public class TestBasicGraph {
         Map<Integer, Collection<Pair<Integer, Double>>> arcs = new HashMap<>();
 
         Collection<Pair<Integer, Double>> arc0 = new ArrayList<>();
-        arc0.add(new Pair<Integer, Double>(1, 1d));
-        arc0.add(new Pair<Integer, Double>(3, 2d));
+        arc0.add(new Pair<>(1, 1d));
+        arc0.add(new Pair<>(3, 2d));
 
         Collection<Pair<Integer, Double>> arc1 = new ArrayList<>();
-        arc1.add(new Pair<Integer, Double>(0, 1d));
-        arc1.add(new Pair<Integer, Double>(2, 3d));
-        arc1.add(new Pair<Integer, Double>(3, 1d));
+        arc1.add(new Pair<>(0, 1d));
+        arc1.add(new Pair<>(2, 3d));
+        arc1.add(new Pair<>(3, 1d));
 
         Collection<Pair<Integer, Double>> arc2 = new ArrayList<>();
-        arc2.add(new Pair<Integer, Double>(1, 3d));
-        arc2.add(new Pair<Integer, Double>(4, 1d));
-        arc2.add(new Pair<Integer, Double>(5, 3d));
+        arc2.add(new Pair<>(1, 3d));
+        arc2.add(new Pair<>(4, 1d));
+        arc2.add(new Pair<>(5, 3d));
 
         Collection<Pair<Integer, Double>> arc3 = new ArrayList<>();
-        arc3.add(new Pair<Integer, Double>(0, 2d));
-        arc3.add(new Pair<Integer, Double>(1, 1d));
-        arc3.add(new Pair<Integer, Double>(4, 4d));
+        arc3.add(new Pair<>(0, 2d));
+        arc3.add(new Pair<>(1, 1d));
+        arc3.add(new Pair<>(4, 4d));
 
         Collection<Pair<Integer, Double>> arc4 = new ArrayList<>();
-        arc4.add(new Pair<Integer, Double>(2, 1d));
-        arc4.add(new Pair<Integer, Double>(3, 4d));
-        arc4.add(new Pair<Integer, Double>(5, 1d));
+        arc4.add(new Pair<>(2, 1d));
+        arc4.add(new Pair<>(3, 4d));
+        arc4.add(new Pair<>(5, 1d));
 
         Collection<Pair<Integer, Double>> arc5 = new ArrayList<>();
-        arc5.add(new Pair<Integer, Double>(2, 3d));
-        arc5.add(new Pair<Integer, Double>(4, 1d));
+        arc5.add(new Pair<>(2, 3d));
+        arc5.add(new Pair<>(4, 1d));
 
         arcs.put(0, arc0);
         arcs.put(1, arc1);
@@ -165,5 +165,70 @@ public class TestBasicGraph {
 
         Assertions.assertEquals(3, g.getCost(5, 2));
         Assertions.assertEquals(1, g.getCost(5, 4));
+    }
+
+    @Test
+    void OutOfBoundsTest() {
+        Map<Integer, Collection<Pair<Integer, Double>>> map = new HashMap<>();
+        Collection<Pair<Integer, Double>> arcs0 = new ArrayList<>();
+        arcs0.add(new Pair<>(1, 2d));
+        arcs0.add(new Pair<>(2, 3d));
+
+        Collection<Pair<Integer, Double>> arcs1 = new ArrayList<>();
+        arcs1.add(new Pair<>(0, 2d));
+        arcs1.add(new Pair<>(2, 2d));
+
+        Collection<Pair<Integer, Double>> arcs2 = new ArrayList<>();
+        arcs2.add(new Pair<>(0, 3d));
+        arcs2.add(new Pair<>(1, 2d));
+
+        map.put(0, arcs0);
+        map.put(1, arcs1);
+        map.put(2, arcs2);
+
+        Graph g = new BasicGraph(map.size(), map);
+
+        Assertions.assertEquals(-1, g.getCost(-1, -1));
+        Assertions.assertEquals(-1, g.getCost(0, -1));
+        Assertions.assertEquals(-1, g.getCost(-1, 0));
+
+        Assertions.assertEquals(-1, g.getCost(972, 945));
+        Assertions.assertEquals(-1, g.getCost(0, 945));
+        Assertions.assertEquals(-1, g.getCost(972, 0));
+
+        Assertions.assertFalse(g.isArc(-1, -1));
+        Assertions.assertFalse(g.isArc(0, -1));
+        Assertions.assertFalse(g.isArc(-1, 0));
+
+        Assertions.assertFalse(g.isArc(972, 945));
+        Assertions.assertFalse(g.isArc(0, 945));
+        Assertions.assertFalse(g.isArc(972, 0));
+
+        BasicGraph.printGraph(g);
+    }
+
+    @Test
+    void nonConnectedGraph() {
+        Map<Integer, Collection<Pair<Integer, Double>>> map = new HashMap<>();
+        Collection<Pair<Integer, Double>> arcs0 = new ArrayList<>();
+        arcs0.add(new Pair<>(1, 2d));
+
+        Collection<Pair<Integer, Double>> arcs1 = new ArrayList<>();
+
+        map.put(0, arcs0);
+        map.put(1, arcs1);
+
+        Graph g = new BasicGraph(map.size(), map);
+
+        Assertions.assertEquals(2, g.getNbVertices());
+
+        Assertions.assertEquals(1, g.getOutgoingArcs(0).size());
+        Assertions.assertEquals(0, g.getOutgoingArcs(1).size());
+
+        Assertions.assertTrue(g.isArc(0,1));
+        Assertions.assertFalse(g.isArc(1, 0));
+
+        Assertions.assertEquals(2d, g.getCost(0, 1));
+        Assertions.assertEquals(-1d, g.getCost(1, 0));
     }
 }
