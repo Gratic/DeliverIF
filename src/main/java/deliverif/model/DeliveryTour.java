@@ -323,6 +323,25 @@ public class DeliveryTour extends Observable {
         return new Pair<>(minDist, closest);
     }
 
+    public List<Pair<Pair<EnumAddressType, Request>, Double>> getClosestRequestsFrom(Coord pos, double maxDist) {
+        List<Pair<Pair<EnumAddressType, Request>, Double>> res = new ArrayList<>();
+        for (Request req : requests) {
+            res.add(new Pair<>(new Pair<>(EnumAddressType.PICKUP_ADDRESS, req), req.getPickupAddress().dist(pos)));
+            res.add(new Pair<>(new Pair<>(EnumAddressType.DELIVERY_ADDRESS, req), req.getDeliveryAddress().dist(pos)));
+        }
+        res.add(new Pair<>(new Pair<>(EnumAddressType.DEPARTURE_ADDRESS, null), this.getDepartureAddress().dist(pos)));
+
+        res.sort(Pair::compareTo);
+        int index = 0;
+        for (Pair<Pair<EnumAddressType, Request>, Double> p : res) {
+            if (p.getY() > maxDist) {
+                break;
+            }
+            index++;
+        }
+        return res.subList(0, index);
+    }
+
     private final static double THRESHOLD = 50d;
 
     private void toggleSelect(int n) {

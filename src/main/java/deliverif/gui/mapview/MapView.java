@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -304,10 +305,9 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         if (this.isMapLoaded()) {
             Pair<Double, Address> closestAddr = map.getClosestAddressFrom(XYToLatLong(e.getPoint()));  // add dist if wished
 
-            if(closestAddr.getX() < 50.) {
+            if (closestAddr.getX() < 50.) {
                 hoveredAddress = closestAddr.getY();
-            }
-            else {
+            } else {
                 hoveredAddress = null;
             }
             repaint();
@@ -318,7 +318,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        zoomView(e.getPoint(),e.getWheelRotation());
+        zoomView(e.getPoint(), e.getWheelRotation());
         System.out.println(e.getX() + " " + e.getY());
     }
 
@@ -352,14 +352,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     public void translateView(int deltaX, int deltaY) {
         this.xTranslation += deltaX;
         this.yTranslation += deltaY;
-/*
-        Point farthestPoint = this.latlongToXY(this.latitudeMax, this.longitudeMax);
 
-        // TODO this equation does not handles maps smaller than main window
-        if (this.xTranslation + this.getWidth() > farthestPoint.x) {
-            System.out.println("X out of bounds !");
-        }
-*/
         this.repaint();
     }
 
@@ -380,41 +373,87 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 System.out.println(p.getY().getId() + " - " + p.getX());
             }
 
-            if(closestAddresses.size() > 0) {  // don't call addressClick if no addresses were actually clicked
-                controller.addressClick(controller.getGui(), closestAddresses);
+            if (closestAddresses.size() > 0) {  // don't call addressClick if no addresses were actually clicked
+                controller.addressClick(controller.getGui(), closestAddresses);  // TODO choose address here
+
+                // TODO if an address was chosen, don't execute request selection path
             }
 
             // check request selection / controller event
-            if(this.isTourLoaded()) {  // request highlighting
+            if (this.isTourLoaded()) {  // request highlighting
                 Coord pos = XYToLatLong(e.getPoint());
-                tour.selectElement(pos);
+                List<Pair<Pair<EnumAddressType, Request>, Double>> requests = tour.getClosestRequestsFrom(pos, 50.);
+                Pair<EnumAddressType, Request> selectedRequest = null;
 
-                if(tour.isDepartureSelected()) {
-                    controller.requestClick(controller.getGui(), null, EnumAddressType.DEPARTURE_ADDRESS);
+                if (requests.size() > 1) {
+                    selectedRequest = this.showRequestSelectionForm(requests);
                 }
-                else if(tour.getSelectedRequest() != null) {
-                    Request request = tour.getSelectedRequest();
-                    EnumAddressType addressType = null;
+                else if (requests.size() == 1) {
+                    selectedRequest = requests.get(0).getX();
+                }
 
-                    for(Pair<Double, Address> addressPair : closestAddresses) {
-                        if(addressPair.getY().equals(request.getDeliveryAddress())) {
-                            addressType = EnumAddressType.DELIVERY_ADDRESS;
-                            break;
-                        }
-                        else if(addressPair.getY().equals(request.getPickupAddress())) {
-                            addressType = EnumAddressType.PICKUP_ADDRESS;
-                            break;
-                        }
+                if(selectedRequest != null) {
+                    if(selectedRequest.getX() == EnumAddressType.DEPARTURE_ADDRESS) {
+                        tour.selectDepartureAddress();
+                    }
+                    else {
+                        tour.selectRequest(selectedRequest.getY());
                     }
 
-                    controller.requestClick(controller.getGui(), request, addressType);
+                    controller.requestClick(controller.getGui(), selectedRequest.getY(), selectedRequest.getX());
                 }
-
 
                 this.repaint();
             }
 
         }
+    }
+
+    /**
+     * Opens a popup that allows the user to choose a request among multiple nearby requests
+     * @return null if the user cancelled the operation, the selected request address otherwise
+     */
+    private Pair<EnumAddressType, Request> showRequestSelectionForm(List<Pair<Pair<EnumAddressType, Request>, Double>> requests) {
+        JPanel optionPanel = new JPanel();
+        optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+        optionPanel.add(new JLabel("There are several request addresses nearby. Please select one among those or retry:"));
+        List<JRadioButton> choices = new ArrayList<>();
+        ButtonGroup radioGroup = new ButtonGroup();
+
+        for (Pair<Pair<EnumAddressType, Request>, Double> request : requests) {
+            String message;
+            switch (request.getX().getX()) {
+                case DELIVERY_ADDRESS -> {
+                    message = "Delivery request address (" + String.format("%.2f", request.getY()) + "m away)";
+                }
+                case PICKUP_ADDRESS -> {
+                    message = "Pickup request address (" + String.format("%.2f", request.getY()) + "m away)";
+                }
+                case DEPARTURE_ADDRESS -> {
+                    message = "Departure address (" + String.format("%.2f", request.getY()) + "m away)";
+                }
+                default -> {
+                    message = "Entrée erronée";
+                }
+            }
+
+            JRadioButton button = new JRadioButton(message);
+            radioGroup.add(button);
+            choices.add(button);
+        }
+
+        int option = JOptionPane.showConfirmDialog(this,
+                optionPanel, "Choose a request address", JOptionPane.OK_CANCEL_OPTION);
+        if(option == JOptionPane.OK_OPTION) {
+            int i = 0;
+            for(JRadioButton button : choices) {
+                if(button.isSelected()) {
+                    return requests.get(i).getX();
+                }
+                i++;
+            }
+        }
+        return null;
     }
 
 
