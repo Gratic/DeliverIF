@@ -29,19 +29,6 @@ public class Roadmap {
 
     }
 
-    public void createFile() {
-        try {
-            File roadmap = new File("resources/roadmap/roadmap.txt");
-            if (roadmap.createNewFile()) {
-                System.out.println("File created: " + roadmap.getName());
-            } else {
-                System.out.println("File already exists.");
-            }
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
 
     public void WriteInFile(File file) {
         try {
@@ -50,7 +37,6 @@ public class Roadmap {
             writer.write("Departure time: ");
             writer.write(getDateFormated(departureTime));
             writer.newLine();
-            writer.write("RoadSegments : ");
             List<Address> addresses = tour.getPathAddresses();
             List<Pair<EnumAddressType, Request>> addressRequestMetadata = tour.getAddressRequestMetadata();
             Date currentDate = departureTime;
@@ -67,15 +53,16 @@ public class Roadmap {
                     writer.write(" minutes)");
                     writer.newLine();
                     writer.write("Estimated departure time : " + getDateFormated(
-                            computeDepartureTimeOnPoint(currentDate, addressRequestMetadata.get(i).getY().getDeliveryDuration())));
+                            computeDepartureTimeOnPoint(currentDate, addressRequestMetadata.get(i).getY().getPickupDuration())));
                     writer.newLine();
                     writer.newLine();
 
 
                     RoadSegment roadSegment = getRoadsegmentBetweenAdresses(addresses.get(i), addresses.get(i + 1));
 
-                    writer.write("Then go on : ");
+                    writer.write("Then go onto ");
                     writer.write(roadSegment.getName());
+                    writer.write(" for " + (int) roadSegment.getLength() + "m");
                     writer.newLine();
 
                     previousRoadSegment = roadSegment;
@@ -94,18 +81,30 @@ public class Roadmap {
                             computeDepartureTimeOnPoint(currentDate, addressRequestMetadata.get(i).getY().getDeliveryDuration())));
                     writer.newLine();
                     writer.newLine();
-                    writer.write("Then go on : ");
+                    writer.write("Then go onto ");
                     RoadSegment roadSegment = getRoadsegmentBetweenAdresses(addresses.get(i), addresses.get(i + 1));
                     writer.write(roadSegment.getName());
+                    writer.write(" for " + (int) roadSegment.getLength() + "m");
                     writer.newLine();
 
                     previousRoadSegment = roadSegment;
                 } else if (addressRequestMetadata.get(i).getX().equals(EnumAddressType.TRAVERSAL_ADDRESS)) {
                     RoadSegment roadSegment = getRoadsegmentBetweenAdresses(addresses.get(i), addresses.get(i + 1));
-                    if(previousRoadSegment!=null && !previousRoadSegment.getName().equals(roadSegment.getName())&& !roadSegment.getName().equals("")) {
-                        writer.write("Then turn on : ");
+                    if (previousRoadSegment == null){
+                        writer.write("Go onto ");
                         writer.write(roadSegment.getName());
+                        writer.write(" for " + (int) roadSegment.getLength() + "m");
                         writer.newLine();
+                    }
+                    else {
+                        if(!previousRoadSegment.getName().equals(roadSegment.getName()) && !roadSegment.getName().equals(""))
+                        {
+                            writer.write(getDirection(previousRoadSegment.getOrigin(), roadSegment.getOrigin(),
+                                    roadSegment.getDestination()));
+                            writer.write(roadSegment.getName());
+                            writer.write(" for " + (int) roadSegment.getLength() + "m");
+                            writer.newLine();
+                        }
                     }
                     previousRoadSegment = roadSegment;
 
@@ -143,9 +142,9 @@ public class Roadmap {
      * @param a2 the stop address of the subpath
      * @return The duration it will take the cyclist to cover this segment (in seconds).
      */
-    public double computeDurationOnSubPath(Address a1, Address a2) {
+    public int computeDurationOnSubPath(Address a1, Address a2) {
         List<RoadSegment> roadSegmentsSubPath = tour.getSubPathBetweenPoints(a1, a2);
-        double duration = 0;
+        int duration = 0;
         for (RoadSegment roadSegment : roadSegmentsSubPath) {
             duration += computeDurationOnARoadSegment(roadSegment);
         }
@@ -162,7 +161,7 @@ public class Roadmap {
      */
     public Date computeArrivalTimeOnPoint(Date previousDate, Address a1, Address a2) {
         long timeInMSecs = previousDate.getTime();
-        double duration = computeDurationOnSubPath(a1, a2);
+        int duration = computeDurationOnSubPath(a1, a2);
         List<Pair<EnumAddressType, Request>> addressRequestMetadata = tour.getAddressRequestMetadata();
         int indexA1 = tour.getIndexOfAddress(a1);
         if (addressRequestMetadata.get(indexA1).getX().equals(EnumAddressType.DELIVERY_ADDRESS)) {
@@ -172,13 +171,13 @@ public class Roadmap {
         }
 
         return new Date(timeInMSecs
-                + (int) duration * ONE_SECOND_IN_MILLIS);
+                +  duration * ONE_SECOND_IN_MILLIS);
     }
 
-    public Date computeDepartureTimeOnPoint(Date previousDate, double duration) {
+    public Date computeDepartureTimeOnPoint(Date previousDate, int duration) {
         long timeInMSecs = previousDate.getTime();
         return new Date(timeInMSecs
-                + (int) duration * ONE_SECOND_IN_MILLIS);
+                +  duration * ONE_SECOND_IN_MILLIS);
     }
 
     public String getDateFormated(Date date){
@@ -217,4 +216,17 @@ public class Roadmap {
         return lastAddress;
     }
 
+    public String getDirection(Address a1, Address a2, Address a3) {
+        double angle = Coord.getAngle(a1.getCoords(), a2.getCoords(), a3.getCoords());
+        if (Math.abs(angle-Math.PI) < 1){
+            return "Then go on ";
+        }
+        else if (angle > 0){
+            return "Then turn right on ";
+        }
+        else {
+            return "Then turn left on ";
+        }
+    }
 }
+
