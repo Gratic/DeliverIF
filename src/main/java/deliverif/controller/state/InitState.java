@@ -7,9 +7,6 @@ public class InitState implements State {
 
     @Override
     public void run(Controller c, Gui gui) {
-        // disable all buttons except loadMapButton
-        gui.getControlPanel().loadRequestsButton.setEnabled(false);
-        gui.getControlPanel().addRequestButton.setEnabled(false);
-        gui.getControlPanel().deleteRequestButton.setEnabled(false);
+
     }
 }

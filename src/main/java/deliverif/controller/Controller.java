@@ -45,7 +45,7 @@ public class Controller {
     private Stack<State> stateStack;
 
     public Controller() {
-        listOfCommands = new ListOfCommands();
+        listOfCommands = new ListOfCommands(this);
 
         cityMap = new CityMap();
         tour = new DeliveryTour();

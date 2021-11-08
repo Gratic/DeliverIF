@@ -15,17 +15,16 @@ import java.nio.file.Path;
 public class Assets {
 
     public static Font expletusSans, minecraftia;
-    public static BufferedImage deliveryImage, pickupImage, departureImage, loadMapImage, addRequestImage, editRequestImage, loadRequestImage, removeRequestImage;
-    public static ImageIcon deliveryIcon, pickupIcon, departureIcon, loadMapIcon, addRequestIcon, editRequestIcon, loadRequestIcon, removeRequestIcon;
+    public static BufferedImage deliveryImage, pickupImage, departureImage, loadMapImage, addRequestImage, editRequestImage, loadRequestImage, removeRequestImage, undoImage, redoImage;
+    public static ImageIcon deliveryIcon, pickupIcon, departureIcon, loadMapIcon, addRequestIcon, editRequestIcon, loadRequestIcon, removeRequestIcon, undoIcon, redoIcon;
 
     public static void init() {
-        // fonts
+        // fonts (NOTE: Do not throw errors)
         expletusSans = FontLoader.loadFontToSize(
                 Path.of("resources/fonts/ExpletusSans-SemiBold.ttf"), 28f);
         //Minecraftia-Regular.ttf
         minecraftia = FontLoader.loadFontToSize(
                 Path.of("resources/fonts/Minecraftia-Regular.ttf"), 28f);
-
 
         System.out.println("t");
 
@@ -38,6 +37,8 @@ public class Assets {
             editRequestImage = ImageIO.read(new File("resources/assets/icons/editRequest.png"));
             loadRequestImage = ImageIO.read(new File("resources/assets/icons/loadRequest.png"));
             removeRequestImage = ImageIO.read(new File("resources/assets/icons/removeRequest.png"));
+            undoImage = ImageIO.read(new File("resources/assets/icons/arrow-u-left-bottom-bold.png"));
+            redoImage = ImageIO.read(new File("resources/assets/icons/arrow-u-right-bottom-bold.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,8 +51,8 @@ public class Assets {
         editRequestIcon = new ImageIcon(editRequestImage);
         loadRequestIcon = new ImageIcon(loadRequestImage);
         removeRequestIcon = new ImageIcon(removeRequestImage);
-
-
+        undoIcon = new ImageIcon(undoImage);
+        redoIcon = new ImageIcon(redoImage);
     }
 
 
