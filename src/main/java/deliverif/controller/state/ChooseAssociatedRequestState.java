@@ -2,6 +2,8 @@ package deliverif.controller.state;
 
 import deliverif.controller.Controller;
 import deliverif.gui.Gui;
+import deliverif.model.EnumAddressType;
+import deliverif.model.Request;
 
 public class ChooseAssociatedRequestState implements State {
     @Override
@@ -10,7 +12,7 @@ public class ChooseAssociatedRequestState implements State {
     }
 
     @Override
-    public void requestClick(Controller controller, Gui gui) {
+    public void requestClick(Controller controller, Gui gui, Request request, EnumAddressType addressType) {
         controller.setCurrentState(controller.deleteRequest);
     }
 

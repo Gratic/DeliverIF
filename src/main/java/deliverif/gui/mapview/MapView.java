@@ -1,9 +1,7 @@
 package deliverif.gui.mapview;
 
 import deliverif.controller.Controller;
-import deliverif.controller.state.ChooseRequestToDeleteState;
 import deliverif.controller.state.MapLoadedState;
-import deliverif.controller.state.RequestsLoadedState;
 import deliverif.gui.utils.ColorTheme;
 import deliverif.model.*;
 import deliverif.observer.Observable;
@@ -43,7 +41,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private final float PATH_SIZE_MULT = 1.75f;
     private final float BOTH_WAY_MULT = 1.25f;
 
-    private final int HOVER_SIZE = 10;
+    private final int HOVER_SIZE = 5;
 
     private double
             latitudeMin = Double.MAX_VALUE,
@@ -94,7 +92,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
                 if (hoveredAddress != null && address == hoveredAddress) {
                     Point pos = latlongToXY(address.getCoords());
-                    g.fillOval(pos.x - HOVER_SIZE / 2, pos.y - HOVER_SIZE / 2, HOVER_SIZE, HOVER_SIZE);
+                    int hoverSize = (int) (HOVER_SIZE * this.zoomLevel);
+                    g.fillOval(pos.x - hoverSize / 2, pos.y - hoverSize / 2, hoverSize, hoverSize);
                 }
                 Collection<RoadSegment> segments = this.map.getSegmentsOriginatingFrom(address.getId());
                 if (segments != null) {
@@ -270,7 +269,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     }
 
     private boolean isTourLoaded() {
-        return tour != null && tour.getRequests().size() > 0;
+        return tour != null && tour.getRequests().size() > 0; // TODO warning, tour could have no requests at the beginning
     }
 
     @Override
@@ -302,9 +301,15 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     public void mouseMoved(MouseEvent e) {
         this.lastPointDragged = null;
 
-        if (controller.getCurrentState() instanceof MapLoadedState) {
-            Pair<Double, Address> closestAddr = map.getClosestAddressFrom(XYToLatLong(e.getPoint()));
-            hoveredAddress = closestAddr.getY();
+        if (this.isMapLoaded()) {
+            Pair<Double, Address> closestAddr = map.getClosestAddressFrom(XYToLatLong(e.getPoint()));  // add dist if wished
+
+            if(closestAddr.getX() < 50.) {
+                hoveredAddress = closestAddr.getY();
+            }
+            else {
+                hoveredAddress = null;
+            }
             repaint();
         } else {
             hoveredAddress = null;
@@ -367,19 +372,48 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             xTranslation = 0;
             this.repaint();
         }
-        if (SwingUtilities.isLeftMouseButton(e) && controller.getCurrentState() instanceof RequestsLoadedState) {
-            Coord pos = XYToLatLong(e.getPoint());
-            tour.selectElement(pos);
 
-            this.repaint();
-        }
-
-        if (controller.getCurrentState() instanceof ChooseRequestToDeleteState) {
-            List<Pair<Double, Address>> closestAddresses = map.getClosestAddressesForm(XYToLatLong(e.getPoint()), 50.);
+        if (SwingUtilities.isLeftMouseButton(e)) { // left click on map
+            // trigger controller address event
+            List<Pair<Double, Address>> closestAddresses = map.getClosestAddressesFrom(XYToLatLong(e.getPoint()), 50.);
             for (Pair<Double, Address> p : closestAddresses) {
                 System.out.println(p.getY().getId() + " - " + p.getX());
             }
-            controller.addressClick(controller.getGui(), closestAddresses.size() > 1);
+
+            if(closestAddresses.size() > 0) {  // don't call addressClick if no addresses were actually clicked
+                controller.addressClick(controller.getGui(), closestAddresses);
+            }
+
+            // check request selection / controller event
+            if(this.isTourLoaded()) {  // request highlighting
+                Coord pos = XYToLatLong(e.getPoint());
+                tour.selectElement(pos);
+
+                if(tour.isDepartureSelected()) {
+                    controller.requestClick(controller.getGui(), null, EnumAddressType.DEPARTURE_ADDRESS);
+                }
+                else if(tour.getSelectedRequest() != null) {
+                    Request request = tour.getSelectedRequest();
+                    EnumAddressType addressType = null;
+
+                    for(Pair<Double, Address> addressPair : closestAddresses) {
+                        if(addressPair.getY().equals(request.getDeliveryAddress())) {
+                            addressType = EnumAddressType.DELIVERY_ADDRESS;
+                            break;
+                        }
+                        else if(addressPair.getY().equals(request.getPickupAddress())) {
+                            addressType = EnumAddressType.PICKUP_ADDRESS;
+                            break;
+                        }
+                    }
+
+                    controller.requestClick(controller.getGui(), request, addressType);
+                }
+
+
+                this.repaint();
+            }
+
         }
     }
 

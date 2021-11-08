@@ -2,6 +2,10 @@ package deliverif.controller.state;
 
 import deliverif.controller.Controller;
 import deliverif.gui.Gui;
+import deliverif.model.Address;
+import pdtsp.Pair;
+
+import java.util.List;
 
 public class ChooseRequestToDeleteState implements State {
 
@@ -12,10 +16,10 @@ public class ChooseRequestToDeleteState implements State {
     }
 
     @Override
-    public void addressClick(Controller controller, Gui gui, boolean overlap) {
+    public void addressClick(Controller controller, Gui gui, List<Pair<Double, Address>> addresses) {
         //TODO: Find a way to detect overlapping points
         //case delete request
-        if (overlap) {
+        if (addresses.size() > 1) {
             controller.setCurrentState(controller.chooseAssociatedRequest);
         } else {
             controller.setCurrentState(controller.deleteRequest);

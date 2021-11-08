@@ -7,7 +7,10 @@ import deliverif.model.CityMap;
 import deliverif.model.DeliveryTour;
 import deliverif.controller.state.*;
 import deliverif.roadmap.Roadmap;
+import deliverif.model.*;
+import pdtsp.Pair;
 
+import java.util.List;
 import java.util.Stack;
 
 public class Controller {
@@ -23,7 +26,7 @@ public class Controller {
     public State mapLoaded;
     public State loadingRequests;
     public State requestsLoaded;
-    public State popupDuration;
+    public State requestDurationPopup;
     public State computingTour;
     public State tourCompleted;
     public State generateRoadMap;
@@ -66,7 +69,7 @@ public class Controller {
         chooseRequestToDelete = new ChooseRequestToDeleteState();
         chooseAssociatedRequest = new ChooseAssociatedRequestState();
         deleteRequest = new DeleteRequestState();
-        popupDuration = new StatePopupDuration();
+        requestDurationPopup = new RequestPopupDurationState();
 
         roadmap = new Roadmap(this);
 
@@ -80,7 +83,6 @@ public class Controller {
         setCurrentState(initState);
 
         gui.init();
-
     }
 
     // state functions
@@ -159,28 +161,16 @@ public class Controller {
         this.getCurrentState().cancelButtonClick(this, gui);
     }
 
-    public void addPickupButtonClick(Gui gui) {
-        this.getCurrentState().addPickupButtonClick(this, gui);
-    }
-
-    public void addDeliveryButtonClick(Gui gui) {
-        this.getCurrentState().addDeliveryButtonClick(this, gui);
-    }
-
-    public void validateDeliveryButtonClick(Gui gui) {
-        this.getCurrentState().addDeliveryButtonClick(this, gui);
-    }
-
     public void deleteButtonClick(Gui gui) {
         this.getCurrentState().deleteButtonClick(this, gui);
     }
 
-    public void addressClick(Gui gui, boolean overlap) {
-        this.getCurrentState().addressClick(this, gui, overlap);
+    public void addressClick(Gui gui, List<Pair<Double, Address>> addresses) {
+        this.getCurrentState().addressClick(this, gui, addresses);
     }
 
-    public void requestClick(Gui gui) {
-        this.getCurrentState().requestClick(this, gui);
+    public void requestClick(Gui gui, Request request, EnumAddressType addressType) {
+        this.getCurrentState().requestClick(this, gui, request, addressType);
     }
 
     public void deleteRequestButton(Gui gui) {

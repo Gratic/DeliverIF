@@ -131,4 +131,8 @@ public class DisplayRequestsView extends ViewState implements ActionListener, Ob
             textualViewPanel.repaint();
         }
     }
+
+    public JButton getComputeButton() {
+        return computeButton;
+    }
 }
