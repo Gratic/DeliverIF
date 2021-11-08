@@ -386,5 +386,20 @@ public class DeliveryTour extends Observable {
         return index;
     }
 
-
+    /**
+     * Returns the index of the next pickup/delivery/departure address in the list
+     * If none is found, returns the size of the list
+     * @param startIndex : the index from which to start the search. Search doesn't look for addresses at this index.
+     * @return the index of the next address
+     */
+    public int nextRequestAddressIndex(int startIndex) {
+        int pos = startIndex + 1;
+        while(pos < this.pathAddresses.size()) {
+            if(this.addressRequestMetadata.get(pos).getX() != EnumAddressType.TRAVERSAL_ADDRESS) {
+                return pos;
+            }
+            pos++;
+        }
+        return pos;
+    }
 }
