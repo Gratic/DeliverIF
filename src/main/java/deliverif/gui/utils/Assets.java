@@ -37,8 +37,8 @@ public class Assets {
             editRequestImage = ImageIO.read(new File("resources/assets/icons/editRequest.png"));
             loadRequestImage = ImageIO.read(new File("resources/assets/icons/loadRequest.png"));
             removeRequestImage = ImageIO.read(new File("resources/assets/icons/removeRequest.png"));
-            undoImage = ImageIO.read(new File("resources/assets/icons/arrow-u-left-bottom-bold.png"));
-            redoImage = ImageIO.read(new File("resources/assets/icons/arrow-u-right-bottom-bold.png"));
+            undoImage = ImageIO.read(new File("resources/assets/icons/undo.png"));
+            redoImage = ImageIO.read(new File("resources/assets/icons/redo.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

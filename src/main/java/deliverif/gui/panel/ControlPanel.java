@@ -92,7 +92,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         northPanel.add(deleteRequestButton);
 
         // undo & redo
-        undoButton = new JButton(new ImageIcon(dye(Assets.undoImage, Color.BLACK)));
+        undoButton = new JButton(Assets.undoIcon);
         undoButton.setPreferredSize(
                 new Dimension(50, 50)
         );
@@ -100,7 +100,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         undoButton.setEnabled(false);
         southPanel.add(undoButton);
 
-        redoButton = new JButton(new ImageIcon(dye(Assets.redoImage, Color.BLACK)));
+        redoButton = new JButton(Assets.redoIcon);
         redoButton.setPreferredSize(
                 new Dimension(50, 50)
         );

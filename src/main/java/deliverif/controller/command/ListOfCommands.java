@@ -32,7 +32,7 @@ public class ListOfCommands {
     }
 
     public void undo() {
-        if (lastCommandIndex >= 0) {
+        if (isUndoPossible()) {
             try {
                 commands.get(lastCommandIndex).doCommand();
             } catch (Exception e) {
@@ -61,6 +61,10 @@ public class ListOfCommands {
 
     public int getLastCommandIndex() {
         return lastCommandIndex;
+    }
+
+    private boolean isUndoPossible() {
+        return lastCommandIndex >= 0;
     }
 
     private boolean isRedoPossible() {
