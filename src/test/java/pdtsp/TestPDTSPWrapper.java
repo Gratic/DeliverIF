@@ -18,20 +18,21 @@ public class TestPDTSPWrapper {
 
     @ParameterizedTest
     @CsvSource({
-            "smallMap.xml,  requestsSmall1.xml",
-            "smallMap.xml,  requestsSmall2.xml",
-            "mediumMap.xml, requestsMedium3.xml",
-            "mediumMap.xml, requestsMedium5.xml",
-            "largeMap.xml, requestsLarge7.xml",
-            "largeMap.xml, requestsLarge9.xml",
-            "largeMap.xml,  requestsSmall1.xml",
-            "largeMap.xml,  requestsSmall2.xml",
-            "largeMap.xml, requestsMedium3.xml",
-            "largeMap.xml, requestsMedium5.xml",
+            "smallMap.xml,  requestsSmall1.xml,5478.643769799999",
+            "smallMap.xml,  requestsSmall2.xml,4378.9992717000005",
+            "mediumMap.xml, requestsMedium3.xml,15056.395194100001",
+            "mediumMap.xml, requestsMedium5.xml,16081.2154806",
+            "largeMap.xml, requestsLarge7.xml,28247.547062600002",
+            "largeMap.xml, requestsLarge9.xml,39088.947161",
+            "largeMap.xml,  requestsSmall1.xml,5478.643769799999",
+            "largeMap.xml,  requestsSmall2.xml,4378.9992717000005",
+            "largeMap.xml, requestsMedium3.xml,15056.395194100001",
+            "largeMap.xml, requestsMedium5.xml,16054.058871099998",
     })
-    void testWithAllFiles(String mapPath, String requestPath) {
+    void testWithAllFiles(String mapPath, String requestPath, String expectedSolutionCostStr) {
         File fileM = new File("./resources/xml/" + mapPath);
         File fileR = new File("./resources/xml/" + requestPath);
+        double expectedSolutionCost = Double.parseDouble(expectedSolutionCostStr);
 
         CityMap cityMap = new CityMap();
         DeliveryTour deliveryTour = new DeliveryTour();
@@ -52,6 +53,7 @@ public class TestPDTSPWrapper {
         });
 
         Assertions.assertTrue(wrapper.isSolutionFound());
+        Assertions.assertEquals(expectedSolutionCost, wrapper.getSolutionCost());
     }
 
     @Test
