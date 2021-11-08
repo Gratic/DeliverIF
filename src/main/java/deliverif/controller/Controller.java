@@ -56,14 +56,11 @@ public class Controller {
         requestsLoaded = new RequestsLoadedState();
 
         computingTour = new ComputingTourState();
-        locallyModifyTour = new LocallyModifyTourState();
         tourCompleted = new TourCompletedState();
         generateRoadMap = new GenerateRoadMapState();
         tourNotOptimal = new TourNotOptimalState();
         addDeliveryRequest = new AddDeliveryRequestState();
         addPickupRequest = new AddPickupRequestState();
-        chooseRequestToDelete = new ChooseRequestToDeleteState();
-        chooseAssociatedRequest = new ChooseAssociatedRequestState();
         deleteRequest = new DeleteRequestState();
         requestDurationPopup = new RequestPopupDurationState();
 

@@ -20,12 +20,6 @@ public class TourCompletedState implements State {
         gui.getMapView().setMapClickable(true);  // TODO will need to move this towards edit states, then put it to false here
     }
 
-
-/*    @Override
-    public void addressClick(Controller controller, Gui gui, List<Pair<Double, Address>> addresses) {
-        controller.setCurrentState(controller.deleteRequest);
-    }*/
-
     @Override
     public void generateRoadMapButtonClick(Controller controller, Gui gui) {
         controller.setCurrentState(controller.generateRoadMap);
