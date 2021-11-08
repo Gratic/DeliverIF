@@ -20,4 +20,9 @@ public class ChooseAssociatedRequestState implements State {
     public void cancelButtonClick(Controller controller, Gui gui) {
         controller.popStates(2);
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

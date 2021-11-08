@@ -45,4 +45,9 @@ public class LoadingRequestsState implements State {
             controller.popState();
         }
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

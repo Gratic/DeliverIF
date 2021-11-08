@@ -16,4 +16,9 @@ public class RequestsLoadedState implements State {
     public void computingTourButtonClick(Controller controller, Gui gui) {
         controller.setCurrentState(controller.computingTour);
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

@@ -2,10 +2,7 @@ package deliverif.gui;
 
 import deliverif.controller.Controller;
 import deliverif.gui.mapview.MapView;
-import deliverif.gui.panel.ControlPanel;
-import deliverif.gui.panel.GraphicalViewPanel;
-import deliverif.gui.panel.MainPanel;
-import deliverif.gui.panel.TextualViewPanel;
+import deliverif.gui.panel.*;
 import deliverif.gui.textualview.RequestsTextView;
 import deliverif.gui.utils.Assets;
 import deliverif.gui.viewstate.InitialView;
@@ -24,6 +21,7 @@ public class Gui {
     protected ControlPanel controlPanel;
     protected GraphicalViewPanel graphicalViewPanel;
     protected TextualViewPanel textualViewPanel;
+    protected BottomPanel bottomPanel;
 
     private final RequestsTextView requestsTextView;
 
@@ -48,6 +46,7 @@ public class Gui {
         controlPanel = new ControlPanel(this);
         graphicalViewPanel = new GraphicalViewPanel();
         textualViewPanel = new TextualViewPanel();
+        bottomPanel = new BottomPanel(this);
         frame.getContentPane().add(
                 controlPanel, BorderLayout.WEST
         );
@@ -56,6 +55,9 @@ public class Gui {
         );
         frame.getContentPane().add(
                 textualViewPanel, BorderLayout.EAST
+        );
+        frame.getContentPane().add(
+                bottomPanel, BorderLayout.SOUTH
         );
 
         mapView = new MapView(controller);
@@ -108,6 +110,10 @@ public class Gui {
 
     public TextualViewPanel getTextualViewPanel() {
         return textualViewPanel;
+    }
+
+    public BottomPanel getBottomPanel() {
+        return bottomPanel;
     }
 
     public JFrame getFrame() {

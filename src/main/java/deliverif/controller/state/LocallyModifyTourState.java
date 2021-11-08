@@ -9,4 +9,9 @@ public class LocallyModifyTourState implements State {
         //local re-computation done
         controller.setCurrentState(controller.tourCompleted);
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

@@ -77,4 +77,9 @@ public class AddDeliveryRequestState implements State, IAddRequestState {
             //}
         }
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

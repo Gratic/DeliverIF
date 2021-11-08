@@ -102,6 +102,7 @@ public class Controller {
     // getters & setters
     public void setCurrentState(State state) {
         this.stateStack.push(state);
+        this.gui.getBottomPanel().updateState(this.getCurrentState());
         this.getCurrentState().run(this, gui);
     }
 

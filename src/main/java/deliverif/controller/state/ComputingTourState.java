@@ -43,5 +43,8 @@ public class ComputingTourState implements State {
 
     }
 
-
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

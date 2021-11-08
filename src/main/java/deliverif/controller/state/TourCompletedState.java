@@ -40,4 +40,9 @@ public class TourCompletedState implements State {
     public void redo(ListOfCommands listOfCommands) {
         // TODO: add code
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

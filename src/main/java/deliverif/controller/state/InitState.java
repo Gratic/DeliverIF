@@ -9,4 +9,9 @@ public class InitState implements State {
     public void run(Controller c, Gui gui) {
 
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }
