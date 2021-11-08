@@ -1,5 +1,7 @@
 package deliverif.model;
 
+import java.util.Objects;
+
 public class RoadSegment {
     private final Address origin;
     private final Address destination;
@@ -28,5 +30,18 @@ public class RoadSegment {
 
     public double getLength() {
         return length;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoadSegment segment = (RoadSegment) o;
+        return Double.compare(segment.length, length) == 0 && Objects.equals(origin, segment.origin) && Objects.equals(destination, segment.destination) && Objects.equals(name, segment.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(origin, destination, name, length);
     }
 }

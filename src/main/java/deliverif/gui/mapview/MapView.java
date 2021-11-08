@@ -106,6 +106,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
                 if (hoveredAddress != null) {
                     Collection<RoadSegment> roadNameSegments = this.map.getSegmentsOriginatingFrom(hoveredAddress.getId());
+
                     if (roadNameSegments != null) {
                         for (RoadSegment roadNameSegment : roadNameSegments) {
                             Point startCoord = this.latlongToXY(roadNameSegment.getOrigin().getCoords());
@@ -118,17 +119,15 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                                 deg += 180;
                             }
                             double angle = Math.toRadians(deg);
-                            center.setLocation(center.x - (len) / 2, center.y - 10);
+                            center.setLocation(center.x - (len) / 2, center.y - (int)(20 * this.zoomLevel));
 
-                            if (roadName.contains("Avenue") && !roadName.contains("Rue")) {
-                                List<String> roadNameDetails = new ArrayList<>();
-                                roadNameDetails.add(String.valueOf(angle));
-                                roadNameDetails.add(roadName);
+                            List<String> roadNameDetails = new ArrayList<>();
+                            roadNameDetails.add(String.valueOf(angle));
+                            roadNameDetails.add(roadName);
 
-                                if (!uniqueRoadNames.contains(roadName)) {
-                                    uniqueRoadNames.add(roadName);
-                                    roadNames.put(center, roadNameDetails);
-                                }
+                            if (!uniqueRoadNames.contains(roadName)) {
+                                uniqueRoadNames.add(roadName);
+                                roadNames.put(center, roadNameDetails);
                             }
                         }
                     }
@@ -154,7 +153,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             // Road names rendering
             int fontSize = g.getFont().getSize();
             String fontName = g.getFont().getName();
-            Font myFont = new Font(fontName, 0, (int) (fontSize * this.zoomLevel));
+            Font myFont = new Font(fontName, Font.PLAIN, (int) (0.3 * fontSize * this.zoomLevel));
             g.setFont(myFont);
             for (Map.Entry<Point, List> entry : roadNames.entrySet()) {
                 Double angle = Double.valueOf(String.valueOf(entry.getValue().get(0)));
