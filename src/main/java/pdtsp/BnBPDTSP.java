@@ -87,10 +87,24 @@ public class BnBPDTSP implements RunnablePDTSP {
 
         for (int i : unvisited) {
             minCost = (g.getCost(currentVertex, i) != -1 ? Math.min(minCost, g.getCost(currentVertex, i)) : minCost);
+            for (int j : unvisited) {
+                if (i == j) continue;
+                minCost = (g.getCost(i, j) != -1 ? Math.min(minCost, g.getCost(i, j)) : minCost);
+            }
+            minCost = (g.getCost(i, currentVertex) != -1 ? Math.min(minCost, g.getCost(i, currentVertex)) : minCost);
         }
 
         return minCost * unvisited.size();
-    }
+    } // 17 MINUTES
+//    protected Double bound(Integer currentVertex, Collection<Integer> unvisited, Graph g) {
+//        double minCost = Double.POSITIVE_INFINITY;
+//
+//        for (int i : unvisited) {
+//            minCost = (g.getCost(currentVertex, i) != -1 ? Math.min(minCost, g.getCost(currentVertex, i)) : minCost);
+//        }
+//
+//        return minCost;
+//    } // 17 MINUTES 30 - 19 MINUTES 4
 
     protected Iterator<Integer> iterator(Integer currentVertex, Collection<Integer> unvisited, Graph g) {
         return new SeqIter(unvisited, currentVertex, g);
