@@ -42,10 +42,10 @@ public class AddDeliveryRequestState implements State, IAddRequestState {
                 gui.getFrame(),
                 "Are you sure ?",
                 "Delivery address choice",
-                JOptionPane.OK_CANCEL_OPTION
+                JOptionPane.YES_NO_OPTION
         );
 
-        if(option == JOptionPane.OK_OPTION) {  // if user cancelled, allow them to select another address
+        if(option == JOptionPane.YES_OPTION) {  // if user cancelled, allow them to select another address
             this.deliveryAddress = addressClicked;
             JOptionPane.showMessageDialog(
                     gui.getFrame(),
