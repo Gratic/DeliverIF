@@ -1,6 +1,8 @@
 package deliverif.controller.state;
 
 import deliverif.controller.Controller;
+import deliverif.controller.command.AddRequestCommand;
+import deliverif.controller.command.Command;
 import deliverif.gui.Gui;
 import deliverif.model.Address;
 import deliverif.model.EnumAddressType;
@@ -42,16 +44,33 @@ public class RequestPopupDurationState implements State, IAddRequestState {
                 int option = this.showConfirmDialog(gui, pickupDuration, deliveryDuration);
                 
                 if(option == JOptionPane.OK_OPTION) {
-                    controller.getTour().addRequest(new Request(
+                    JOptionPane.showMessageDialog(gui.getFrame(), "The system will now add the request and recompute the tour.");
+
+                    Request request = new Request(
                             this.pickupAddress,
                             this.deliveryAddress,
                             pickupDuration,
                             deliveryDuration
-                    ));
+                    );
+                    try {
+                        if (request.getDeliveryAddress()==request.getDeliveryAddress()){
+                            throw new Exception("Same pickup and delivery address");
+                        }
+                        Command command = new AddRequestCommand(
+                                controller.getTour(), request, controller.getCityMap(),
+                                addressBeforePickup, addressBeforeDelivery
+                        );
+                        controller.getListOfCommands().add(command);
 
-                    JOptionPane.showMessageDialog(gui.getFrame(), "Request added. The system will now recompute the tour.");
 
-                    // TODO add call to recompute here
+                        JOptionPane.showMessageDialog(gui.getFrame(), "Request added!",
+                                "Request added", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(gui.getFrame(), "An unexpected error occurred during the operation.\n"+e.getMessage(),
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
 
                     controller.setCurrentState(controller.tourCompleted);
                     return;

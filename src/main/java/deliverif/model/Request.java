@@ -22,6 +22,14 @@ public class Request {
         return deliveryAddress;
     }
 
+    public Address getAddress(EnumAddressType type) {
+        if (type == EnumAddressType.PICKUP_ADDRESS) {
+            return pickupAddress;
+        } else {
+            return deliveryAddress;
+        }
+    }
+
     public int getPickupDuration() {
         return pickupDuration;
     }

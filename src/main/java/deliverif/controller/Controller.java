@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Stack;
 
 public class Controller {
-
-
-
     private final Gui gui;
     private final CityMap cityMap;
     private final DeliveryTour tour;
@@ -199,5 +196,9 @@ public class Controller {
 
     public Roadmap getRoadmap() {
         return roadmap;
+    }
+
+    public ListOfCommands getListOfCommands() {
+        return listOfCommands;
     }
 }

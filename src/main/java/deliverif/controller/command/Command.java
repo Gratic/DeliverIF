@@ -1,7 +1,7 @@
 package deliverif.controller.command;
 
 public interface Command {
-    void doCommand();
+    void doCommand() throws Exception;
 
-    void undoCommand();
+    void undoCommand() throws Exception;
 }
