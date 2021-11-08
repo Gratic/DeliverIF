@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="deliver-if" target="17" />
+      <module name="deliver-if" target="16" />
     </bytecodeTargetLevel>
   </component>
 </project>
