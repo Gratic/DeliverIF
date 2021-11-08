@@ -184,6 +184,7 @@ public class Controller {
         for (int i = 0; i < nb; i++) {
             this.stateStack.pop();
         }
+        this.gui.getBottomPanel().updateState(this.getCurrentState());
         this.getCurrentState().run(this, gui);
     }
 

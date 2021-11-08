@@ -14,8 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
 
 import static deliverif.gui.utils.Assets.*;
@@ -38,8 +37,9 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private final double ZOOM_SENSITIVITY = 0.2;
 
     private final float BASE_STREET_SIZE = 1.f;
-    private final float PATH_SIZE_MULT = 1.75f;
+    private final float PATH_SIZE_MULT = 1.5f;
     private final float BOTH_WAY_MULT = 1.25f;
+    private final float PATH_ARROW_THICKNESS = 3.f;
 
     private final int HOVER_SIZE = 5;
     private final double ADDRESS_SELECTION_THRESHOLD = 20.;
@@ -56,6 +56,9 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     private boolean isMapClickable = false;
     private Address hoveredAddress;
+
+    private Map<Request, Color> requestColorMap = new HashMap<>();
+    private Map<Address, Integer> pathOverlapCounts = new HashMap<>();
 
     public MapView(Controller controller) {
         this.controller = controller;
@@ -77,6 +80,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        this.requestColorMap.clear();
+        this.pathOverlapCounts.clear();
 
         Graphics2D g2d = (Graphics2D) g;
         float streetSize = (float) (this.zoomLevel * BASE_STREET_SIZE);
@@ -131,21 +136,23 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 }
                 Point pickupPoint = this.latlongToXY(request.getPickupAddress().getCoords());
                 Point deliveryPoint = this.latlongToXY(request.getDeliveryAddress().getCoords());
+                Color requestColor = ColorTheme.REQUEST_PALETTE.get(i % ColorTheme.REQUEST_PALETTE.size());
 
-
-                g.drawImage(dye(pickupImage, ColorTheme.REQUEST_PALETTE.get(i % ColorTheme.REQUEST_PALETTE.size())),
+                g.drawImage(dye(pickupImage, requestColor),
                         pickupPoint.x - (iconsWidth / 2),
                         pickupPoint.y - (iconsHeight),
                         iconsWidth,
                         iconsHeight,
                         this);
 
-                g.drawImage(dye(deliveryImage, ColorTheme.REQUEST_PALETTE.get(i % ColorTheme.REQUEST_PALETTE.size())),
+                g.drawImage(dye(deliveryImage, requestColor),
                         deliveryPoint.x - (iconsWidth / 2),
                         deliveryPoint.y - (iconsHeight),
                         iconsWidth,
                         iconsHeight,
                         this);
+
+                this.requestColorMap.put(request, requestColor);
 
                 if (tour.isSelected(request)) {
                     iconsHeight /= ICON_SELECTED_MULT;
@@ -170,21 +177,41 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                         iconsHeight,
                         this
                 );
+                requestColorMap.put(null, ColorTheme.DEPARTURE_COLOR);
             }
 
             // Display tour path
             if (this.tour.getPath().size() >= 2) {
-                g.setColor(Color.RED);
-                for (int j = 0; j < this.tour.getPath().size() - 1; j++) {
-                    RoadSegment segment = this.tour.getPath().get(j);
+                int nextRqAddressIndex = this.tour.nextRequestAddressIndex(0);
+                Color color = ColorTheme.DEPARTURE_COLOR;
+
+                for(int j = 1; j < this.tour.getPathAddresses().size(); j++) {  // address 0 is always departure
+                    Address currentAddress = this.tour.getPathAddresses().get(j);
+                    Pair<EnumAddressType, Request> addrMetadata = this.tour.getAddressRequestMetadata().get(j);
+
+                    RoadSegment segment = this.tour.getPath().get(j - 1);
+
+                    g.setColor(color);
+                    if(j == nextRqAddressIndex) {  // color update will apply on next segment (this is intended)
+                        color = requestColorMap.get(addrMetadata.getY());
+                        nextRqAddressIndex = this.tour.nextRequestAddressIndex(nextRqAddressIndex);
+                    }
+
+                    int overlap = this.pathOverlapCounts.getOrDefault(currentAddress, 0);
 
                     Point segStart = this.latlongToXY(segment.getOrigin().getCoords());
                     Point segEnd = this.latlongToXY(segment.getDestination().getCoords());
 
+                    boolean bothWayRoad = this.map.findSegment(segment.getDestination().getId(), segment.getOrigin().getId()) != null;
+                    int deltaAbs = (int)( (bothWayRoad ? 0.5 + overlap : overlap) * streetSize * PATH_SIZE_MULT);
                     Point printDelta = new Point(
-                            segEnd.x - segStart.x < 0 ? 1 : -1,
-                            segEnd.y - segStart.y < 0 ? 1 : -1
+                            segEnd.x - segStart.x < 0 ? deltaAbs : -deltaAbs,
+                            segEnd.y - segStart.y < 0 ? deltaAbs : -deltaAbs
                     );
+                    segStart.x += printDelta.x;
+                    segStart.y += printDelta.y;
+                    segEnd.x += printDelta.x;
+                    segEnd.y += printDelta.y;
 
                     Point arrowTip = new Point(
                             segStart.x + (int) ((segEnd.x - segStart.x) * 0.8),
@@ -203,13 +230,20 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                     double arrowVecNorm = Math.sqrt(arrowVec.x * arrowVec.x + arrowVec.y * arrowVec.y);
 
                     Point arrowBase = new Point(
-                            arrowTip.x + (int) ((segNormal.x - arrowTip.x) / arrowVecNorm * 3 * this.zoomLevel),
-                            arrowTip.y + (int) ((segNormal.y - arrowTip.y) / arrowVecNorm * 3 * this.zoomLevel)
+                            arrowTip.x + (int) ((segNormal.x - arrowTip.x) / arrowVecNorm * 4 * this.zoomLevel),
+                            arrowTip.y + (int) ((segNormal.y - arrowTip.y) / arrowVecNorm * 4 * this.zoomLevel)
                     );
 
-                    g2d.setStroke(new BasicStroke((streetSize * PATH_SIZE_MULT)));
-                    g2d.drawLine(segStart.x + printDelta.x, segStart.y + printDelta.y, segEnd.x + printDelta.x, segEnd.y + printDelta.y);
+                    g2d.setStroke(new BasicStroke(streetSize * PATH_SIZE_MULT));
+                    g2d.drawLine(segStart.x, segStart.y, segEnd.x, segEnd.y);
+
+                    g2d.setStroke(new BasicStroke(PATH_ARROW_THICKNESS));
                     g2d.drawLine(arrowBase.x, arrowBase.y, arrowTip.x, arrowTip.y);
+
+                    if(this.pathOverlapCounts.containsKey(currentAddress))
+                        this.pathOverlapCounts.replace(currentAddress, overlap + 1);
+                    else
+                        this.pathOverlapCounts.put(currentAddress, overlap + 1);
                 }
             }
 

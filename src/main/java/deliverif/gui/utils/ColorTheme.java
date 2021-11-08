@@ -19,15 +19,26 @@ public class ColorTheme {
     public static List<Color> REQUEST_PALETTE = new ArrayList<>() {
         {
             add(new Color(0x197278));
+            add(new Color(0xf032e6));
             add(new Color(0x5CE9FF));
             add(new Color(0x009758));
             add(new Color(0x7BE85D));
-            add(new Color(0x772E25));
+            add(new Color(0x53231B));
             add(new Color(0xF75C03));
             add(new Color(0x691AC1));
+            add(new Color(0x8F7C00));
             add(new Color(0x765379));
             add(new Color(0xA001A0));
             add(new Color(0xCF1259));
+            add(new Color(0x800000));
+            add(new Color(0x808000));
+            add(new Color(0x469990));
+            add(new Color(0x000075));
+            add(new Color(0xE55276));
+            add(new Color(0xE79055));
+            add(new Color(0xbfef45));
+            add(new Color(0xC46DDB));
+            add(new Color(0x808080));
         }
     };
 
