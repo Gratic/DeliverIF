@@ -323,35 +323,31 @@ public class DeliveryTour extends Observable {
         return new Pair<>(minDist, closest);
     }
 
-    private final static double THRESHOLD = 50d;
+    public List<Pair<Double, Pair<EnumAddressType, Request>>> getClosestRequestsFrom(Coord pos, double maxDist) {
+        List<Pair<Double, Pair<EnumAddressType, Request>>> res = new ArrayList<>();
+        for (Request req : requests) {
+            res.add(new Pair<>(req.getPickupAddress().dist(pos), new Pair<>(EnumAddressType.PICKUP_ADDRESS, req)));
+            res.add(new Pair<>(req.getDeliveryAddress().dist(pos), new Pair<>(EnumAddressType.DELIVERY_ADDRESS, req)));
+        }
+        res.add(new Pair<>(this.getDepartureAddress().dist(pos), new Pair<>(EnumAddressType.DEPARTURE_ADDRESS, null)));
+
+        res.sort(Pair::compareTo);
+        int index = 0;
+        for (Pair<Double, Pair<EnumAddressType, Request>> p : res) {
+            if (p.getX() > maxDist) {
+                break;
+            }
+            index++;
+        }
+        return res.subList(0, index);
+    }
+
+    private final static double THRESHOLD = 20.;
 
     private void toggleSelect(int n) {
         selectedElement = selectedElement != n ? n : -2;
 
         this.notifyObservers();
-    }
-
-    public void selectElement(Coord coords, double threshold) {
-        Pair<Double, Integer> res = getClosestRequest(coords);
-        double distDeparture = Double.MAX_VALUE;
-        Address departure = getDepartureAddress();
-        if (departure != null) {
-            distDeparture = departure.dist(coords);
-        }
-
-        if (distDeparture < res.getX() && distDeparture < threshold) {
-            toggleSelect(-1);
-
-        } else if (res.getX() < threshold) {
-            toggleSelect(res.getY());
-        }
-        else {
-            this.selectedElement = -2;
-        }
-    }
-
-    public void selectElement(Coord coords) {
-        selectElement(coords, THRESHOLD);
     }
 
     public void selectDepartureAddress() {
@@ -365,6 +361,10 @@ public class DeliveryTour extends Observable {
         } else {
             toggleSelect(index);
         }
+    }
+
+    public void unselectRequest() {
+        selectedElement = -2;
     }
 
 

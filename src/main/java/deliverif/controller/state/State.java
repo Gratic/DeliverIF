@@ -63,7 +63,7 @@ public interface State {
     default void cancelButtonClick(Controller controller, Gui gui) {
     }
 
-    default void addressClick(Controller controller, Gui gui, List<Pair<Double, Address>> addresses) {
+    default void addressClick(Controller controller, Gui gui, Address addressClicked) {
     }
 
     default void requestClick(Controller controller, Gui gui, Request request, EnumAddressType addressType) {

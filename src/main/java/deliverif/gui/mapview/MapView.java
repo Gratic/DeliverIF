@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +34,6 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private final double ICON_SELECTED_MULT = 1.5;
 
     private final double MAX_ZOOM_LEVEL = 6.0;
-    private final double MIN_ZOOM_LEVEL = .1;
     private final double BASE_ZOOM_LEVEL = 1.0;
     private final double ZOOM_SENSITIVITY = 0.2;
 
@@ -42,6 +42,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private final float BOTH_WAY_MULT = 1.25f;
 
     private final int HOVER_SIZE = 5;
+    private final double ADDRESS_SELECTION_THRESHOLD = 20.;
+    private final double REQUEST_SELECTION_THRESHOLD = 50.;
 
     private double
             latitudeMin = Double.MAX_VALUE,
@@ -52,6 +54,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private double zoomLevel = BASE_ZOOM_LEVEL;
     private int xTranslation = 0, yTranslation = 0;
 
+    private boolean isMapClickable = false;
     private Address hoveredAddress;
 
     public MapView(Controller controller) {
@@ -83,18 +86,15 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             g.setColor(new Color(10, 10, 10));
 
             for (Address address : this.map.getAddresses().values()) {
-                if (address.getId() == 190866513) {
-                    Point point = this.latlongToXY(address.getCoords());
-                    g.setColor(new Color(200, 0, 0));
-                    g.drawChars("Home".toCharArray(), 0, 4, point.x, point.y);
-                    g.setColor(new Color(10, 10, 10));
-                }
 
-                if (hoveredAddress != null && address == hoveredAddress) {
+                // Display address hover
+                if (this.isMapClickable && hoveredAddress != null && address == hoveredAddress) {
                     Point pos = latlongToXY(address.getCoords());
                     int hoverSize = (int) (HOVER_SIZE * this.zoomLevel);
                     g.fillOval(pos.x - hoverSize / 2, pos.y - hoverSize / 2, hoverSize, hoverSize);
                 }
+
+                // Display segments originating from this address
                 Collection<RoadSegment> segments = this.map.getSegmentsOriginatingFrom(address.getId());
                 if (segments != null) {
                     for (RoadSegment segment : segments) {
@@ -123,6 +123,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             int iconsWidth = (int) (ICON_SIZE * this.zoomLevel);
             int iconsHeight = (int) (ICON_SIZE * this.zoomLevel);
 
+            // Display request icons
             for (Request request : this.tour.getRequests()) {
                 if (tour.isSelected(request)) {
                     iconsHeight *= ICON_SELECTED_MULT;
@@ -153,6 +154,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 i++;
             }
 
+            // Display departure address icon
             Address departureAddress = this.tour.getDepartureAddress();
             if (departureAddress != null) {
                 Point point = this.latlongToXY(departureAddress.getCoords());
@@ -213,7 +215,6 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
         }
     }
-
 
     private Point latlongToXY(Coord coord) {
         Coord normalizedCoord = normalizeCoord(coord);
@@ -304,10 +305,9 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         if (this.isMapLoaded()) {
             Pair<Double, Address> closestAddr = map.getClosestAddressFrom(XYToLatLong(e.getPoint()));  // add dist if wished
 
-            if(closestAddr.getX() < 50.) {
+            if (closestAddr.getX() < ADDRESS_SELECTION_THRESHOLD) {
                 hoveredAddress = closestAddr.getY();
-            }
-            else {
+            } else {
                 hoveredAddress = null;
             }
             repaint();
@@ -318,8 +318,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        zoomView(e.getPoint(),e.getWheelRotation());
-        System.out.println(e.getX() + " " + e.getY());
+        zoomView(e.getPoint(), e.getWheelRotation());
     }
 
     public void zoomView(Point zoomPoint, int rotations) {
@@ -329,11 +328,17 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         double zoomDelta = -ZOOM_SENSITIVITY * rotations;
         Coord zoomPointLatLong = XYToLatLong(zoomPoint);
 
+        // Handle max unzoom
+        int mapSize = (int) (MAP_BASE_SIZE * (this.zoomLevel + zoomDelta));
+        if(mapSize < this.getWidth() * 0.7
+                && mapSize < this.getHeight() * 0.7
+                && rotations > 0) {  // rotations > 0 means unzoom
+            return;
+        }
+
         zoomLevel += zoomDelta;
 
-        if (zoomLevel < MIN_ZOOM_LEVEL) {
-            zoomLevel = MIN_ZOOM_LEVEL;
-        } else if (zoomLevel > MAX_ZOOM_LEVEL) {
+        if (zoomLevel > MAX_ZOOM_LEVEL) {
             zoomLevel = MAX_ZOOM_LEVEL;
         }
 
@@ -352,14 +357,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     public void translateView(int deltaX, int deltaY) {
         this.xTranslation += deltaX;
         this.yTranslation += deltaY;
-/*
-        Point farthestPoint = this.latlongToXY(this.latitudeMax, this.longitudeMax);
 
-        // TODO this equation does not handles maps smaller than main window
-        if (this.xTranslation + this.getWidth() > farthestPoint.x) {
-            System.out.println("X out of bounds !");
-        }
-*/
         this.repaint();
     }
 
@@ -374,49 +372,160 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         }
 
         if (SwingUtilities.isLeftMouseButton(e)) { // left click on map
-            // trigger controller address event
-            List<Pair<Double, Address>> closestAddresses = map.getClosestAddressesFrom(XYToLatLong(e.getPoint()), 50.);
-            for (Pair<Double, Address> p : closestAddresses) {
-                System.out.println(p.getY().getId() + " - " + p.getX());
-            }
-
-            if(closestAddresses.size() > 0) {  // don't call addressClick if no addresses were actually clicked
-                controller.addressClick(controller.getGui(), closestAddresses);
-            }
 
             // check request selection / controller event
-            if(this.isTourLoaded()) {  // request highlighting
+            if (this.isTourLoaded()) {  // request highlighting
                 Coord pos = XYToLatLong(e.getPoint());
-                tour.selectElement(pos);
+                List<Pair<Double, Pair<EnumAddressType, Request>>> requests = tour.getClosestRequestsFrom(pos, REQUEST_SELECTION_THRESHOLD);
+                Pair<EnumAddressType, Request> selectedRequest = null;
 
-                if(tour.isDepartureSelected()) {
-                    controller.requestClick(controller.getGui(), null, EnumAddressType.DEPARTURE_ADDRESS);
+                if (requests.size() > 1) {
+                    selectedRequest = this.showRequestSelectionForm(requests);
                 }
-                else if(tour.getSelectedRequest() != null) {
-                    Request request = tour.getSelectedRequest();
-                    EnumAddressType addressType = null;
+                else if (requests.size() == 1) {
+                    selectedRequest = requests.get(0).getY();
+                }
 
-                    for(Pair<Double, Address> addressPair : closestAddresses) {
-                        if(addressPair.getY().equals(request.getDeliveryAddress())) {
-                            addressType = EnumAddressType.DELIVERY_ADDRESS;
-                            break;
-                        }
-                        else if(addressPair.getY().equals(request.getPickupAddress())) {
-                            addressType = EnumAddressType.PICKUP_ADDRESS;
-                            break;
-                        }
+                if(selectedRequest != null) {
+                    if(selectedRequest.getX() == EnumAddressType.DEPARTURE_ADDRESS) {
+                        tour.selectDepartureAddress();
+                    }
+                    else {
+                        tour.selectRequest(selectedRequest.getY());
                     }
 
-                    controller.requestClick(controller.getGui(), request, addressType);
+                    controller.requestClick(controller.getGui(), selectedRequest.getY(), selectedRequest.getX());
                 }
-
 
                 this.repaint();
             }
 
+
+            // trigger controller address event
+            if(this.isMapClickable) {
+                List<Pair<Double, Address>> closestAddresses = map.getClosestAddressesFrom(XYToLatLong(e.getPoint()), ADDRESS_SELECTION_THRESHOLD);
+                for (Pair<Double, Address> p : closestAddresses) {
+                    System.out.println(p.getY().getId() + " - " + p.getX());
+                }
+
+                Address clickedAddress = null;
+
+                if (closestAddresses.size() >= 1) {
+                    clickedAddress = closestAddresses.get(0).getY();
+                }
+
+                if (clickedAddress != null) { // don't call addressClick if no addresses were actually clicked/chosen
+                    controller.addressClick(controller.getGui(), clickedAddress);
+                }
+            }
         }
     }
 
+    /**
+     * Opens a popup that allows the user to choose a request among multiple nearby requests
+     * @return null if the user cancelled the operation, the selected request address otherwise
+     */
+    private Pair<EnumAddressType, Request> showRequestSelectionForm(List<Pair<Double, Pair<EnumAddressType, Request>>> requests) {
+        JPanel optionPanel = new JPanel();
+        optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+        optionPanel.add(new JLabel("There are several request addresses nearby. Please select one among those or retry:"));
+        List<JRadioButton> choices = new ArrayList<>();
+        ButtonGroup radioGroup = new ButtonGroup();
+
+        for (Pair<Double, Pair<EnumAddressType, Request>> request : requests) {
+            String message;
+            switch (request.getY().getX()) {
+                case DELIVERY_ADDRESS -> {
+                    message = "Delivery request address (" + String.format("%.2f", request.getX()) + "m away)";
+                }
+                case PICKUP_ADDRESS -> {
+                    message = "Pickup request address (" + String.format("%.2f", request.getX()) + "m away)";
+                }
+                case DEPARTURE_ADDRESS -> {
+                    message = "Departure address (" + String.format("%.2f", request.getX()) + "m away)";
+                }
+                default -> {
+                    message = "Entrée erronée";
+                }
+            }
+
+            JRadioButton button = new JRadioButton(message);
+            radioGroup.add(button);
+            choices.add(button);
+            optionPanel.add(button);
+        }
+
+        int option = JOptionPane.showConfirmDialog(this,
+                optionPanel, "Choose a request address", JOptionPane.OK_CANCEL_OPTION);
+        if(option == JOptionPane.OK_OPTION) {
+            int i = 0;
+            for(JRadioButton button : choices) {
+                if(button.isSelected()) {
+                    return requests.get(i).getY();
+                }
+                i++;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Opens a popup that allows the user to choose an address among multiple nearby addresses
+     * @return null if the user cancelled the operation, the selected request address otherwise
+     */
+    @Deprecated
+    private Address showAddressSelectionForm(List<Pair<Double, Address>> addresses) {
+        JPanel optionPanel = new JPanel();
+        optionPanel.add(new JLabel("There are several addresses nearby. Please select one of those, or try again:"));
+        optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+
+        List<JRadioButton> choices = new ArrayList<>();
+        ButtonGroup radioGroup = new ButtonGroup();
+
+        // populate radio buttons
+        for (Pair<Double, Address> addressPair : addresses) {
+            Address address = addressPair.getY();
+
+            String nearMessage = this.createAddressRoadsNearbyText(controller, address);
+            JRadioButton radio = new JRadioButton(
+                    "<html><p style='width: 400px'>" + String.format("%.2f", addressPair.getX()) + "m away:<br>" + nearMessage + "</p></html>"
+            );
+
+            if (choices.isEmpty()) { // means this is the first address of the list
+                radio.setSelected(true);
+            }
+
+            choices.add(radio);
+            radioGroup.add(radio);
+            optionPanel.add(radio);
+        }
+
+        int option = JOptionPane.showConfirmDialog(
+                controller.getGui().getFrame(), optionPanel, "Multiple possible addresses", JOptionPane.OK_CANCEL_OPTION
+        );
+        if (option == JOptionPane.OK_OPTION) {
+            int i = 0;
+            for(JRadioButton button : choices) {
+                if(button.isSelected()) {
+                    return addresses.get(i).getY();
+                }
+                i++;
+            }
+        }
+
+        return null;
+    }
+
+    private String createAddressRoadsNearbyText(Controller controller, Address address) {
+        Collection<RoadSegment> segments = controller.getCityMap().getSegmentsOriginatingFrom(address.getId());
+        StringBuilder nearMessage = new StringBuilder("near<br>");
+        for (RoadSegment segment : segments) {
+            // &#09 is the tab character
+            nearMessage.append("&#09").append(segment.getName()).append("<br>");
+        }
+
+        return nearMessage.toString();
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -435,5 +544,9 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    public void setMapClickable(boolean clickable) {
+        this.isMapClickable = clickable;
     }
 }

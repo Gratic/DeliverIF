@@ -17,11 +17,12 @@ public class TourCompletedState implements State {
         gui.getControlPanel().addRequestButton.setEnabled(true);
         gui.getControlPanel().deleteRequestButton.setEnabled(true);
         gui.setCurrentViewState(new ViewTourComputed(gui));
+        gui.getMapView().setMapClickable(true);  // TODO will need to move this towards edit states, then put it to false here
     }
 
 
     @Override
-    public void addressClick(Controller controller, Gui gui, List<Pair<Double, Address>> addresses) {
+    public void addressClick(Controller controller, Gui gui, Address addressClicked) {
         controller.setCurrentState(controller.deleteRequest);
     }
 
