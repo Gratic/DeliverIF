@@ -373,23 +373,34 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 System.out.println(p.getY().getId() + " - " + p.getX());
             }
 
-            if (closestAddresses.size() > 0) {  // don't call addressClick if no addresses were actually clicked
-                controller.addressClick(controller.getGui(), closestAddresses);  // TODO choose address here
+            Address clickedAddress = null;
+            boolean addressPopupChoiceDone = false;
 
-                // TODO if an address was chosen, don't execute request selection path
+            if(closestAddresses.size() > 1) {
+                clickedAddress = this.showAddressSelectionForm(closestAddresses);
+                if(clickedAddress != null) addressPopupChoiceDone = true;
+            }
+            else if(closestAddresses.size() == 1) {
+                clickedAddress = closestAddresses.get(0).getY();
             }
 
+            if(clickedAddress != null) { // don't call addressClick if no addresses were actually clicked/chosen
+                controller.addressClick(controller.getGui(), clickedAddress);
+            }
+
+            System.out.println(addressPopupChoiceDone);
+
             // check request selection / controller event
-            if (this.isTourLoaded()) {  // request highlighting
+            if (this.isTourLoaded() && !addressPopupChoiceDone) {  // request highlighting
                 Coord pos = XYToLatLong(e.getPoint());
-                List<Pair<Pair<EnumAddressType, Request>, Double>> requests = tour.getClosestRequestsFrom(pos, 50.);
+                List<Pair<Double, Pair<EnumAddressType, Request>>> requests = tour.getClosestRequestsFrom(pos, 50.);
                 Pair<EnumAddressType, Request> selectedRequest = null;
 
                 if (requests.size() > 1) {
                     selectedRequest = this.showRequestSelectionForm(requests);
                 }
                 else if (requests.size() == 1) {
-                    selectedRequest = requests.get(0).getX();
+                    selectedRequest = requests.get(0).getY();
                 }
 
                 if(selectedRequest != null) {
@@ -413,24 +424,24 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
      * Opens a popup that allows the user to choose a request among multiple nearby requests
      * @return null if the user cancelled the operation, the selected request address otherwise
      */
-    private Pair<EnumAddressType, Request> showRequestSelectionForm(List<Pair<Pair<EnumAddressType, Request>, Double>> requests) {
+    private Pair<EnumAddressType, Request> showRequestSelectionForm(List<Pair<Double, Pair<EnumAddressType, Request>>> requests) {
         JPanel optionPanel = new JPanel();
         optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
         optionPanel.add(new JLabel("There are several request addresses nearby. Please select one among those or retry:"));
         List<JRadioButton> choices = new ArrayList<>();
         ButtonGroup radioGroup = new ButtonGroup();
 
-        for (Pair<Pair<EnumAddressType, Request>, Double> request : requests) {
+        for (Pair<Double, Pair<EnumAddressType, Request>> request : requests) {
             String message;
-            switch (request.getX().getX()) {
+            switch (request.getY().getX()) {
                 case DELIVERY_ADDRESS -> {
-                    message = "Delivery request address (" + String.format("%.2f", request.getY()) + "m away)";
+                    message = "Delivery request address (" + String.format("%.2f", request.getX()) + "m away)";
                 }
                 case PICKUP_ADDRESS -> {
-                    message = "Pickup request address (" + String.format("%.2f", request.getY()) + "m away)";
+                    message = "Pickup request address (" + String.format("%.2f", request.getX()) + "m away)";
                 }
                 case DEPARTURE_ADDRESS -> {
-                    message = "Departure address (" + String.format("%.2f", request.getY()) + "m away)";
+                    message = "Departure address (" + String.format("%.2f", request.getX()) + "m away)";
                 }
                 default -> {
                     message = "Entrée erronée";
@@ -448,7 +459,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             int i = 0;
             for(JRadioButton button : choices) {
                 if(button.isSelected()) {
-                    return requests.get(i).getX();
+                    return requests.get(i).getY();
                 }
                 i++;
             }
@@ -456,6 +467,62 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         return null;
     }
 
+    /**
+     * Opens a popup that allows the user to choose an address among multiple nearby addresses
+     * @return null if the user cancelled the operation, the selected request address otherwise
+     */
+    private Address showAddressSelectionForm(List<Pair<Double, Address>> addresses) {
+        JPanel optionPanel = new JPanel();
+        optionPanel.add(new JLabel("There are several addresses nearby. Please select one of those, or try again:"));
+        optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+
+        List<JRadioButton> choices = new ArrayList<>();
+        ButtonGroup radioGroup = new ButtonGroup();
+
+        // populate radio buttons
+        for (Pair<Double, Address> addressPair : addresses) {
+            Address address = addressPair.getY();
+
+            String nearMessage = this.createAddressRoadsNearbyText(controller, address);
+            JRadioButton radio = new JRadioButton(
+                    "<html><p style='width: 400px'>" + address.getId() + ": " + "(" + String.format("%.2f", addressPair.getX()) + "m away)<br>" + nearMessage + "</p></html>"
+            );
+
+            if (choices.isEmpty()) { // means this is the first address of the list
+                radio.setSelected(true);
+            }
+
+            choices.add(radio);
+            radioGroup.add(radio);
+            optionPanel.add(radio);
+        }
+
+        int option = JOptionPane.showConfirmDialog(
+                controller.getGui().getFrame(), optionPanel, "Multiple possible addresses", JOptionPane.OK_CANCEL_OPTION
+        );
+        if (option == JOptionPane.OK_OPTION) {
+            int i = 0;
+            for(JRadioButton button : choices) {
+                if(button.isSelected()) {
+                    return addresses.get(i).getY();
+                }
+                i++;
+            }
+        }
+
+        return null;
+    }
+
+    private String createAddressRoadsNearbyText(Controller controller, Address address) {
+        Collection<RoadSegment> segments = controller.getCityMap().getSegmentsOriginatingFrom(address.getId());
+        StringBuilder nearMessage = new StringBuilder("near<br>");
+        for (RoadSegment segment : segments) {
+            // &#09 is the tab character
+            nearMessage.append("&#09").append(segment.getName()).append("<br>");
+        }
+
+        return nearMessage.toString();
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {

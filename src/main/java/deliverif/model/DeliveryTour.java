@@ -323,18 +323,18 @@ public class DeliveryTour extends Observable {
         return new Pair<>(minDist, closest);
     }
 
-    public List<Pair<Pair<EnumAddressType, Request>, Double>> getClosestRequestsFrom(Coord pos, double maxDist) {
-        List<Pair<Pair<EnumAddressType, Request>, Double>> res = new ArrayList<>();
+    public List<Pair<Double, Pair<EnumAddressType, Request>>> getClosestRequestsFrom(Coord pos, double maxDist) {
+        List<Pair<Double, Pair<EnumAddressType, Request>>> res = new ArrayList<>();
         for (Request req : requests) {
-            res.add(new Pair<>(new Pair<>(EnumAddressType.PICKUP_ADDRESS, req), req.getPickupAddress().dist(pos)));
-            res.add(new Pair<>(new Pair<>(EnumAddressType.DELIVERY_ADDRESS, req), req.getDeliveryAddress().dist(pos)));
+            res.add(new Pair<>(req.getPickupAddress().dist(pos), new Pair<>(EnumAddressType.PICKUP_ADDRESS, req)));
+            res.add(new Pair<>(req.getDeliveryAddress().dist(pos), new Pair<>(EnumAddressType.DELIVERY_ADDRESS, req)));
         }
-        res.add(new Pair<>(new Pair<>(EnumAddressType.DEPARTURE_ADDRESS, null), this.getDepartureAddress().dist(pos)));
+        res.add(new Pair<>(this.getDepartureAddress().dist(pos), new Pair<>(EnumAddressType.DEPARTURE_ADDRESS, null)));
 
         res.sort(Pair::compareTo);
         int index = 0;
-        for (Pair<Pair<EnumAddressType, Request>, Double> p : res) {
-            if (p.getY() > maxDist) {
+        for (Pair<Double, Pair<EnumAddressType, Request>> p : res) {
+            if (p.getX() > maxDist) {
                 break;
             }
             index++;

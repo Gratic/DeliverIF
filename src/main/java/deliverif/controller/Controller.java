@@ -162,8 +162,8 @@ public class Controller {
         this.getCurrentState().deleteButtonClick(this, gui);
     }
 
-    public void addressClick(Gui gui, List<Pair<Double, Address>> addresses) {
-        this.getCurrentState().addressClick(this, gui, addresses);
+    public void addressClick(Gui gui, Address addressClicked) {
+        this.getCurrentState().addressClick(this, gui, addressClicked);
     }
 
     public void requestClick(Gui gui, Request request, EnumAddressType addressType) {

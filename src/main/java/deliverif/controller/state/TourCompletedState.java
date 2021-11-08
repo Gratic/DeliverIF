@@ -21,7 +21,7 @@ public class TourCompletedState implements State {
 
 
     @Override
-    public void addressClick(Controller controller, Gui gui, List<Pair<Double, Address>> addresses) {
+    public void addressClick(Controller controller, Gui gui, Address addressClicked) {
         controller.setCurrentState(controller.deleteRequest);
     }
 
