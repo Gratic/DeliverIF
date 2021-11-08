@@ -1,5 +1,7 @@
 package pdtsp;
 
+import java.util.Objects;
+
 /**
  * Utility class to access two elements that can be of different type.
  * Only the first element must be comparable to compare two pair.
@@ -41,5 +43,18 @@ public class Pair<T extends Comparable<T>, K> implements Comparable<Pair<T, K>> 
     @Override
     public int compareTo(Pair<T, K> o) {
         return this.getX().compareTo(o.getX());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pair<?, ?> pair = (Pair<?, ?>) o;
+        return Objects.equals(x, pair.x) && Objects.equals(y, pair.y);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }

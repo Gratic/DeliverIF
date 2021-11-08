@@ -91,6 +91,13 @@ public class DeliveryTour extends Observable {
         }
     }
 
+    public Request getSelectedRequest() {
+        if(selectedElement >= 0) {
+            return requests.get(selectedElement);
+        }
+        return null;
+    }
+
     public boolean isDepartureSelected() {
         return selectedElement == -1;
     }
@@ -137,6 +144,7 @@ public class DeliveryTour extends Observable {
         path.clear();
         pathAddresses.clear();
         addressRequestMetadata.clear();
+        this.notifyObservers();
     }
 
     public void clear() {
@@ -188,7 +196,6 @@ public class DeliveryTour extends Observable {
         selectedElement = selectedElement != n ? n : -2;
 
         this.notifyObservers();
-
     }
 
     public void selectElement(Coord coords, double threshold) {
@@ -204,6 +211,9 @@ public class DeliveryTour extends Observable {
 
         } else if (res.getX() < threshold) {
             toggleSelect(res.getY());
+        }
+        else {
+            this.selectedElement = -2;
         }
     }
 

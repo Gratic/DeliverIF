@@ -87,12 +87,10 @@ public class CityMap extends Observable {
     }
 
     public Pair<Double, Address> getClosestAddressFrom(Coord pos) {
-
-
-        return getClosestAddressesForm(pos, Double.MAX_VALUE).get(0);
+        return getClosestAddressesFrom(pos, Double.MAX_VALUE).get(0);
     }
 
-    public List<Pair<Double, Address>> getClosestAddressesForm(Coord pos, double maxDist) {
+    public List<Pair<Double, Address>> getClosestAddressesFrom(Coord pos, double maxDist) {
         List<Pair<Double, Address>> res = new ArrayList<>();
         for (Address add : addresses.values()) {
             res.add(new Pair<>(add.dist(pos), add));

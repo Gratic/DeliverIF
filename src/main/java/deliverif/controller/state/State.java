@@ -3,6 +3,12 @@ package deliverif.controller.state;
 import deliverif.controller.Controller;
 import deliverif.controller.command.ListOfCommands;
 import deliverif.gui.Gui;
+import deliverif.model.Address;
+import deliverif.model.EnumAddressType;
+import deliverif.model.Request;
+import pdtsp.Pair;
+
+import java.util.List;
 
 public interface State {
     void run(Controller c, Gui gui);
@@ -32,7 +38,7 @@ public interface State {
     }
 
     default void addRequestButtonClick(Controller controller, Gui gui) {
-        controller.setCurrentState(controller.popupDuration);
+        controller.setCurrentState(controller.addPickupRequest);
     }
 
     default void deleteButtonClick(Controller controller, Gui gui) {
@@ -54,24 +60,13 @@ public interface State {
     default void generateRoadMapButtonClick(Controller controller, Gui gui) {
     }
 
-
     default void cancelButtonClick(Controller controller, Gui gui) {
     }
 
-    default void addPickupButtonClick(Controller controller, Gui gui) {
+    default void addressClick(Controller controller, Gui gui, List<Pair<Double, Address>> addresses) {
     }
 
-    default void addDeliveryButtonClick(Controller controller, Gui gui) {
-    }
-
-    default void validateDeliveryButtonClick(Controller controller, Gui gui) {
-    }
-
-
-    default void addressClick(Controller controller, Gui gui, boolean overlap) {
-    }
-
-    default void requestClick(Controller controller, Gui gui) {
+    default void requestClick(Controller controller, Gui gui, Request request, EnumAddressType addressType) {
     }
 
     default void validateDeleteRequestButtonClick(Controller controller, Gui gui) {
