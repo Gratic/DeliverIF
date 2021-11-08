@@ -2,6 +2,7 @@ package pdtsp;
 
 import deliverif.model.*;
 
+import java.io.File;
 import java.util.*;
 
 public class RunPDTSP {
@@ -63,14 +64,13 @@ public class RunPDTSP {
             cityMap.addSegment(rd);
         }
 
-        // Deux requêtes : une de 1 vers 2 et une de 2 vers 1.
-        Collection<Request> requests = new ArrayList<>();
-        requests.add(new Request(add1, add2, 0, 0));
-        requests.add(new Request(add2, add1, 0, 0));
+        DeliveryTour deliveryTour = new DeliveryTour();
+        deliveryTour.addRequest(new Request(add1, add2, 0, 0));
+        deliveryTour.addRequest(new Request(add2, add1, 0, 0));
 
         return new ArrayList<>() {{
             add(cityMap);
-            add(requests);
+            add(deliveryTour);
             add(add0);
         }};
     }
@@ -191,24 +191,63 @@ public class RunPDTSP {
     }
 
     public static void main(String[] args) {
+        Scanner myScanner = new Scanner(System.in);
+        /*
         List<Object> example = case1real();
 
         CityMap cityMap = (CityMap) example.get(0);
-        List<Request> requests = (List<Request>) example.get(1);
+        DeliveryTour deliveryTour = (DeliveryTour) example.get(1);
         Address startPoint = (Address) example.get(2);
 
+        deliveryTour.addAddress(startPoint);
+         */
+
+        File fileM = new File("./resources/xml/" + "largeMap.xml");
+        File fileR = new File("./resources/xml/" + "requestsLarge9.xml");
+
+        CityMap cityMap = new CityMap();
         DeliveryTour deliveryTour = new DeliveryTour();
 
-        PDTSPWrapper wrapper = new PDTSPWrapper(cityMap, deliveryTour, 10000);
-        wrapper.prepare();
-//        while(!wrapper.isSolutionOptimal())
-//        {
-//            System.out.println("not Optimal");
-        while (!wrapper.isSolutionFound()) {
-            System.out.println("computing ...");
-            wrapper.compute();
+        try {
+            cityMap.loadMapFromFile(fileM);
+            deliveryTour.loadRequestsFromFile(fileR, cityMap);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-//        }
+
+        PDTSPWrapper wrapper = new PDTSPWrapper(cityMap, deliveryTour, 500);
+        wrapper.prepare();
+
+        int timeElapsed = 0;
+
+        boolean continueSearching = true;
+        while (continueSearching) {
+            long startStep = System.currentTimeMillis();
+            wrapper.compute();
+
+            long timeStep = System.currentTimeMillis() - startStep;
+            timeElapsed += timeStep;
+
+            System.out.println("-----------------");
+            System.out.println("timeElapsed=" + timeElapsed + " (timeStep=" + timeStep + ")");
+            System.out.println("Found=" + wrapper.isSolutionFound());
+            System.out.println("Optimal=" + wrapper.isSolutionOptimal());
+
+            String choice = "";
+            if (!wrapper.isSolutionOptimal()) {
+                while (choice.equals("")) {
+                    System.out.println("Continuer ?");
+                    choice = myScanner.nextLine();
+                }
+
+                if (!choice.equals("y")) {
+                    continueSearching = false;
+                    wrapper.killAlgorithmThread();
+                }
+            }
+        }
+
+        System.out.println("done.");
 
         List<Long> realPath = wrapper.getPath();
 
@@ -247,7 +286,6 @@ public class RunPDTSP {
 
         System.out.print("[");
         for (int i = 0; i < deliveryTour.getPathAddresses().size(); i++) {
-            Address address = deliveryTour.getPathAddresses().get(i);
             String type = null;
             Request request = null;
 
@@ -269,7 +307,7 @@ public class RunPDTSP {
             }
 
             if (type != null) {
-                if (type != "start/end" && type != "traversal") {
+                if (!type.equals("start/end") && !type.equals("traversal")) {
                     long pickupAddressId = request.getPickupAddress().getId();
                     long deliveryAddressId = request.getDeliveryAddress().getId();
 
