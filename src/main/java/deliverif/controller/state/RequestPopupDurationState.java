@@ -96,4 +96,9 @@ public class RequestPopupDurationState implements State, IAddRequestState {
                 JOptionPane.OK_CANCEL_OPTION
         );
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

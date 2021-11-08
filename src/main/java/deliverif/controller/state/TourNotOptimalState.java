@@ -37,4 +37,8 @@ public class TourNotOptimalState implements State {
         controller.setCurrentState(controller.tourCompleted);
     }
 
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

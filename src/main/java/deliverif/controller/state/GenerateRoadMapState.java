@@ -36,5 +36,8 @@ public class GenerateRoadMapState implements State {
         controller.popState();
     }
 
-
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

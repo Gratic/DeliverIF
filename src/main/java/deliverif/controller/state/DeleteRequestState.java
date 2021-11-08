@@ -18,4 +18,8 @@ public class DeleteRequestState implements State {
         controller.setCurrentState(controller.tourCompleted);
     }
 
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

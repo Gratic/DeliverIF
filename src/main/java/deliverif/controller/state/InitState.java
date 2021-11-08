@@ -12,4 +12,9 @@ public class InitState implements State {
         gui.getControlPanel().addRequestButton.setEnabled(false);
         gui.getControlPanel().deleteRequestButton.setEnabled(false);
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

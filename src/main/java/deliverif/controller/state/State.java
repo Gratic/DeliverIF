@@ -72,5 +72,6 @@ public interface State {
     default void validateDeleteRequestButtonClick(Controller controller, Gui gui) {
     }
 
-
+    /** Visitor pattern accept() method */
+    void accept(StateVisitor visitor);
 }

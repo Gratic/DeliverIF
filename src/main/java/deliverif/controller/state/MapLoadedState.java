@@ -13,4 +13,9 @@ public class MapLoadedState implements State {
         gui.getControlPanel().deleteRequestButton.setEnabled(false);
         gui.setCurrentViewState(new LoadRequestsView(gui));
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }

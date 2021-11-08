@@ -89,4 +89,9 @@ public class AddPickupRequestState implements State, IAddRequestState {
             }
         }
     }
+
+    @Override
+    public void accept(StateVisitor visitor) {
+        visitor.visit(this);
+    }
 }
