@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.ColorConvertOp;
 import java.util.*;
 import java.util.List;
 
@@ -89,10 +90,10 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
         if (this.isMapLoaded()) {
             g.setColor(new Color(10, 10, 10));
-            
+
             Hashtable<Point, List> roadNames = new Hashtable<>();
             List<String> uniqueRoadNames = new ArrayList<>();
-            
+
             for (Address address : this.map.getAddresses().values()) {
 
                 // Display address hover
@@ -104,6 +105,37 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
                 // Display segments originating from this address
                 Collection<RoadSegment> segments = this.map.getSegmentsOriginatingFrom(address.getId());
+
+                if (hoveredAddress != null) {
+                Collection<RoadSegment> roadNameSegments = this.map.getSegmentsOriginatingFrom(hoveredAddress.getId());
+                if (roadNameSegments != null) {
+                    for (RoadSegment roadNameSegment : roadNameSegments) {
+                        Point startCoord = this.latlongToXY(roadNameSegment.getOrigin().getCoords());
+                        Point endCoord = this.latlongToXY(roadNameSegment.getDestination().getCoords());
+                        Point point = this.latlongToXY(roadNameSegment.getOrigin().getCoords());
+                        Point center = new Point(startCoord.x + ((endCoord.x - startCoord.x) / 2), startCoord.y + ((endCoord.y - startCoord.y) / 2));
+                        String roadName = roadNameSegment.getName();
+                        int len = roadName.length();
+                        double deg = Math.toDegrees(Math.atan2(center.y - endCoord.y, center.x - endCoord.x) + Math.PI);
+                        if ((deg > 90) && (deg < 270)) {
+                            deg += 180;
+                        }
+                        double angle = Math.toRadians(deg);
+                        center.setLocation(center.x - (len) / 2, center.y - 10);
+
+                        if (roadName.contains("Avenue") && !roadName.contains("Rue")) {
+                            List<String> roadNameDetails = new ArrayList<String>();
+                            roadNameDetails.add(String.valueOf(angle));
+                            roadNameDetails.add(roadName);
+
+                            if (!uniqueRoadNames.contains(roadName)) {
+                                uniqueRoadNames.add(roadName);
+                                roadNames.put(center, roadNameDetails);
+                            }
+                        }
+                    }
+                }
+                }
                 //perhaps use reverse hashtable?
                 if (segments != null) {
                     for (RoadSegment segment : segments) {
@@ -116,9 +148,9 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
                         Point startCoord = this.latlongToXY(segment.getOrigin().getCoords());
                         Point endCoord = this.latlongToXY(segment.getDestination().getCoords());
-                        
-                        Point origin = this.latlongToXY(segment.getOrigin().getCoords());
-                        Point center = new Point(startCoord.x + ((endCoord.x-startCoord.x)/2), startCoord.y + ((endCoord.y-startCoord.y)/2));
+
+                        Point point = this.latlongToXY(segment.getOrigin().getCoords());
+                        /*Point center = new Point(startCoord.x + ((endCoord.x-startCoord.x)/2), startCoord.y + ((endCoord.y-startCoord.y)/2));
                         String roadName= segment.getName();
                         int len= roadName.length();
                         double deg = Math.toDegrees(Math.atan2(center.y - endCoord.y, center.x - endCoord.x)+ Math.PI);
@@ -139,7 +171,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                                 uniqueRoadNames.add(roadName);
                                 roadNames.put(center,roadNameDetails);
                             }
-                        }
+                        }*/
 
                         g2d.drawLine(startCoord.x, startCoord.y, endCoord.x, endCoord.y);
                     }
@@ -149,18 +181,18 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             String fontName=g.getFont().getName();
             Font myFont = new Font (fontName, 0,(int) (fontSize * this.zoomLevel));
             g.setFont(myFont);
-            for (Map.Entry<Point,List> entry : roadNames.entrySet()){
+            for (Map.Entry<Point,List> entry : roadNames.entrySet()) {
 
-                Double angle=Double.valueOf(String.valueOf(entry.getValue().get(0)));
-                int centerX=entry.getKey().x;
-                int centerY=entry.getKey().y;
+                    Double angle = Double.valueOf(String.valueOf(entry.getValue().get(0)));
+                    int centerX = entry.getKey().x;
+                    int centerY = entry.getKey().y;
 
-                ((Graphics2D) g).rotate(angle, centerX,centerY);
+                    ((Graphics2D) g).rotate(angle, centerX, centerY);
 
-                g.drawString(String.valueOf(entry.getValue().get(1)),centerX ,centerY );
+                    g.drawString(String.valueOf(entry.getValue().get(1)), centerX, centerY);
 
-                ((Graphics2D) g).rotate(-angle, centerX  , centerY);
-                    }
+                    ((Graphics2D) g).rotate(-angle, centerX, centerY);
+            }
         } else {
             String message = "La carte n'est pas chargée ou vide.";
             int messageWidth = g.getFontMetrics().stringWidth(message);
