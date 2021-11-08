@@ -11,7 +11,7 @@ public class BnBPDTSP implements RunnablePDTSP {
     private volatile boolean threadReady = false;
     private volatile boolean runningInThread = false;
     private volatile boolean running = false;
-    private volatile boolean paused = false;
+    private volatile boolean paused = true;
 
     private volatile boolean isSolutionFound = false;
     private volatile boolean isOptimal = false;
@@ -48,6 +48,8 @@ public class BnBPDTSP implements RunnablePDTSP {
 
         startTime = System.currentTimeMillis();
         branchAndBound(0, unvisited, visited, 0d);
+
+        isOptimal = true;
     }
 
     @Override
@@ -104,7 +106,7 @@ public class BnBPDTSP implements RunnablePDTSP {
      */
     private void branchAndBound(int currentVertex, Collection<Integer> unvisited,
                                 Collection<Integer> visited, Double currentCost) {
-        if (!running) return;
+        if (runningInThread && !running) return;
 
         if (DEBUG) System.out.println("currentCost=" + currentCost);
 
@@ -212,7 +214,6 @@ public class BnBPDTSP implements RunnablePDTSP {
 
         searchSolution(timeLimit, g, pred);
 
-        isOptimal = true;
         running = false;
         paused = true;
     }

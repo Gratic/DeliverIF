@@ -50,6 +50,8 @@ public class TestPDTSPWrapper {
             wrapper.compute();
             wrapper.updateDeliveryTour();
         });
+
+        Assertions.assertTrue(wrapper.isSolutionFound());
     }
 
     @Test
@@ -75,6 +77,7 @@ public class TestPDTSPWrapper {
             wrapper.updateDeliveryTour();
         });
 
+        Assertions.assertTrue(wrapper.isSolutionFound());
         Assertions.assertEquals(expectedSolutionCost, wrapper.getSolutionCost());
     }
 
@@ -141,6 +144,7 @@ public class TestPDTSPWrapper {
             wrapper.updateDeliveryTour();
         });
 
+        Assertions.assertTrue(wrapper.isSolutionFound());
         Assertions.assertEquals(expectedSolutionCost, wrapper.getSolutionCost());
     }
 
@@ -171,6 +175,7 @@ public class TestPDTSPWrapper {
             wrapper.updateDeliveryTour();
         });
 
+        Assertions.assertTrue(wrapper.isSolutionFound());
         Assertions.assertEquals(expectedSolutionCost, wrapper.getSolutionCost());
     }
 }

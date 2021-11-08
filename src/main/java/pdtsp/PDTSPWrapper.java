@@ -25,15 +25,14 @@ public class PDTSPWrapper {
     private DistortedTransformer distorter;
     private PrecedenceTransformer precedencer;
 
-    private RunnablePDTSP pdtsp;
-
-    boolean isPreparationDone;
 
     private final BasicGraphWrapper graphWrapper;
 
     private final DeliveryTour deliveryTour;
 
+    private RunnablePDTSP pdtsp;
     private Thread pdtspThread;
+    boolean isPreparationDone;
 
     public PDTSPWrapper(CityMap cityMap, DeliveryTour deliveryTour, Integer timeLimit) {
         this.timeLimit = timeLimit;
@@ -125,12 +124,6 @@ public class PDTSPWrapper {
 
             pdtsp.resume();
 
-            try {
-                Thread.sleep(timeLimit);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             while (!pdtsp.isPaused()) {
                 try {
                     Thread.sleep(500);
@@ -163,8 +156,7 @@ public class PDTSPWrapper {
 
         realPathInteger.addAll(getRealPath(previous, startPointInteger, shortestPaths));
 
-        for(int node : realPathInteger)
-        {
+        for (int node : realPathInteger) {
             realPath.add(graphWrapper.idConvert(node));
         }
 
