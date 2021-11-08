@@ -25,7 +25,7 @@ public class PDTSPWrapper {
     private DistortedTransformer distorter;
     private PrecedenceTransformer precedencer;
 
-    private PDTSP pdtsp;
+    private RunnablePDTSP pdtsp;
 
     boolean isPreparationDone;
 
@@ -33,12 +33,12 @@ public class PDTSPWrapper {
 
     private final DeliveryTour deliveryTour;
 
+    private Thread pdtspThread;
+
     public PDTSPWrapper(CityMap cityMap, DeliveryTour deliveryTour, Integer timeLimit) {
         this.timeLimit = timeLimit;
 
-
         this.requestsInteger = new ArrayList<>();
-
 
         this.deliveryTour = deliveryTour;
         this.requests = deliveryTour.getRequests();
@@ -89,7 +89,6 @@ public class PDTSPWrapper {
                 BasicGraph.printGraph(reevaluated);
             }
 
-
             // TASK 2: Distortion
             distorter = new DistortedTransformer(reevaluated, reevaluatedRequests);
             distorter.transform();
@@ -104,14 +103,19 @@ public class PDTSPWrapper {
             isPreparationDone = true;
 
             if (pdtsp == null) {
-                pdtsp = new BnBPDTSP();
+                pdtsp = new BnBPDTSP(timeLimit, distorter.getTransformedGraph(), precedencer.getTransformedGraph());
+                pdtspThread = new Thread(pdtsp);
+                pdtspThread.start();
+
+                while (!pdtsp.isReady()) {
+                }
             }
         }
 
     }
 
     public void compute() {
-        if (isPreparationDone) {
+        if (isPreparationDone && !isSolutionOptimal() && pdtsp.isRunning()) {
             if (DEBUG) {
                 System.out.println("distorted");
                 BasicGraph.printGraph(distorter.getTransformedGraph());
@@ -119,7 +123,21 @@ public class PDTSPWrapper {
                 BasicGraph.printGraph(precedencer.getTransformedGraph());
             }
 
-            pdtsp.searchSolution(timeLimit, distorter.getTransformedGraph(), precedencer.getTransformedGraph());
+            pdtsp.resume();
+
+            try {
+                Thread.sleep(timeLimit);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            while (!pdtsp.isPaused()) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -335,5 +353,9 @@ public class PDTSPWrapper {
 
     public double getSolutionCost() {
         return pdtsp.getSolutionCost();
+    }
+
+    public void killAlgorithmThread() {
+        pdtsp.kill();
     }
 }

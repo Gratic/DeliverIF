@@ -5,21 +5,30 @@ import java.util.Collection;
 import java.util.Iterator;
 
 // TODO: Possibility to stop and continue the computation.
-public class BnBPDTSP implements PDTSP {
+public class BnBPDTSP implements RunnablePDTSP {
     private static final boolean DEBUG = false;
 
-    private Integer[] bestSol;
+    private volatile boolean threadReady = false;
+    private volatile boolean runningInThread = false;
+    private volatile boolean running = false;
+    private volatile boolean paused = false;
+
+    private volatile boolean isSolutionFound = false;
+    private volatile boolean isOptimal = false;
+
+    private volatile Integer[] bestSol;
+    private volatile Double bestSolCost;
+
     protected Graph g;
     protected Graph pred;
-    private Double bestSolCost;
     private int timeLimit;
-    private long startTime;
+    private volatile long startTime;
 
-    private boolean computationStarted = false;
-    private Collection<Integer> unvisited;
-    private Collection<Integer> visited;
-    private boolean isSolutionFound = false;
-    private boolean isOptimal = false;
+    public BnBPDTSP(int timeLimit, Graph g, Graph pred) {
+        this.timeLimit = timeLimit;
+        this.g = g;
+        this.pred = pred;
+    }
 
     // TODO: Working stop/resume
     @Override
@@ -28,20 +37,16 @@ public class BnBPDTSP implements PDTSP {
 
         this.timeLimit = timeLimit;
 
-        if (!computationStarted) {
-            computationStarted = true;
-            this.g = g;
-            this.pred = pred;
-            bestSol = new Integer[g.getNbVertices()];
-            unvisited = new ArrayList<>(g.getNbVertices() - 1);
-            for (int i = 1; i < g.getNbVertices(); i++) unvisited.add(i);
-            visited = new ArrayList<>(g.getNbVertices());
-            visited.add(0);
-            bestSolCost = Double.POSITIVE_INFINITY;
-        }
+        this.g = g;
+        this.pred = pred;
+        bestSol = new Integer[g.getNbVertices()];
+        Collection<Integer> unvisited = new ArrayList<>(g.getNbVertices() - 1);
+        for (int i = 1; i < g.getNbVertices(); i++) unvisited.add(i);
+        Collection<Integer> visited = new ArrayList<>(g.getNbVertices());
+        visited.add(0);
+        bestSolCost = Double.POSITIVE_INFINITY;
 
         startTime = System.currentTimeMillis();
-
         branchAndBound(0, unvisited, visited, 0d);
     }
 
@@ -76,7 +81,7 @@ public class BnBPDTSP implements PDTSP {
      * @return a estimated value
      */
     protected Double bound(Integer currentVertex, Collection<Integer> unvisited, Graph g) {
-        Double minCost = Double.POSITIVE_INFINITY;
+        double minCost = Double.POSITIVE_INFINITY;
 
         for (int i : unvisited) {
             minCost = (g.getCost(currentVertex, i) != -1 ? Math.min(minCost, g.getCost(currentVertex, i)) : minCost);
@@ -99,15 +104,34 @@ public class BnBPDTSP implements PDTSP {
      */
     private void branchAndBound(int currentVertex, Collection<Integer> unvisited,
                                 Collection<Integer> visited, Double currentCost) {
+        if (!running) return;
+
         if (DEBUG) System.out.println("currentCost=" + currentCost);
-        if (System.currentTimeMillis() - startTime > timeLimit) {
+
+        long timeElapsed = System.currentTimeMillis() - startTime;
+
+        if (timeElapsed > timeLimit) {
             if (DEBUG) System.out.println("TIMELIMIT !");
-            return;
+
+            if (runningInThread)
+                pause();
+            else
+                return;
         }
+
+        while (running && paused) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (unvisited.size() == 0) {
             if (g.isArc(currentVertex, 0)) { // Si on peut revenir au début
                 if (currentCost + g.getCost(currentVertex, 0) < bestSolCost) { // si le cout est meilleur que bestSolCost
                     if (DEBUG) System.out.println("A solution has been found !");
+
                     visited.toArray(bestSol);
                     bestSolCost = currentCost + g.getCost(currentVertex, 0);
                     isSolutionFound = true;
@@ -132,10 +156,6 @@ public class BnBPDTSP implements PDTSP {
                     branchAndBound(nextVertex, unvisited, visited,
                             currentCost + g.getCost(currentVertex, nextVertex));
 
-                    if (System.currentTimeMillis() - startTime > timeLimit) {
-                        if (DEBUG) System.out.println("TIMELIMIT !");
-                        return;
-                    }
                 } else {
                     if (DEBUG) {
                         System.out.println("Cutted because precedence !");
@@ -147,10 +167,53 @@ public class BnBPDTSP implements PDTSP {
                 visited.remove(nextVertex);
                 unvisited.add(nextVertex);
             }
-            if (currentVertex == 0 && !it.hasNext()) {
-                if (DEBUG) System.out.println("Algorithm is done");
-                isOptimal = true;
-            }
         }
+    }
+
+    @Override
+    public void pause() {
+        paused = true;
+    }
+
+    @Override
+    public void resume() {
+        startTime = System.currentTimeMillis();
+        paused = false;
+    }
+
+    @Override
+    public void kill() {
+        running = false;
+    }
+
+    @Override
+    public boolean isReady() {
+        return threadReady;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public boolean isPaused() {
+        return paused;
+    }
+
+    @Override
+    public void run() {
+        runningInThread = true;
+        running = true;
+        paused = true;
+        isOptimal = false;
+
+        threadReady = true;
+
+        searchSolution(timeLimit, g, pred);
+
+        isOptimal = true;
+        running = false;
+        paused = true;
     }
 }
