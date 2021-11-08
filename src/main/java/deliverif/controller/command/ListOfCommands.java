@@ -1,6 +1,7 @@
 package deliverif.controller.command;
 
 import deliverif.controller.Controller;
+import javax.swing.*;
 import java.util.LinkedList;
 
 public class ListOfCommands {
@@ -12,11 +13,11 @@ public class ListOfCommands {
 
     public ListOfCommands(Controller controller) {
         lastCommandIndex = -1;
-        commands = new LinkedList<Command>();
+        commands = new LinkedList<>();
         this.controller = controller;
     }
 
-    public void add(Command command) {
+    public void add(Command command) throws Exception {
         if(commands.size() > lastCommandIndex + 1) {
             // clearing subList view of the list allows removal of elements from the list
             commands.subList(lastCommandIndex + 1, commands.size()).clear();
@@ -32,7 +33,12 @@ public class ListOfCommands {
 
     public void undo() {
         if (lastCommandIndex >= 0) {
-            commands.get(lastCommandIndex).undoCommand();
+            try {
+                commands.get(lastCommandIndex).doCommand();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null,"An error occured during undo");
+                e.printStackTrace();
+            }
             lastCommandIndex--; // WARN: Decrement after
         }
 
@@ -41,8 +47,13 @@ public class ListOfCommands {
 
     public void redo() {
         if(isRedoPossible()) {
-            lastCommandIndex++; // WARN: Increment first
-            commands.get(lastCommandIndex).doCommand();
+            try {
+                lastCommandIndex++;
+                commands.get(lastCommandIndex).doCommand();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null,"An error occured during redo");
+                e.printStackTrace();
+            }
         }
 
         updateGuiUndoRedoButtons();

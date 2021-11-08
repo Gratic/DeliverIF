@@ -5,6 +5,7 @@ import deliverif.observer.Observable;
 import deliverif.xml.RequestsXMLHandler;
 import org.xml.sax.SAXException;
 import pdtsp.Pair;
+import pdtsp.ShortestPathWrapper;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -155,14 +156,146 @@ public class DeliveryTour extends Observable {
         requests.add(request);
         this.notifyObservers();
     }
+    private void updatePath(CityMap map){
+        path.clear();
+        Address prevAddress =null;
+        for (Address address : pathAddresses){
+            if (prevAddress != null){
+                if (map.findSegment(prevAddress.getId(), address.getId()) != null) {
+                    path.add(map.findSegment(prevAddress.getId(), address.getId()));
+                }else {
+                    System.out.println(prevAddress.getId()+" - "+address.getId());
+                }
+            }
+            prevAddress = address;
+        }
+        this.notifyObservers();
+    }
+    public void addPointToPath( EnumAddressType type, Request request, Pair<EnumAddressType, Request> pairPrevious, CityMap map) {
 
-    // Request modifs from User
-    public void addRequestRecompute(Request request, int indexPickup, int indexDelivery) {
-        // TODO: Need to recompute locally the delivery tour
+        int indexAddressPrevious = this.addressRequestMetadata.indexOf(pairPrevious);
+        Address address = request.getAddress(type);
+        Address addressPrevious;
+        if (pairPrevious.getX()==EnumAddressType.DEPARTURE_ADDRESS){
+            addressPrevious = getDepartureAddress();
+        }else {
+        addressPrevious =pairPrevious.getY().getAddress(pairPrevious.getX());
+        }
+        int indexAddressNext = indexAddressPrevious + 1;
+
+        //visit addressRequestMetadata until we find an address that isn't transversal
+        while (this.addressRequestMetadata.get(indexAddressNext).getX() == EnumAddressType.TRAVERSAL_ADDRESS) {
+            indexAddressNext++;
+        }
+
+        Pair<EnumAddressType, Request> addressNextPair = this.addressRequestMetadata.get(indexAddressNext);
+        System.out.println(pairPrevious.getX()+" - "+(requests.indexOf(pairPrevious.getY())+1));
+        System.out.println(addressNextPair.getX()+" - "+(requests.indexOf(addressNextPair.getY())+1 +" - "+indexAddressNext));
+
+        Address addressNext;
+        if (addressNextPair.getX()==EnumAddressType.DEPARTURE_ADDRESS){
+            addressNext = getDepartureAddress();
+        }else {
+            addressNext = addressNextPair.getY().getAddress(addressNextPair.getX());
+        }
+
+        ShortestPathWrapper wrapper = new ShortestPathWrapper(map);
+
+        List<Address> newPath = wrapper.shortestPathBetween(addressPrevious, address);
+        newPath.remove(newPath.size()-1);
+        int indexMiddle = newPath.size() ;
+
+        newPath.addAll(wrapper.shortestPathBetween(address, addressNext));
+
+
+        for (int i = 0; i < indexAddressNext-indexAddressPrevious+1; i++) {
+            this.pathAddresses.remove(indexAddressPrevious);
+            this.addressRequestMetadata.remove(indexAddressPrevious);
+        }
+        int indexToAdd = indexAddressPrevious ;
+
+        for (int j = 0; j < newPath.size(); j++) {
+            this.pathAddresses.add(indexToAdd, newPath.get(j));
+            if (j == 0) {
+                this.addressRequestMetadata.add(indexToAdd, pairPrevious);
+            } else if (j == indexMiddle) {
+                this.addressRequestMetadata.add(indexToAdd, new Pair<>(type,request));
+            } else if (j == newPath.size() - 1) {
+                this.addressRequestMetadata.add(indexToAdd, addressNextPair);
+            } else {
+                this.addressRequestMetadata.add(indexToAdd, new Pair<>(EnumAddressType.TRAVERSAL_ADDRESS, null));
+            }
+            indexToAdd++;
+        }
     }
 
-    public void deleteRequestRecompute(Request request) {
-        // TODO: Need to recompute locally the delivery tour
+    // Request modifs from User
+    public void addRequestRecompute(Request request, Pair<EnumAddressType, Request> pickupPrevious,
+                                    Pair<EnumAddressType, Request> deliveryPrevious, CityMap map) throws Exception {
+        if(addressRequestMetadata.indexOf(pickupPrevious) > addressRequestMetadata.indexOf(deliveryPrevious)){
+            throw new Exception("Delivery before pickup");
+        }
+        requests.add(request);
+
+        addPointToPath(EnumAddressType.PICKUP_ADDRESS, request, pickupPrevious, map);
+
+        if (pickupPrevious.equals(deliveryPrevious)){
+            deliveryPrevious = new Pair<>(EnumAddressType.PICKUP_ADDRESS,request);
+        }
+        addPointToPath(EnumAddressType.DELIVERY_ADDRESS, request, deliveryPrevious, map);
+
+        updatePath(map);
+    }
+
+    public void deletePointFromPath(Address address, Request request, CityMap map) {
+
+        int indexAddress = this.pathAddresses.indexOf(address);
+
+        //visit addressRequestMetadata to find previous point
+        int indexPreviousAddress = indexAddress;
+        while (this.addressRequestMetadata.get(indexAddress).getX() == EnumAddressType.TRAVERSAL_ADDRESS) {
+            indexPreviousAddress--;
+        }
+        Address previousAddress = pathAddresses.get(indexPreviousAddress);
+
+        //visit addressRequestMetadata to find next point
+        int indexNextAddress = indexAddress;
+        while (this.addressRequestMetadata.get(indexAddress).getX() == EnumAddressType.TRAVERSAL_ADDRESS) {
+            indexNextAddress++;
+        }
+        Address nextAddress = pathAddresses.get(indexNextAddress);
+
+        ShortestPathWrapper wrapper = new ShortestPathWrapper(map);
+        List<Address> newPath = wrapper.shortestPathBetween(previousAddress, nextAddress);
+
+        for (int i = indexPreviousAddress + 1; i < indexNextAddress; i++) {
+            this.pathAddresses.remove(i);
+            this.addressRequestMetadata.remove(i);
+        }
+        int indexToAdd = indexPreviousAddress + 1;
+
+        for (int j = 0; j < newPath.size(); j++) {
+
+            this.pathAddresses.add(indexToAdd, newPath.get(j));
+
+            if (j == 0) {
+                this.addressRequestMetadata.add(indexToAdd, this.addressRequestMetadata.get(indexPreviousAddress));
+            } else if (j == newPath.size() - 1) {
+                this.addressRequestMetadata.add(indexToAdd, this.addressRequestMetadata.get(indexNextAddress));
+            } else {
+                this.addressRequestMetadata.add(indexToAdd, new Pair<>(EnumAddressType.TRAVERSAL_ADDRESS, null));
+            }
+            indexToAdd++;
+        }
+    }
+
+
+    public void deleteRequestRecompute(Request request, CityMap map) {
+        deletePointFromPath(request.getPickupAddress(), request, map);
+        deletePointFromPath(request.getDeliveryAddress(), request, map);
+
+        updatePath(map);
+
     }
 
     public List<Request> getRequests() {
@@ -239,8 +372,7 @@ public class DeliveryTour extends Observable {
         List<Address> addresses = this.pathAddresses;
         int indexAddress1 = getIndexOfAddress(a1);
         int indexAddress2 = getIndexOfAddress(a2);
-        List<RoadSegment> roadSegmentsBetweenA1AndA2 = path.subList(indexAddress1, indexAddress2 - 1);
-        return roadSegmentsBetweenA1AndA2;
+        return path.subList(indexAddress1, indexAddress2 - 1);
     }
 
     public int getIndexOfAddress(Address address) {
