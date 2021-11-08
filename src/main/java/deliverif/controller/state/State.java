@@ -18,30 +18,32 @@ public interface State {
     }
 
     default void undo(ListOfCommands listOfCommands) {
+        listOfCommands.undo();
     }
 
     default void redo(ListOfCommands listOfCommands) {
+        listOfCommands.redo();
     }
 
-    default void rightClick(Controller controller, Gui gui) {
+    default void rightClick(Controller controller) {
     }
 
-    default void leftClick(Controller controller, Gui gui) {
+    default void leftClick(Controller controller) {
     }
 
-    default void loadMapButtonClick(Controller controller, Gui gui) {
+    default void loadMapButtonClick(Controller controller) {
         controller.setCurrentState(controller.loadingMap);
     }
 
-    default void loadRequestsButtonClick(Controller controller, Gui gui) {
+    default void loadRequestsButtonClick(Controller controller) {
         controller.setCurrentState(controller.loadingRequests);
     }
 
-    default void addRequestButtonClick(Controller controller, Gui gui) {
+    default void addRequestButtonClick(Controller controller) {
         controller.setCurrentState(controller.addPickupRequest);
     }
 
-    default void deleteButtonClick(Controller controller, Gui gui) {
+    default void deleteButtonClick(Controller controller) {
         controller.setCurrentState(controller.deleteRequest);
     }
 

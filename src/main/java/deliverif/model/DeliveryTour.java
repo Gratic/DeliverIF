@@ -189,8 +189,6 @@ public class DeliveryTour extends Observable {
         }
 
         Pair<EnumAddressType, Request> addressNextPair = this.addressRequestMetadata.get(indexAddressNext);
-        System.out.println(pairPrevious.getX()+" - "+(requests.indexOf(pairPrevious.getY())+1));
-        System.out.println(addressNextPair.getX()+" - "+(requests.indexOf(addressNextPair.getY())+1 +" - "+indexAddressNext));
 
         Address addressNext;
         if (addressNextPair.getX()==EnumAddressType.DEPARTURE_ADDRESS){
@@ -253,20 +251,20 @@ public class DeliveryTour extends Observable {
         updatePath(map);
     }
 
-    public void deletePointFromPath(Address address, Request request, CityMap map) {
+    public Pair<EnumAddressType, Request> deletePointFromPath(Address address, Request request, CityMap map, EnumAddressType type) {
 
-        int indexAddress = this.pathAddresses.indexOf(address);
+        int indexAddress = this.addressRequestMetadata.indexOf(new Pair<>(type, request));
 
         //visit addressRequestMetadata to find previous point
-        int indexPreviousAddress = indexAddress;
-        while (this.addressRequestMetadata.get(indexAddress).getX() == EnumAddressType.TRAVERSAL_ADDRESS) {
+        int indexPreviousAddress = indexAddress - 1;
+        while (this.addressRequestMetadata.get(indexPreviousAddress).getX() == EnumAddressType.TRAVERSAL_ADDRESS) {
             indexPreviousAddress--;
         }
         Address previousAddress = pathAddresses.get(indexPreviousAddress);
 
         //visit addressRequestMetadata to find next point
-        int indexNextAddress = indexAddress;
-        while (this.addressRequestMetadata.get(indexAddress).getX() == EnumAddressType.TRAVERSAL_ADDRESS) {
+        int indexNextAddress = indexAddress +1;
+        while (this.addressRequestMetadata.get(indexNextAddress).getX() == EnumAddressType.TRAVERSAL_ADDRESS) {
             indexNextAddress++;
         }
         Address nextAddress = pathAddresses.get(indexNextAddress);
@@ -274,34 +272,44 @@ public class DeliveryTour extends Observable {
         ShortestPathWrapper wrapper = new ShortestPathWrapper(map);
         List<Address> newPath = wrapper.shortestPathBetween(previousAddress, nextAddress);
 
-        for (int i = indexPreviousAddress + 1; i < indexNextAddress; i++) {
-            this.pathAddresses.remove(i);
-            this.addressRequestMetadata.remove(i);
+        Pair<EnumAddressType, Request> pairPrevious = this.addressRequestMetadata.get(indexPreviousAddress);
+        Pair<EnumAddressType, Request> pairNext = this.addressRequestMetadata.get(indexNextAddress);
+
+        for (int i = 0; i < indexNextAddress - indexPreviousAddress + 1; i++) {
+            this.pathAddresses.remove(indexPreviousAddress);
+            this.addressRequestMetadata.remove(indexPreviousAddress);
         }
-        int indexToAdd = indexPreviousAddress + 1;
+
+        int indexToAdd = indexPreviousAddress ;
 
         for (int j = 0; j < newPath.size(); j++) {
 
             this.pathAddresses.add(indexToAdd, newPath.get(j));
 
             if (j == 0) {
-                this.addressRequestMetadata.add(indexToAdd, this.addressRequestMetadata.get(indexPreviousAddress));
+                this.addressRequestMetadata.add(indexToAdd,pairPrevious);
             } else if (j == newPath.size() - 1) {
-                this.addressRequestMetadata.add(indexToAdd, this.addressRequestMetadata.get(indexNextAddress));
+                this.addressRequestMetadata.add(indexToAdd, pairNext);
             } else {
                 this.addressRequestMetadata.add(indexToAdd, new Pair<>(EnumAddressType.TRAVERSAL_ADDRESS, null));
             }
             indexToAdd++;
         }
+        return pairPrevious;
     }
 
 
-    public void deleteRequestRecompute(Request request, CityMap map) {
-        deletePointFromPath(request.getPickupAddress(), request, map);
-        deletePointFromPath(request.getDeliveryAddress(), request, map);
+    public Pair< Pair<EnumAddressType, Request>, Pair<EnumAddressType, Request>> deleteRequestRecompute(Request request, CityMap map) {
+
+        Pair<Pair<EnumAddressType, Request>, Pair<EnumAddressType, Request>> res = new Pair<>();
+        res.setX(deletePointFromPath(request.getPickupAddress(), request, map, EnumAddressType.PICKUP_ADDRESS));
+        res.setY(deletePointFromPath(request.getDeliveryAddress(), request, map, EnumAddressType.DELIVERY_ADDRESS));
+
+        requests.remove(request);
+        selectedElement = -2;
 
         updatePath(map);
-
+        return res;
     }
 
     public List<Request> getRequests() {

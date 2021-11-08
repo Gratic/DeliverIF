@@ -79,6 +79,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         addRequestButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        addRequestButton.setToolTipText("Add Request");
         addRequestButton.addActionListener(this);
         addRequestButton.setEnabled(false);
         northPanel.add(addRequestButton);
@@ -87,6 +88,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         deleteRequestButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        deleteRequestButton.setToolTipText("Delete Request");
         deleteRequestButton.addActionListener(this);
         deleteRequestButton.setEnabled(false);
         northPanel.add(deleteRequestButton);
@@ -96,6 +98,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         undoButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        undoButton.setToolTipText("Undo");
         undoButton.addActionListener(this);
         undoButton.setEnabled(false);
         southPanel.add(undoButton);
@@ -104,6 +107,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         redoButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        redoButton.setToolTipText("Redo");
         redoButton.addActionListener(this);
         redoButton.setEnabled(false);
         southPanel.add(redoButton);

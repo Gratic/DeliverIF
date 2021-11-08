@@ -21,24 +21,14 @@ public class TourCompletedState implements State {
     }
 
 
-    @Override
-    public void addressClick(Controller controller, Gui gui, Address addressClicked) {
+/*    @Override
+    public void addressClick(Controller controller, Gui gui, List<Pair<Double, Address>> addresses) {
         controller.setCurrentState(controller.deleteRequest);
-    }
+    }*/
 
     @Override
     public void generateRoadMapButtonClick(Controller controller, Gui gui) {
         controller.setCurrentState(controller.generateRoadMap);
-    }
-
-    @Override
-    public void undo(ListOfCommands listOfCommands) {
-        // TODO: add code
-    }
-
-    @Override
-    public void redo(ListOfCommands listOfCommands) {
-        // TODO: add code
     }
 
     @Override

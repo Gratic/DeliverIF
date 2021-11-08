@@ -5,7 +5,6 @@ import deliverif.controller.state.*;
 import deliverif.gui.Gui;
 import deliverif.model.CityMap;
 import deliverif.model.DeliveryTour;
-import deliverif.controller.state.*;
 import deliverif.roadmap.Roadmap;
 import deliverif.model.*;
 import pdtsp.Pair;
@@ -92,11 +91,11 @@ public class Controller {
     }
 
     public void rightClick(Controller controller, Gui gui) {
-        this.getCurrentState().rightClick(this, gui);
+        this.getCurrentState().rightClick(this);
     }
 
     public void leftClick(Controller controller, Gui gui) {
-        this.getCurrentState().leftClick(this, gui);
+        this.getCurrentState().leftClick(this);
     }
 
     // getters & setters
@@ -120,11 +119,11 @@ public class Controller {
     }
 
     public void loadMapButtonClick(Gui gui) {
-        this.getCurrentState().loadMapButtonClick(this, gui);
+        this.getCurrentState().loadMapButtonClick(this);
     }
 
     public void loadRequestsButtonClick(Gui gui) {
-        this.getCurrentState().loadRequestsButtonClick(this, gui);
+        this.getCurrentState().loadRequestsButtonClick(this);
     }
 
     public void computingTourButtonClick(Gui gui) {
@@ -152,7 +151,7 @@ public class Controller {
     }
 
     public void addRequestButtonClick(Gui gui) {
-        this.getCurrentState().addRequestButtonClick(this, gui);
+        this.getCurrentState().addRequestButtonClick(this);
     }
 
     public void cancelButtonClick(Gui gui) {
@@ -160,7 +159,7 @@ public class Controller {
     }
 
     public void deleteButtonClick(Gui gui) {
-        this.getCurrentState().deleteButtonClick(this, gui);
+        this.getCurrentState().deleteButtonClick(this);
     }
 
     public void addressClick(Gui gui, Address addressClicked) {
@@ -168,7 +167,11 @@ public class Controller {
     }
 
     public void requestClick(Gui gui, Request request, EnumAddressType addressType) {
-        this.getCurrentState().requestClick(this, gui, request, addressType);
+        try {
+            this.getCurrentState().requestClick(this, gui, request, addressType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteRequestButton(Gui gui) {

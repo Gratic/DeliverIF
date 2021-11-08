@@ -34,7 +34,7 @@ public class ListOfCommands {
     public void undo() {
         if (isUndoPossible()) {
             try {
-                commands.get(lastCommandIndex).doCommand();
+                commands.get(lastCommandIndex).undoCommand();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null,"An error occured during undo");
                 e.printStackTrace();
@@ -73,10 +73,16 @@ public class ListOfCommands {
 
     private void updateGuiUndoRedoButtons() {
         // check if Undo button should be active or not
-        controller.getGui().getControlPanel().undoButton.setEnabled(commands.size() > 0);
+        controller.getGui().getControlPanel().undoButton.setEnabled((commands.size() > 0) && (lastCommandIndex != -1));
 
         // check if Redo button should be active or not
         controller.getGui().getControlPanel().redoButton.setEnabled(isRedoPossible());
+    }
+
+    public void clear(){
+        commands.clear();
+        lastCommandIndex =-1;
+        updateGuiUndoRedoButtons();
     }
 
 }

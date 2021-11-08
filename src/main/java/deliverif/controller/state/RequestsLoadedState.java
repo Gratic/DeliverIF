@@ -9,7 +9,10 @@ public class RequestsLoadedState implements State {
 
     @Override
     public void run(Controller controller, Gui gui) {
+        gui.getControlPanel().addRequestButton.setEnabled(false);
+        gui.getControlPanel().deleteRequestButton.setEnabled(false);
         gui.setCurrentViewState(new DisplayRequestsView(gui));
+        controller.getListOfCommands().clear();
     }
 
     @Override

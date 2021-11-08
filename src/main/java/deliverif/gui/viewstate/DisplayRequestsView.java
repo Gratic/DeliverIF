@@ -40,21 +40,6 @@ public class DisplayRequestsView extends ViewState implements ActionListener, Ob
 
         // add text to East panel
         ////
-        /*
-        TextualViewPanel textualViewPanel = gui.getTextualViewPanel();
-        textualViewPanel.removeAll();
-
-        JLabel pleaseLoadRequestsText = new JLabel("Compute a tour");
-        textualViewPanel.add(pleaseLoadRequestsText);
-        JButton computeButton = new JButton("Compute");
-        textualViewPanel.add(computeButton);
-        textualViewPanel.add(
-                this.gui.getRequestsTextView()
-        );
-
-        textualViewPanel.revalidate();
-        textualViewPanel.repaint();
-        */
 
         textualViewPanel = gui.getTextualViewPanel();
         textualViewPanel.removeAll();
@@ -78,42 +63,6 @@ public class DisplayRequestsView extends ViewState implements ActionListener, Ob
         textualViewPanel.revalidate();
         textualViewPanel.repaint();
         ////
-    }
-
-    private void createGuiComponents() {
-        // base panel
-        panel = new JPanel();
-        panel.setOpaque(true);
-        panel.setBackground(ColorTheme.LIGHT_BASE_GREY);
-        panel.setLocation(50, 50);
-        panel.setLayout(null);
-
-        // inner JPanel to be centered
-        JPanel innerPanel = new JPanel();
-        FlowLayout verticalFlowLayout = new FlowLayout(
-                FlowLayout.LEADING, 50, 15
-        );
-        innerPanel.setLayout(verticalFlowLayout);
-        innerPanel.setPreferredSize(new Dimension(700, 400));
-        innerPanel.setBackground(ColorTheme.BOX_GENERAL_BASE_BG);
-
-        Font titleFont = Assets.expletusSans;
-
-        JLabel welcomeLabel = new JLabel(
-                "You win"
-        );
-        welcomeLabel.setSize(600, 30);
-        welcomeLabel.setFont(titleFont);
-        innerPanel.add(welcomeLabel);
-
-        // main panel settings
-        panel.setLayout(new GridBagLayout());
-        panel.setPreferredSize(new Dimension(700, 700));
-        panel.add(innerPanel);
-        panel.setVisible(true);
-
-        panel = this.gui.getMapView();
-        panel.repaint();
     }
 
     @Override
