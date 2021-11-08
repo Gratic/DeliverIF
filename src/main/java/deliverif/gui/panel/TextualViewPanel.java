@@ -20,10 +20,7 @@ public class TextualViewPanel extends JPanel {
         );
         setLayout(verticalFlowLayout);
 
-        init();
     }
 
-    private void init() {
 
-    }
 }

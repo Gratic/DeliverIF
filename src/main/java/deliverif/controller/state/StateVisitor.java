@@ -3,15 +3,12 @@ package deliverif.controller.state;
 public interface StateVisitor {
     void visit(AddDeliveryRequestState state);
     void visit(AddPickupRequestState state);
-    void visit(ChooseAssociatedRequestState state);
-    void visit(ChooseRequestToDeleteState state);
     void visit(ComputingTourState state);
     void visit(DeleteRequestState state);
     void visit(GenerateRoadMapState state);
     void visit(InitState state);
     void visit(LoadingMapState state);
     void visit(LoadingRequestsState state);
-    void visit(LocallyModifyTourState state);
     void visit(MapLoadedState state);
     void visit(RequestPopupDurationState state);
     void visit(RequestsLoadedState state);

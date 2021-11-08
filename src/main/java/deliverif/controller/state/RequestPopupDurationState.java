@@ -53,7 +53,7 @@ public class RequestPopupDurationState implements State, IAddRequestState {
                             deliveryDuration
                     );
                     try {
-                        if (request.getDeliveryAddress()==request.getDeliveryAddress()){
+                        if (request.getPickupAddress()==request.getDeliveryAddress()){
                             throw new Exception("Same pickup and delivery address");
                         }
                         Command command = new AddRequestCommand(
@@ -65,6 +65,7 @@ public class RequestPopupDurationState implements State, IAddRequestState {
 
                         JOptionPane.showMessageDialog(gui.getFrame(), "Request added!",
                                 "Request added", JOptionPane.INFORMATION_MESSAGE);
+                        controller.setCurrentState(controller.tourCompleted);
                     }
                     catch (Exception e) {
                         JOptionPane.showMessageDialog(gui.getFrame(), "An unexpected error occurred during the operation.\n"+e.getMessage(),

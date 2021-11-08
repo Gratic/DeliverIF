@@ -37,7 +37,7 @@ public class LoadRequestsView extends ViewState {
         textualViewPanel.repaint();
     }
 
-    private void createGuiComponents() {
+    protected void createGuiComponents() {
         this.panel = this.gui.getMapView();
     }
 }
