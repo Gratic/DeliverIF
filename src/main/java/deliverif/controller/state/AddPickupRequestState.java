@@ -42,7 +42,7 @@ public class AddPickupRequestState implements State, IAddRequestState {
 
         int option = JOptionPane.showConfirmDialog(
                 gui.getFrame(),
-                "You selected address n°" + addressClicked.getId(),
+                "Are you sure ?",
                 "Pickup address choice",
                 JOptionPane.OK_CANCEL_OPTION
         );
@@ -63,19 +63,19 @@ public class AddPickupRequestState implements State, IAddRequestState {
         if(this.pickupAddress != null) {
             String message = this.addressBeforeMessage(new Pair<>(addressType, request));
 
-            int option = JOptionPane.showConfirmDialog(
+            /*int option = JOptionPane.showConfirmDialog(
                     gui.getFrame(),
                     "You chose to add the pickup address directly after " + message + ".",
                     "Preceding address choice",
                     JOptionPane.OK_CANCEL_OPTION
-            );
+            );*/
 
-            if(option == JOptionPane.OK_OPTION) {  // if user cancelled, allow them to select another address
+            //if(option == JOptionPane.OK_OPTION) {  // if user cancelled, allow them to select another request
                 Pair<EnumAddressType, Request> predecessor = new Pair<>(addressType, request);
 
                 ((AddDeliveryRequestState) controller.addDeliveryRequest).entryAction(this.pickupAddress, predecessor);
                 controller.setCurrentState(controller.addDeliveryRequest);
-            }
+            //}
         }
     }
 }

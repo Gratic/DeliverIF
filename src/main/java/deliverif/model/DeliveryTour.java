@@ -342,35 +342,12 @@ public class DeliveryTour extends Observable {
         return res.subList(0, index);
     }
 
-    private final static double THRESHOLD = 50d;
+    private final static double THRESHOLD = 20.;
 
     private void toggleSelect(int n) {
         selectedElement = selectedElement != n ? n : -2;
 
         this.notifyObservers();
-    }
-
-    public void selectElement(Coord coords, double threshold) {
-        Pair<Double, Integer> res = getClosestRequest(coords);
-        double distDeparture = Double.MAX_VALUE;
-        Address departure = getDepartureAddress();
-        if (departure != null) {
-            distDeparture = departure.dist(coords);
-        }
-
-        if (distDeparture < res.getX() && distDeparture < threshold) {
-            toggleSelect(-1);
-
-        } else if (res.getX() < threshold) {
-            toggleSelect(res.getY());
-        }
-        else {
-            this.selectedElement = -2;
-        }
-    }
-
-    public void selectElement(Coord coords) {
-        selectElement(coords, THRESHOLD);
     }
 
     public void selectDepartureAddress() {
@@ -384,6 +361,10 @@ public class DeliveryTour extends Observable {
         } else {
             toggleSelect(index);
         }
+    }
+
+    public void unselectRequest() {
+        selectedElement = -2;
     }
 
 
