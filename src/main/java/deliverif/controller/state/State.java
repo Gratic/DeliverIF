@@ -42,7 +42,7 @@ public interface State {
     }
 
     default void deleteButtonClick(Controller controller, Gui gui) {
-        controller.setCurrentState(controller.chooseRequestToDelete);
+        controller.setCurrentState(controller.deleteRequest);
     }
 
     default void computingTourButtonClick(Controller controller, Gui gui) {

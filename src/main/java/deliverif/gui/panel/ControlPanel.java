@@ -119,7 +119,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         } else if (e.getSource() == addRequestButton) {
             this.gui.getController().addRequestButtonClick(this.gui);
         } else if (e.getSource() == deleteRequestButton) {
-
+            this.gui.getController().deleteButtonClick(this.gui);
         } else if (e.getSource() == undoButton) {
             this.gui.getController().undo();
         } else if(e.getSource() == redoButton) {

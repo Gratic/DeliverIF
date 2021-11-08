@@ -229,6 +229,12 @@ public class DeliveryTour extends Observable {
         }
     }
 
+    public void deleteRequest(Request request){
+        requests.remove(request);
+        selectedElement =-2;
+        this.notifyObservers();
+    }
+
     // Request modifs from User
     public void addRequestRecompute(Request request, Pair<EnumAddressType, Request> pickupPrevious,
                                     Pair<EnumAddressType, Request> deliveryPrevious, CityMap map) throws Exception {
