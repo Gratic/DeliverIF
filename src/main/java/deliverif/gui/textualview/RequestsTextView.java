@@ -19,7 +19,7 @@ public class RequestsTextView extends JPanel implements Observer {
         this.setBackground(ColorTheme.PANEL_2_BASE_BG);
         this.map = map;
         this.tour = tour;
-        this.setPreferredSize(new Dimension(280, 900));
+        this.setPreferredSize(new Dimension(380, 600));
         //this.setLayout(new BorderLayout());
         this.setLayout(new FlowLayout());
     }

@@ -62,6 +62,8 @@ public class DisplayRequestsView extends ViewState implements ActionListener, Ob
         textualViewPanel.add(pleaseLoadRequestsText);
         computeButton = new JButton("Compute");
         textualViewPanel.add(computeButton);
+        computeButton.setFocusPainted(false);
+        computeButton.setContentAreaFilled(false);
         computeButton.addActionListener(this);
 
         //TextualViewScrollPanel textualViewScrollPanel = new TextualViewScrollPanel();

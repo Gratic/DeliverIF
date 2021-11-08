@@ -41,52 +41,61 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         FlowLayout verticalFlowLayout = new FlowLayout(
                 FlowLayout.LEADING, 10, 20
         );
-
+        setBorder(BorderFactory.createLineBorder(ColorTheme.PANEL_2_BASE_BG));
         // sub-panels
         northPanel = new JPanel();
         northPanel.setOpaque(true);
-        northPanel.setBackground(ColorTheme.PANEL_1_BASE_BG);
+        northPanel.setBackground(ColorTheme.GENERAL_BASE_BG);
         northPanel.setPreferredSize(new Dimension(70, 300));
         northPanel.setLayout(verticalFlowLayout);
         add(northPanel, BorderLayout.NORTH);
 
         southPanel = new JPanel();
         southPanel.setOpaque(true);
-        southPanel.setBackground(ColorTheme.PANEL_1_BASE_BG);
+        southPanel.setBackground(ColorTheme.GENERAL_BASE_BG);
         southPanel.setPreferredSize(new Dimension(70, 200));
         southPanel.setLayout(verticalFlowLayout);
         add(southPanel, BorderLayout.SOUTH);
 
         // buttons
-        loadMapButton = new JButton(new ImageIcon(dye(Assets.loadMapImage, Color.BLACK)));
+        loadMapButton = new JButton(Assets.loadMapIcon);
         loadMapButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+
+        loadMapButton.setFocusPainted(false);
+        loadMapButton.setContentAreaFilled(false);
         loadMapButton.setToolTipText("Load Map");
         loadMapButton.addActionListener(this);
         northPanel.add(loadMapButton);
 
-        loadRequestsButton = new JButton(new ImageIcon(dye(Assets.loadRequestImage, Color.BLACK)));
+        loadRequestsButton = new JButton(Assets.loadRequestIcon);
         loadRequestsButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        loadRequestsButton.setFocusPainted(false);
+        loadRequestsButton.setContentAreaFilled(false);
         loadRequestsButton.setToolTipText("Load Requests");
         loadRequestsButton.addActionListener(this);
         loadRequestsButton.setEnabled(false);
         northPanel.add(loadRequestsButton);
 
-        addRequestButton = new JButton(new ImageIcon(dye(Assets.addRequestImage, Color.BLACK)));
+        addRequestButton = new JButton(Assets.addRequestIcon);
         addRequestButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        addRequestButton.setFocusPainted(false);
+        addRequestButton.setContentAreaFilled(false);
         addRequestButton.addActionListener(this);
         addRequestButton.setEnabled(false);
         northPanel.add(addRequestButton);
 
-        deleteRequestButton = new JButton(new ImageIcon(dye(Assets.removeRequestImage, Color.BLACK)));
+        deleteRequestButton = new JButton(Assets.removeRequestIcon);
         deleteRequestButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        deleteRequestButton.setFocusPainted(false);
+        deleteRequestButton.setContentAreaFilled(false);
         deleteRequestButton.addActionListener(this);
         deleteRequestButton.setEnabled(false);
         northPanel.add(deleteRequestButton);
@@ -96,6 +105,8 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         undoButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        undoButton.setFocusPainted(false);
+        undoButton.setContentAreaFilled(false);
         undoButton.addActionListener(this);
         undoButton.setEnabled(false);
         southPanel.add(undoButton);
@@ -104,6 +115,8 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         redoButton.setPreferredSize(
                 new Dimension(50, 50)
         );
+        redoButton.setFocusPainted(false);
+        redoButton.setContentAreaFilled(false);
         redoButton.addActionListener(this);
         redoButton.setEnabled(false);
         southPanel.add(redoButton);

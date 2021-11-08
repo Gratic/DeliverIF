@@ -16,17 +16,17 @@ public abstract class ScrollItemPanel extends JPanel implements MouseListener {
     public ScrollItemPanel(DeliveryTour tour) {
         super();
         setOpaque(true);
-        setBackground(ColorTheme.LIGHT_BASE_GREY);
+        setBackground(ColorTheme.PANEL_1_BASE_BG);
         setPreferredSize(
-                new Dimension(270, 125)
+                new Dimension(360, 125)
         );
         // layout
         FlowLayout verticalFlowLayout = new FlowLayout(
-                FlowLayout.LEADING, 10, 20
+                FlowLayout.LEADING, 30, 30
         );
         setLayout(verticalFlowLayout);
         addMouseListener(this);
-        textColor = Color.WHITE;
+        textColor = ColorTheme.TEXT_COLOR;
         this.tour = tour;
         setVisible(true);
 
@@ -40,9 +40,9 @@ public abstract class ScrollItemPanel extends JPanel implements MouseListener {
 
     protected void setColor(Graphics g) {
         if (selected()) {
-            g.setColor(Color.RED);
+            g.setColor(ColorTheme.TEXT_COLOR_HIGHLIGHTED);
         } else {
-            g.setColor(Color.BLACK);
+            g.setColor(ColorTheme.TEXT_COLOR);
         }
     }
 

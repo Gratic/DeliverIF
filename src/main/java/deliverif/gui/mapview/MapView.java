@@ -1,7 +1,6 @@
 package deliverif.gui.mapview;
 
 import deliverif.controller.Controller;
-import deliverif.controller.state.MapLoadedState;
 import deliverif.gui.utils.ColorTheme;
 import deliverif.model.*;
 import deliverif.observer.Observable;
@@ -14,8 +13,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static deliverif.gui.utils.Assets.*;
 import static deliverif.gui.utils.Utils.dye;
@@ -90,6 +89,9 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         if (this.isMapLoaded()) {
             g.setColor(new Color(10, 10, 10));
 
+            Hashtable<Point, List> roadNames = new Hashtable<>();
+            List<String> uniqueRoadNames = new ArrayList<>();
+
             for (Address address : this.map.getAddresses().values()) {
 
                 // Display address hover
@@ -101,6 +103,36 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
                 // Display segments originating from this address
                 Collection<RoadSegment> segments = this.map.getSegmentsOriginatingFrom(address.getId());
+
+                if (hoveredAddress != null) {
+                    Collection<RoadSegment> roadNameSegments = this.map.getSegmentsOriginatingFrom(hoveredAddress.getId());
+
+                    if (roadNameSegments != null) {
+                        for (RoadSegment roadNameSegment : roadNameSegments) {
+                            Point startCoord = this.latlongToXY(roadNameSegment.getOrigin().getCoords());
+                            Point endCoord = this.latlongToXY(roadNameSegment.getDestination().getCoords());
+                            Point center = new Point(startCoord.x + ((endCoord.x - startCoord.x) / 2), startCoord.y + ((endCoord.y - startCoord.y) / 2));
+                            String roadName = roadNameSegment.getName();
+                            int len = roadName.length();
+                            double deg = Math.toDegrees(Math.atan2(center.y - endCoord.y, center.x - endCoord.x) + Math.PI);
+                            if ((deg > 90) && (deg < 270)) {
+                                deg += 180;
+                            }
+                            double angle = Math.toRadians(deg);
+                            center.setLocation(center.x - (len) / 2, center.y - (int)(20 * this.zoomLevel));
+
+                            List<String> roadNameDetails = new ArrayList<>();
+                            roadNameDetails.add(String.valueOf(angle));
+                            roadNameDetails.add(roadName);
+
+                            if (!uniqueRoadNames.contains(roadName)) {
+                                uniqueRoadNames.add(roadName);
+                                roadNames.put(center, roadNameDetails);
+                            }
+                        }
+                    }
+                }
+
                 if (segments != null) {
                     for (RoadSegment segment : segments) {
                         // check if road is one-way only
@@ -117,6 +149,24 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                     }
                 }
             }
+
+            // Road names rendering
+            int fontSize = g.getFont().getSize();
+            String fontName = g.getFont().getName();
+            Font myFont = new Font(fontName, Font.PLAIN, (int) ( fontSize * this.zoomLevel));
+            g.setFont(myFont);
+            for (Map.Entry<Point, List> entry : roadNames.entrySet()) {
+                Double angle = Double.valueOf(String.valueOf(entry.getValue().get(0)));
+                int centerX = entry.getKey().x;
+                int centerY = entry.getKey().y;
+
+                ((Graphics2D) g).rotate(angle, centerX, centerY);
+
+                g.drawString(String.valueOf(entry.getValue().get(1)), centerX, centerY);
+
+                ((Graphics2D) g).rotate(-angle, centerX, centerY);
+            }
+
         } else {
             String message = "La carte n'est pas chargée ou vide.";
             int messageWidth = g.getFontMetrics().stringWidth(message);
@@ -185,14 +235,14 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 int nextRqAddressIndex = this.tour.nextRequestAddressIndex(0);
                 Color color = ColorTheme.DEPARTURE_COLOR;
 
-                for(int j = 1; j < this.tour.getPathAddresses().size(); j++) {  // address 0 is always departure
+                for (int j = 1; j < this.tour.getPathAddresses().size(); j++) {  // address 0 is always departure
                     Address currentAddress = this.tour.getPathAddresses().get(j);
                     Pair<EnumAddressType, Request> addrMetadata = this.tour.getAddressRequestMetadata().get(j);
 
                     RoadSegment segment = this.tour.getPath().get(j - 1);
 
                     g.setColor(color);
-                    if(j == nextRqAddressIndex) {  // color update will apply on next segment (this is intended)
+                    if (j == nextRqAddressIndex) {  // color update will apply on next segment (this is intended)
                         color = requestColorMap.get(addrMetadata.getY());
                         nextRqAddressIndex = this.tour.nextRequestAddressIndex(nextRqAddressIndex);
                     }
@@ -203,7 +253,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                     Point segEnd = this.latlongToXY(segment.getDestination().getCoords());
 
                     boolean bothWayRoad = this.map.findSegment(segment.getDestination().getId(), segment.getOrigin().getId()) != null;
-                    int deltaAbs = (int)( (bothWayRoad ? 0.5 + overlap : overlap) * streetSize * PATH_SIZE_MULT);
+                    int deltaAbs = (int) ((bothWayRoad ? 0.5 + overlap : overlap) * streetSize * PATH_SIZE_MULT);
                     Point printDelta = new Point(
                             segEnd.x - segStart.x < 0 ? deltaAbs : -deltaAbs,
                             segEnd.y - segStart.y < 0 ? deltaAbs : -deltaAbs
@@ -240,7 +290,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                     g2d.setStroke(new BasicStroke(PATH_ARROW_THICKNESS));
                     g2d.drawLine(arrowBase.x, arrowBase.y, arrowTip.x, arrowTip.y);
 
-                    if(this.pathOverlapCounts.containsKey(currentAddress))
+                    if (this.pathOverlapCounts.containsKey(currentAddress))
                         this.pathOverlapCounts.replace(currentAddress, overlap + 1);
                     else
                         this.pathOverlapCounts.put(currentAddress, overlap + 1);
@@ -364,7 +414,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
         // Handle max unzoom
         int mapSize = (int) (MAP_BASE_SIZE * (this.zoomLevel + zoomDelta));
-        if(mapSize < this.getWidth() * 0.7
+        if (mapSize < this.getWidth() * 0.7
                 && mapSize < this.getHeight() * 0.7
                 && rotations > 0) {  // rotations > 0 means unzoom
             return;
@@ -415,16 +465,14 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
                 if (requests.size() > 1) {
                     selectedRequest = this.showRequestSelectionForm(requests);
-                }
-                else if (requests.size() == 1) {
+                } else if (requests.size() == 1) {
                     selectedRequest = requests.get(0).getY();
                 }
 
-                if(selectedRequest != null) {
-                    if(selectedRequest.getX() == EnumAddressType.DEPARTURE_ADDRESS) {
+                if (selectedRequest != null) {
+                    if (selectedRequest.getX() == EnumAddressType.DEPARTURE_ADDRESS) {
                         tour.selectDepartureAddress();
-                    }
-                    else {
+                    } else {
                         tour.selectRequest(selectedRequest.getY());
                     }
 
@@ -436,7 +484,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
 
             // trigger controller address event
-            if(this.isMapClickable) {
+            if (this.isMapClickable) {
                 List<Pair<Double, Address>> closestAddresses = map.getClosestAddressesFrom(XYToLatLong(e.getPoint()), ADDRESS_SELECTION_THRESHOLD);
                 for (Pair<Double, Address> p : closestAddresses) {
                     System.out.println(p.getY().getId() + " - " + p.getX());
@@ -457,6 +505,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     /**
      * Opens a popup that allows the user to choose a request among multiple nearby requests
+     *
      * @return null if the user cancelled the operation, the selected request address otherwise
      */
     private Pair<EnumAddressType, Request> showRequestSelectionForm(List<Pair<Double, Pair<EnumAddressType, Request>>> requests) {
@@ -491,10 +540,10 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
         int option = JOptionPane.showConfirmDialog(this,
                 optionPanel, "Choose a request address", JOptionPane.OK_CANCEL_OPTION);
-        if(option == JOptionPane.OK_OPTION) {
+        if (option == JOptionPane.OK_OPTION) {
             int i = 0;
-            for(JRadioButton button : choices) {
-                if(button.isSelected()) {
+            for (JRadioButton button : choices) {
+                if (button.isSelected()) {
                     return requests.get(i).getY();
                 }
                 i++;
@@ -505,6 +554,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     /**
      * Opens a popup that allows the user to choose an address among multiple nearby addresses
+     *
      * @return null if the user cancelled the operation, the selected request address otherwise
      */
     @Deprecated
@@ -539,8 +589,8 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
         );
         if (option == JOptionPane.OK_OPTION) {
             int i = 0;
-            for(JRadioButton button : choices) {
-                if(button.isSelected()) {
+            for (JRadioButton button : choices) {
+                if (button.isSelected()) {
                     return addresses.get(i).getY();
                 }
                 i++;

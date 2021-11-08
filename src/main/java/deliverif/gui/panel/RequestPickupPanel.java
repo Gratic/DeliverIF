@@ -33,16 +33,16 @@ public class RequestPickupPanel extends RequestItemPanel {
         long idPickupAdress = request.getPickupAddress().getId();
 
 
-        int placeRequest = 10;
+        int placeRequest = 20;
 
-
-        g.drawString("Request " + requestNumber + " - Pickup : ", 10, placeRequest);
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 15));
+        g.drawString("Pickup Request " + requestNumber, 10, placeRequest);
 
         int intersectionsInterlign = 15;
         int titleInterlign = 18;
 
 
-        g.setFont(new Font("TimesRoman", Font.PLAIN, 11));
+        g.setFont(new Font("TimesRoman", Font.BOLD, 11));
 
         int placePickup = placeRequest + titleInterlign;
 
@@ -55,14 +55,18 @@ public class RequestPickupPanel extends RequestItemPanel {
 
             if (!segmentNamesPickup.contains(segment.getName())) {
                 segmentNamesPickup.add(segment.getName());
+                g.setFont(new Font("TimesRoman", Font.PLAIN, 11));
                 g.drawString(segment.getName(), 25, placePickup = placePickup + intersectionsInterlign);
 
             }
 
         }
         int placeDuration = placePickup + titleInterlign;
+        g.setFont(new Font("TimesRoman", Font.BOLD, 11));
         g.drawString("Pickup Duration : ", 20, placeDuration);
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 11));
         g.drawString(String.valueOf(request.getPickupDuration()), 25, placeDuration + 20);
+
         g.drawString("seconds", 50, placeDuration + 20);
 
 

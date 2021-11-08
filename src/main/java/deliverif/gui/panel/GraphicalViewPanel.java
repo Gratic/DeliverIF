@@ -10,7 +10,8 @@ public class GraphicalViewPanel extends JPanel {
     public GraphicalViewPanel() {
         super();
         setOpaque(true);
-        setBackground(ColorTheme.GENERAL_BASE_BG);
+        setBackground(ColorTheme.BOX_GENERAL_BASE_BG);
+        setBorder(BorderFactory.createLineBorder(ColorTheme.PANEL_2_BASE_BG));
         setLayout(new BorderLayout());
     }
 }

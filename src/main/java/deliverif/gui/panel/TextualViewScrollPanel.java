@@ -19,8 +19,9 @@ public class TextualViewScrollPanel extends JScrollPane {
         setOpaque(true);
         this.getViewport().setBackground(ColorTheme.PANEL_2_BASE_BG);
         setPreferredSize(
-                new Dimension(275, 700)
+                new Dimension(360, 600)
         );
+        setBorder(BorderFactory.createEmptyBorder());
         setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
         setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 
