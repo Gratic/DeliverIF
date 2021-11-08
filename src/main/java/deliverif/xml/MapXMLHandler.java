@@ -1,13 +1,16 @@
 package deliverif.xml;
-
 import deliverif.model.Address;
 import deliverif.model.CityMap;
 import deliverif.model.RoadSegment;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+
+
 public class MapXMLHandler extends org.xml.sax.helpers.DefaultHandler {
     private final CityMap cityMap;
+
+
 
     public MapXMLHandler(CityMap cityMap) {
         this.cityMap = cityMap;
@@ -15,6 +18,7 @@ public class MapXMLHandler extends org.xml.sax.helpers.DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+
         switch (qName) {
             case "intersection":
                 String idString = attributes.getValue("id");
@@ -48,6 +52,7 @@ public class MapXMLHandler extends org.xml.sax.helpers.DefaultHandler {
                 }
 
                 Address address = new Address(id, latitude, longitude);
+
                 cityMap.getAddresses().put(id, address);
                 break;
             case "segment":
@@ -55,6 +60,8 @@ public class MapXMLHandler extends org.xml.sax.helpers.DefaultHandler {
                 String origString = attributes.getValue("origin");
                 String lenString = attributes.getValue("length");
                 String name = attributes.getValue("name");
+
+
 
                 if (destString == null || origString == null || lenString == null || name == null) {
                     throw new SAXException("XML file malformed");
@@ -91,7 +98,6 @@ public class MapXMLHandler extends org.xml.sax.helpers.DefaultHandler {
 
                 RoadSegment segment = new RoadSegment(origin, destination, name, length);
                 cityMap.addSegment(segment);
-
                 break;
             case "map":
                 break;

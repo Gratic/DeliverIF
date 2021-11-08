@@ -89,7 +89,10 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
         if (this.isMapLoaded()) {
             g.setColor(new Color(10, 10, 10));
-
+            
+            Hashtable<Point, List> roadNames = new Hashtable<>();
+            List<String> uniqueRoadNames = new ArrayList<>();
+            
             for (Address address : this.map.getAddresses().values()) {
 
                 // Display address hover
@@ -101,6 +104,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
                 // Display segments originating from this address
                 Collection<RoadSegment> segments = this.map.getSegmentsOriginatingFrom(address.getId());
+                //perhaps use reverse hashtable?
                 if (segments != null) {
                     for (RoadSegment segment : segments) {
                         // check if road is one-way only
@@ -112,11 +116,51 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
                         Point startCoord = this.latlongToXY(segment.getOrigin().getCoords());
                         Point endCoord = this.latlongToXY(segment.getDestination().getCoords());
+                        
+                        Point origin = this.latlongToXY(segment.getOrigin().getCoords());
+                        Point center = new Point(startCoord.x + ((endCoord.x-startCoord.x)/2), startCoord.y + ((endCoord.y-startCoord.y)/2));
+                        String roadName= segment.getName();
+                        int len= roadName.length();
+                        double deg = Math.toDegrees(Math.atan2(center.y - endCoord.y, center.x - endCoord.x)+ Math.PI);
+                        if ((deg>90)&&(deg<270)){
+                            deg += 180;
+                        }
+                        double angle = Math.toRadians(deg);
+                        center.setLocation(center.x - (len)/2,center.y - 10);
+
+
+                        if(roadName.contains("Avenue")&&!roadName.contains("Rue")) {
+                            List<String> roadNameDetails=new ArrayList<String>();
+                            roadNameDetails.add(String.valueOf(angle));
+                            roadNameDetails.add(roadName);
+
+                            if (!uniqueRoadNames.contains(roadName)) {
+                                //System.out.println(roadName);
+                                uniqueRoadNames.add(roadName);
+                                roadNames.put(center,roadNameDetails);
+                            }
+                        }
 
                         g2d.drawLine(startCoord.x, startCoord.y, endCoord.x, endCoord.y);
                     }
                 }
             }
+            int fontSize=g.getFont().getSize();
+            String fontName=g.getFont().getName();
+            Font myFont = new Font (fontName, 0,(int) (fontSize * this.zoomLevel));
+            g.setFont(myFont);
+            for (Map.Entry<Point,List> entry : roadNames.entrySet()){
+
+                Double angle=Double.valueOf(String.valueOf(entry.getValue().get(0)));
+                int centerX=entry.getKey().x;
+                int centerY=entry.getKey().y;
+
+                ((Graphics2D) g).rotate(angle, centerX,centerY);
+
+                g.drawString(String.valueOf(entry.getValue().get(1)),centerX ,centerY );
+
+                ((Graphics2D) g).rotate(-angle, centerX  , centerY);
+                    }
         } else {
             String message = "La carte n'est pas chargée ou vide.";
             int messageWidth = g.getFontMetrics().stringWidth(message);
