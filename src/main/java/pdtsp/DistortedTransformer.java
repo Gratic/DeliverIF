@@ -2,16 +2,20 @@ package pdtsp;
 
 import java.util.*;
 
+/**
+ * This transformation distinguish each pair of nodes of a request as unique node.
+ * This makes a new complete graph with no overlapping. Each request has two distinguishable and uniques nodes.
+ */
 public class DistortedTransformer implements GraphTransformer, RequestsTransformer {
     private final Graph reevaluated;
     private final List<Pair<Integer, Integer>> reevaluatedRequests;
 
-    private final Map<Integer, String> nodeTypes;                                     // Map of node types. Node ID's are distorted world ID.
-    private final Map<Integer, Integer> nodeRequests;                                  // Map of node with request. Second field is the request index in distortedRequest.
+    private final Map<Integer, String> nodeTypes;                                     // Map of node types. Nodes' IDs are distorted world ID.
+    private final Map<Integer, Integer> nodeRequests;                                 // Map of node with request. Second field is the request index in distortedRequest.
     private final Map<Integer, Integer> afterToBeforeIndexes;                         // Index from distorted world to reevaluated world
     private final Map<Integer, Collection<Integer>> beforeToAfterIndexes;             // Index from reevaluated world to distorted world
     private final Map<Integer, Collection<Pair<Integer, Double>>> distortedWorld;     // Distorted graph, adjacency list. Pair<Node ID, Distance>
-    private final List<Pair<Integer, Integer>> distortedRequests;               // Each request with nodes reevaluted in the distorted graph.
+    private final List<Pair<Integer, Integer>> distortedRequests;                     // Each request with nodes reevaluated in the distorted graph.
 
     private Graph distortedGraph;
 
@@ -29,14 +33,14 @@ public class DistortedTransformer implements GraphTransformer, RequestsTransform
 
     /**
      * Transform a reevaluated graph into a distorted graph.
-     * A distorted graph is the name I use to qualify a graph that had been twisted in a way that
+     * A distorted graph is the name I used to qualify a graph that had been twisted in a way that
      * there is no overlapping between requests. I actually don't know if there will be a case when a problem
-     * with overlapping will occur. But in case, this propose a general solution to the problem.
+     * with overlapping will occur. But in case, this proposes a general solution to the problem.
      * The notable side effect is that more nodes can be present than in the reevaluated graph.
      * Resulting in a longer TSP computation.
      */
     public void transform() {
-        // TASK 1: Re-index every nodes AND recompute requests in the distorted world
+        // TASK 1: Re-index every node AND recompute requests in the distorted world
 
         nodeTypes.put(0, "start");
         afterToBeforeIndexes.put(0, 0);
@@ -61,11 +65,9 @@ public class DistortedTransformer implements GraphTransformer, RequestsTransform
 
             // Looping on every node of the reevaluated world.
             // Note that this requires that nodes are valued in [1, getNbVertices[.
-            // O must be the starting point and we already treated that part.
+            // O must be the starting point, and we already treated that part.
             for (int i = 1; i < reevaluated.getNbVertices(); i++) {
-                if (beforeToAfterIndexes.get(i) == null) {
-                    beforeToAfterIndexes.put(i, new ArrayList<>());
-                }
+                beforeToAfterIndexes.computeIfAbsent(i, k -> new ArrayList<>());
 
                 // Classification
                 if (pickupPoint == i) {
@@ -127,7 +129,7 @@ public class DistortedTransformer implements GraphTransformer, RequestsTransform
                     distortedArc.setY(0d);
                 } else {
                     // If it not a duplication, we just copy the cost of the original points.
-                    // Also we know that there is a cost because reevaluated is a complete graph.
+                    // Also, we know that there is a cost because reevaluated is a complete graph.
                     distortedArc.setY(reevaluated.getCost(realPointI, realPointJ));
                 }
 
@@ -166,6 +168,12 @@ public class DistortedTransformer implements GraphTransformer, RequestsTransform
         return nodeRequests;
     }
 
+    /**
+     * Returns the index of the request in distortedRequests for which we can find the corresponding distortedNodeIndex.
+     *
+     * @param distortedNodeIndex the identifier of the node.
+     * @return the index of the request.
+     */
     public Integer getIndexOfRequestOfNode(Integer distortedNodeIndex) {
         for (int i = 0; i < distortedRequests.size(); i++) {
             Pair<Integer, Integer> request = distortedRequests.get(i);

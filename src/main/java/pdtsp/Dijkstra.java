@@ -9,7 +9,7 @@ import java.util.PriorityQueue;
  * Distances between arcs must be POSITIVE !!
  * Else the algorithm won't work as intended.
  * <p>
- * WARNING NOTE: graph g must contains node indexes from [0, nbVertices[.
+ * WARNING NOTE: graph g must contain node indexes from [0, nbVertices[ with g.getNbVertices() vertices.
  * Else the algorithm won't work as it uses a list for result (using node indexes as indices for the list).
  */
 public class Dijkstra implements ShortestPath {
