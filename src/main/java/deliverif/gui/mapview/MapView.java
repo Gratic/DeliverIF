@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
 
@@ -36,7 +37,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private final double ZOOM_SENSITIVITY = 0.2;
 
     private final float BASE_STREET_SIZE = 1.f;
-    private final float PATH_SIZE_MULT = 1.5f;
+    private final float PATH_SIZE_MULT = 1.75f;
     private final float BOTH_WAY_MULT = 1.25f;
     private final float PATH_ARROW_THICKNESS = 3.f;
 
@@ -58,6 +59,13 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
     private Map<Request, Color> requestColorMap = new HashMap<>();
     private Map<Address, Integer> pathOverlapCounts = new HashMap<>();
+
+    enum PathColorMode {
+        RED,
+        REQUEST_COLOR,
+        GRADIENT
+    }
+    private PathColorMode colorMode = PathColorMode.GRADIENT;
 
     public MapView(Controller controller) {
         this.controller = controller;
@@ -241,7 +249,18 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
                     RoadSegment segment = this.tour.getPath().get(j - 1);
 
-                    g.setColor(color);
+                    if(colorMode == PathColorMode.REQUEST_COLOR) {
+                        g.setColor(color);
+                    }
+                    else if(colorMode == PathColorMode.GRADIENT) {
+                        int colorValue = (int) (((double)j / this.tour.getPathAddresses().size()) * 200);
+                        int reverseColorValue = 255 - colorValue;
+                        g.setColor(new Color(255, reverseColorValue, reverseColorValue));
+                    }
+                    else {
+                        g.setColor(Color.RED);
+                    }
+
                     if (j == nextRqAddressIndex) {  // color update will apply on next segment (this is intended)
                         color = requestColorMap.get(addrMetadata.getY());
                         nextRqAddressIndex = this.tour.nextRequestAddressIndex(nextRqAddressIndex);
