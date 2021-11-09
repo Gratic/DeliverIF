@@ -12,9 +12,9 @@ public class SeqIter implements Iterator<Integer> {
      * which are successors of <code>currentVertex</code> in <code>g</code>
      * Vertices are traversed in the same order as in <code>unvisited</code>
      *
-     * @param unvisited
-     * @param currentVertex
-     * @param g
+     * @param unvisited     the unvisited nodes
+     * @param currentVertex the current vertex
+     * @param g             the graph
      */
     public SeqIter(Collection<Integer> unvisited, Integer currentVertex, Graph g) {
         this.candidates = new Integer[unvisited.size()];

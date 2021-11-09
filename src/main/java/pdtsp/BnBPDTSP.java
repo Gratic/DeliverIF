@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-// TODO: Possibility to stop and continue the computation.
+/**
+ * Branch'n'Bound algorithm implementation for PDTSP.
+ *
+ * @deprecated takes too long.
+ */
 public class BnBPDTSP implements RunnablePDTSP {
     private static final boolean DEBUG = false;
 
@@ -30,7 +34,6 @@ public class BnBPDTSP implements RunnablePDTSP {
         this.pred = pred;
     }
 
-    // TODO: Working stop/resume
     @Override
     public void searchSolution(int timeLimit, Graph g, Graph pred) {
         if (timeLimit <= 0) return;
@@ -95,16 +98,7 @@ public class BnBPDTSP implements RunnablePDTSP {
         }
 
         return minCost * unvisited.size();
-    } // 17 MINUTES
-//    protected Double bound(Integer currentVertex, Collection<Integer> unvisited, Graph g) {
-//        double minCost = Double.POSITIVE_INFINITY;
-//
-//        for (int i : unvisited) {
-//            minCost = (g.getCost(currentVertex, i) != -1 ? Math.min(minCost, g.getCost(currentVertex, i)) : minCost);
-//        }
-//
-//        return minCost;
-//    } // 17 MINUTES 30 - 19 MINUTES 4
+    }
 
     protected Iterator<Integer> iterator(Integer currentVertex, Collection<Integer> unvisited, Graph g) {
         return new SeqIter(unvisited, currentVertex, g);

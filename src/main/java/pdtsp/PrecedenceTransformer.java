@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A requirement to verify quickly the precedence constraints in PDTSP.
+ */
 public class PrecedenceTransformer implements GraphTransformer {
     private final Integer nbVertices;
     private final Collection<Pair<Integer, Integer>> requests;
@@ -20,7 +23,7 @@ public class PrecedenceTransformer implements GraphTransformer {
     }
 
     /**
-     * This transformation is simple, we take a graph and a list of request and we make an arc
+     * This transformation is simple, we take a graph and a list of request, and we make an arc
      * between two nodes if there is a request that need both.
      * The arc is oriented : from delivery to pickup.
      * <p>
