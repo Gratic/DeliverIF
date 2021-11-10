@@ -299,6 +299,16 @@ public class PaperPDTSP implements RunnablePDTSP {
                     double a = alpha * g.getCost(k, nodeP) + pdcost + (2 - alpha) * g.getCost(nodeD, l) - klcost;
 
                     for (int o2 = o + 2; o2 < H.size() - 1; o2++) {
+
+                        timeElapsed = System.currentTimeMillis() - startingTime;
+                        if (timeElapsed > timeLimit) {
+                            if (isRunningInThread)
+                                pause();
+                            else
+                                return null;
+                        }
+                        waitResume();
+
                         s = H.get(o2);
                         t = H.get(o2 + 1);
 
@@ -372,6 +382,15 @@ public class PaperPDTSP implements RunnablePDTSP {
                 int nodeIPlus = H.get(i);
 
                 for (int j = i + 1; j < end; j++) {
+                    long timeElapsed = System.currentTimeMillis() - startingTime;
+                    if (timeElapsed > timeLimit) {
+                        if (isRunningInThread)
+                            pause();
+                        else
+                            return null;
+                    }
+                    waitResume();
+
                     int nodeJ = H.get(j - 1);
                     int nodeJPlus = H.get(j);
 
@@ -419,6 +438,15 @@ public class PaperPDTSP implements RunnablePDTSP {
                     int nodeJPlus = H.get(j);
 
                     for (int k = j + 1; k < end; k++) {
+                        long timeElapsed = System.currentTimeMillis() - startingTime;
+                        if (timeElapsed > timeLimit) {
+                            if (isRunningInThread)
+                                pause();
+                            else
+                                return null;
+                        }
+                        waitResume();
+
                         int nodeK = H.get(k - 1);
                         int nodeKPlus = H.get(k);
 
@@ -618,6 +646,10 @@ public class PaperPDTSP implements RunnablePDTSP {
 
         isReady = true;
 
+        long timeElapsed = System.currentTimeMillis() - startingTime;
+        if (timeElapsed > timeLimit) {
+            pause();
+        }
         waitResume();
 
         this.withOpt = false;
@@ -627,6 +659,10 @@ public class PaperPDTSP implements RunnablePDTSP {
                 this.alpha = i;
                 searchSolution(timeLimit, g, p);
 
+                timeElapsed = System.currentTimeMillis() - startingTime;
+                if (timeElapsed > timeLimit) {
+                    pause();
+                }
                 waitResume();
             }
         }
@@ -637,6 +673,10 @@ public class PaperPDTSP implements RunnablePDTSP {
                 this.alpha = i;
                 searchSolution(timeLimit, g, p);
 
+                timeElapsed = System.currentTimeMillis() - startingTime;
+                if (timeElapsed > timeLimit) {
+                    pause();
+                }
                 waitResume();
             }
         }
