@@ -476,6 +476,24 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
         if (SwingUtilities.isLeftMouseButton(e)) { // left click on map
 
+            // trigger controller address event
+            if (this.isMapClickable) {
+                List<Pair<Double, Address>> closestAddresses = map.getClosestAddressesFrom(XYToLatLong(e.getPoint()), ADDRESS_SELECTION_THRESHOLD);
+                for (Pair<Double, Address> p : closestAddresses) {
+                    System.out.println(p.getY().getId() + " - " + p.getX());
+                }
+
+                Address clickedAddress = null;
+
+                if (closestAddresses.size() >= 1) {
+                    clickedAddress = closestAddresses.get(0).getY();
+                }
+
+                if (clickedAddress != null) { // don't call addressClick if no addresses were actually clicked/chosen
+                    controller.addressClick(controller.getGui(), clickedAddress);
+                }
+            }
+
             // check request selection / controller event
             if (this.isTourLoaded()) {  // request highlighting
                 Coord pos = XYToLatLong(e.getPoint());
@@ -501,24 +519,6 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 this.repaint();
             }
 
-
-            // trigger controller address event
-            if (this.isMapClickable) {
-                List<Pair<Double, Address>> closestAddresses = map.getClosestAddressesFrom(XYToLatLong(e.getPoint()), ADDRESS_SELECTION_THRESHOLD);
-                for (Pair<Double, Address> p : closestAddresses) {
-                    System.out.println(p.getY().getId() + " - " + p.getX());
-                }
-
-                Address clickedAddress = null;
-
-                if (closestAddresses.size() >= 1) {
-                    clickedAddress = closestAddresses.get(0).getY();
-                }
-
-                if (clickedAddress != null) { // don't call addressClick if no addresses were actually clicked/chosen
-                    controller.addressClick(controller.getGui(), clickedAddress);
-                }
-            }
         }
     }
 
