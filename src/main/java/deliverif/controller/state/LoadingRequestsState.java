@@ -39,7 +39,7 @@ public class LoadingRequestsState implements State {
                         JOptionPane.WARNING_MESSAGE
                 );
 
-                run(controller, gui); // rerun current state. WARN: Run after popup!
+                controller.popState();
             }
         } else if (option == JFileChooser.CANCEL_OPTION) {
             controller.popState();
