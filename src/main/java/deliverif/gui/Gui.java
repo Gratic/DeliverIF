@@ -35,7 +35,7 @@ public class Gui {
 
         // create Frame and its MainPanel
         frame = new JFrame("Deliverif");
-        frame.setSize(width, height);
+        frame.setSize(new Dimension(width, height));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setContentPane(new MainPanel());
 
@@ -71,7 +71,7 @@ public class Gui {
 
     public void init() {
         // load assets
-        frame.setIconImage(Assets.loadMapImage);
+        frame.setIconImage(Assets.logoImage);
 
         // set current ViewState
         this.currentViewState = new InitialView(this);

@@ -161,7 +161,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
             // Road names rendering
             int fontSize = g.getFont().getSize();
             String fontName = g.getFont().getName();
-            Font myFont = new Font(fontName, Font.PLAIN, (int) (0.3 * fontSize * this.zoomLevel));
+            Font myFont = new Font(fontName, Font.PLAIN, (int) ( fontSize * this.zoomLevel));
             g.setFont(myFont);
             for (Map.Entry<Point, List> entry : roadNames.entrySet()) {
                 Double angle = Double.valueOf(String.valueOf(entry.getValue().get(0)));

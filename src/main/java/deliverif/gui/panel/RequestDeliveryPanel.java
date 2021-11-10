@@ -28,18 +28,18 @@ public class RequestDeliveryPanel extends RequestItemPanel {
         long idDeliveryAdress = request.getDeliveryAddress().getId();
 
 
-        int placeRequest = 10;
+        int placeRequest = 20;
 
 
         int intersectionsInterlign = 15;
         int titleInterlign = 18;
 
 
-        g.setFont(new Font("TimesRoman", Font.PLAIN, 11));
-        g.drawString("Request " + requestNumber + " - Delivery : ", 10, placeRequest);
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 15));
+        g.drawString("Delivery Request " + requestNumber, 10, placeRequest);
 
         placeRequest = placeRequest + titleInterlign;
-
+        g.setFont(new Font("TimesRoman", Font.BOLD, 12));
         g.drawString("Road Intersections : ", 20, placeRequest);
         int placeDelivery = placeRequest + 20;
         ArrayList<String> segmentNamesDelivery = new ArrayList<>();
@@ -48,6 +48,7 @@ public class RequestDeliveryPanel extends RequestItemPanel {
 
             if (!segmentNamesDelivery.contains(segment.getName())) {
                 segmentNamesDelivery.add(segment.getName());
+                g.setFont(new Font("TimesRoman", Font.PLAIN, 11));
                 g.drawString(segment.getName(), 25, placeDelivery);
                 placeDelivery = placeDelivery + intersectionsInterlign;
             }
@@ -55,7 +56,9 @@ public class RequestDeliveryPanel extends RequestItemPanel {
         }
 
         int placeDuration = placeDelivery;
+        g.setFont(new Font("TimesRoman", Font.BOLD, 11));
         g.drawString("Delivery Duration : ", 20, placeDuration);
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 11));
         g.drawString(String.valueOf(request.getDeliveryDuration()), 25, placeDuration + 20);
         g.drawString("seconds", 50, placeDuration + 20);
 

@@ -15,7 +15,7 @@ import java.nio.file.Path;
 public class Assets {
 
     public static Font expletusSans, minecraftia;
-    public static BufferedImage deliveryImage, pickupImage, departureImage, loadMapImage, addRequestImage, editRequestImage, loadRequestImage, removeRequestImage, undoImage, redoImage;
+    public static BufferedImage deliveryImage, pickupImage, departureImage, loadMapImage, finishImage,logoImage, addRequestImage, editRequestImage, loadRequestImage, removeRequestImage, undoImage, redoImage;
     public static ImageIcon deliveryIcon, pickupIcon, departureIcon, loadMapIcon, addRequestIcon, editRequestIcon, loadRequestIcon, removeRequestIcon, undoIcon, redoIcon;
 
     public static void init() {
@@ -26,7 +26,7 @@ public class Assets {
         minecraftia = FontLoader.loadFontToSize(
                 Path.of("resources/fonts/Minecraftia-Regular.ttf"), 28f);
 
-        System.out.println("t");
+        System.out.println("t(in assets)");
 
         try {
             deliveryImage = ImageIO.read(new File("resources/assets/icons/delivery.png"));
@@ -39,10 +39,11 @@ public class Assets {
             removeRequestImage = ImageIO.read(new File("resources/assets/icons/removeRequest.png"));
             undoImage = ImageIO.read(new File("resources/assets/icons/undo.png"));
             redoImage = ImageIO.read(new File("resources/assets/icons/redo.png"));
+            finishImage = ImageIO.read(new File("resources/assets/icons/finish.png"));
+            logoImage = ImageIO.read(new File("resources/assets/icons/logo.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         deliveryIcon = new ImageIcon(deliveryImage);
         pickupIcon = new ImageIcon(pickupImage);
         departureIcon = new ImageIcon(departureImage);

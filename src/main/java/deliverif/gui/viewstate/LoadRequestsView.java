@@ -33,6 +33,7 @@ public class LoadRequestsView extends ViewState {
         JLabel pleaseLoadRequestsText = new JLabel("Please load requests.");
         textualViewPanel.add(pleaseLoadRequestsText);
 
+
         textualViewPanel.revalidate();
         textualViewPanel.repaint();
     }

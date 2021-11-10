@@ -8,7 +8,7 @@ public class MainPanel extends JPanel {
     public MainPanel() {
         super();
         setOpaque(true);
-        setBackground(Color.cyan);
+        setBackground(Color.WHITE);
         setLayout(new BorderLayout());
     }
 

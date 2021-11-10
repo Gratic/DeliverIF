@@ -23,7 +23,7 @@ public class InitialView extends ViewState {
         // base panel
         panel = new JPanel();
         panel.setOpaque(true);
-        panel.setBackground(ColorTheme.LIGHT_BASE_GREY);
+        panel.setBackground(ColorTheme.GENERAL_BASE_BG);
 
         // inner JPanel to be centered
         JPanel innerPanel = new JPanel();
@@ -32,12 +32,12 @@ public class InitialView extends ViewState {
         );
         innerPanel.setLayout(verticalFlowLayout);
         innerPanel.setPreferredSize(new Dimension(700, 400));
-        innerPanel.setBackground(ColorTheme.BOX_GENERAL_BASE_BG);
+        innerPanel.setBackground(ColorTheme.GENERAL_BASE_BG);
 
         Font titleFont = Assets.expletusSans;
 
         JLabel welcomeLabel = new JLabel(
-                "Please choose a map to load."
+                "Nothing is Loaded."
         );
         welcomeLabel.setSize(600, 30);
         welcomeLabel.setFont(titleFont);

@@ -52,9 +52,11 @@ public class ViewTourComputed extends ViewState implements ActionListener {
 
         TextualViewPanel textualViewPanel = gui.getTextualViewPanel();
         textualViewPanel.removeAll();
-        JLabel generateRoadmap = new JLabel("Generate the roadmap");
+        JLabel generateRoadmap = new JLabel("Generate roadmap");
         textualViewPanel.add(generateRoadmap);
         generateRoadmapButton = new JButton("Generate");
+        generateRoadmapButton.setFocusPainted(false);
+        generateRoadmapButton.setContentAreaFilled(false);
         textualViewPanel.add(generateRoadmapButton);
         generateRoadmapButton.addActionListener(this);
 
