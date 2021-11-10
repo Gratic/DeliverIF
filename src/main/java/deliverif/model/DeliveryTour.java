@@ -384,22 +384,15 @@ public class DeliveryTour extends Observable {
 
     public List<RoadSegment> getSubPathBetweenPoints(Address a1, Address a2) {
         List<Address> addresses = this.pathAddresses;
-        int indexAddress1 = addresses.indexOf(a1);
-        int indexAddress2 = getIndexOfDeliveryAddress(a2, indexAddress1);
+        int indexAddress1 = getIndexOfAddress(a1);
+        int indexAddress2 = getIndexOfAddress(a2);
         return path.subList(indexAddress1, indexAddress2 - 1);
     }
-    
 
-    /**
-     * get the index of a delivery address, useful when a delivery address is visited before and after a pickup for the same request
-     * @param address the address we want the index of
-     * @param pickupPointIndex index of the pickup point of the same request
-     * @return the index of the address
-     */
-    public int getIndexOfDeliveryAddress(Address address, int pickupPointIndex) {
+    public int getIndexOfAddress(Address address) {
         List<Address> addresses = this.pathAddresses;
         int index = 0;
-        for (int i = pickupPointIndex; i < addresses.size(); i++) {
+        for (int i = 0; i < addresses.size(); i++) {
             if (addresses.get(i).equals(address)) {
                 index = i;
             }

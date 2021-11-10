@@ -60,7 +60,7 @@ public class Roadmap {
 
                     RoadSegment roadSegment = getRoadsegmentBetweenAdresses(addresses.get(i), addresses.get(i + 1));
 
-                    writer.write("  Then go onto ");
+                    writer.write("Then go onto ");
                     writer.write(roadSegment.getName());
                     writer.write(" for " + (int) roadSegment.getLength() + "m");
                     writer.newLine();
@@ -81,7 +81,7 @@ public class Roadmap {
                             computeDepartureTimeOnPoint(currentDate, addressRequestMetadata.get(i).getY().getDeliveryDuration())));
                     writer.newLine();
                     writer.newLine();
-                    writer.write("  Then go onto ");
+                    writer.write("Then go onto ");
                     RoadSegment roadSegment = getRoadsegmentBetweenAdresses(addresses.get(i), addresses.get(i + 1));
                     writer.write(roadSegment.getName());
                     writer.write(" for " + (int) roadSegment.getLength() + "m");
@@ -91,7 +91,7 @@ public class Roadmap {
                 } else if (addressRequestMetadata.get(i).getX().equals(EnumAddressType.TRAVERSAL_ADDRESS)) {
                     RoadSegment roadSegment = getRoadsegmentBetweenAdresses(addresses.get(i), addresses.get(i + 1));
                     if (previousRoadSegment == null){
-                        writer.write("  Go onto ");
+                        writer.write("Go onto ");
                         writer.write(roadSegment.getName());
                         writer.write(" for " + (int) roadSegment.getLength() + "m");
                         writer.newLine();
@@ -163,8 +163,7 @@ public class Roadmap {
         long timeInMSecs = previousDate.getTime();
         int duration = computeDurationOnSubPath(a1, a2);
         List<Pair<EnumAddressType, Request>> addressRequestMetadata = tour.getAddressRequestMetadata();
-        List<Address> addresses = tour.getPathAddresses() ;
-        int indexA1 = addresses.indexOf(a1);
+        int indexA1 = tour.getIndexOfAddress(a1);
         if (addressRequestMetadata.get(indexA1).getX().equals(EnumAddressType.DELIVERY_ADDRESS)) {
             duration += addressRequestMetadata.get(indexA1).getY().getDeliveryDuration();
         } else if (addressRequestMetadata.get(indexA1).getX().equals(EnumAddressType.PICKUP_ADDRESS)) {
@@ -206,7 +205,7 @@ public class Roadmap {
     public Address findLastRequest(Address currentAddress) {
         List<Address> addresses = tour.getPathAddresses();
         List<Pair<EnumAddressType, Request>> addressRequestMetadata = tour.getAddressRequestMetadata();
-        int stopIndex = addresses.indexOf(currentAddress);
+        int stopIndex = tour.getIndexOfAddress(currentAddress);
         Address lastAddress = null;
         for (int i = 0; i < stopIndex; i++) {
             if (addressRequestMetadata.get(i).getX().equals(EnumAddressType.PICKUP_ADDRESS) ||
@@ -220,13 +219,13 @@ public class Roadmap {
     public String getDirection(Address a1, Address a2, Address a3) {
         double angle = Coord.getAngle(a1.getCoords(), a2.getCoords(), a3.getCoords());
         if (Math.abs(angle-Math.PI) < 1){
-            return "Go onto ";
+            return "Then go on ";
         }
         else if (angle > 0){
-            return "    Turn right onto ";
+            return "Then turn right on ";
         }
         else {
-            return "    Turn left onto ";
+            return "Then turn left on ";
         }
     }
 }
