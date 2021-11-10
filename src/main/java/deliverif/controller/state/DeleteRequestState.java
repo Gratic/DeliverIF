@@ -5,6 +5,7 @@ import deliverif.controller.command.AddRequestCommand;
 import deliverif.controller.command.Command;
 import deliverif.controller.command.DeleteRequestCommand;
 import deliverif.gui.Gui;
+import deliverif.gui.viewstate.DisplayRequestsView;
 import deliverif.model.Address;
 import deliverif.model.EnumAddressType;
 import deliverif.model.Request;
@@ -14,7 +15,18 @@ import javax.swing.*;
 public class DeleteRequestState implements State {
     @Override
     public void run(Controller controller, Gui gui) {
+        int option = JOptionPane.showConfirmDialog(gui.getFrame(),
+                "Please choose a request to delete on the map.",
+                "Request choice",
+                JOptionPane.OK_CANCEL_OPTION);
 
+        if (option == JOptionPane.CANCEL_OPTION) {
+            controller.popState();
+        } else {
+            if (controller.getGui().getCurrentViewState() instanceof DisplayRequestsView) {
+                ((DisplayRequestsView) controller.getGui().getCurrentViewState()).getComputeButton().setEnabled(false);
+            }
+        }
     }
 
     @Override

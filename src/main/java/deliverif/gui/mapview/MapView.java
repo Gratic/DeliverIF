@@ -37,7 +37,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private final double ZOOM_SENSITIVITY = 0.2;
 
     private final float BASE_STREET_SIZE = 1.f;
-    private final float PATH_SIZE_MULT = 1.75f;
+    private final float PATH_SIZE_MULT = 4.f;
     private final float BOTH_WAY_MULT = 1.25f;
     private final float PATH_ARROW_THICKNESS = 3.f;
 
@@ -240,6 +240,15 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
             // Display tour path
             if (this.tour.getPath().size() >= 2) {
+                String fontName = g.getFont().getName();
+                Font myFont = new Font(fontName, Font.PLAIN, 20);
+                g.setFont(myFont);
+
+                g.setColor(new Color(255, 255, 0));
+                g.drawString("Départ", 10, 20);
+                g.setColor(new Color(255, 0, 255));
+                g.drawString("Arrivée", 10, 50);
+
                 int nextRqAddressIndex = this.tour.nextRequestAddressIndex(0);
                 Color color = ColorTheme.DEPARTURE_COLOR;
 
@@ -253,9 +262,10 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                         g.setColor(color);
                     }
                     else if(colorMode == PathColorMode.GRADIENT) {
-                        int colorValue = (int) (((double)j / this.tour.getPathAddresses().size()) * 200);
+                        double ratio = ((double)j / this.tour.getPathAddresses().size());
+                        int colorValue = 255 - (int) (ratio * 255);
                         int reverseColorValue = 255 - colorValue;
-                        g.setColor(new Color(255, reverseColorValue, reverseColorValue));
+                        g.setColor(new Color(255, colorValue, reverseColorValue));
                     }
                     else {
                         g.setColor(Color.RED);
@@ -303,7 +313,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                             arrowTip.y + (int) ((segNormal.y - arrowTip.y) / arrowVecNorm * 4 * this.zoomLevel)
                     );
 
-                    g2d.setStroke(new BasicStroke(streetSize * PATH_SIZE_MULT));
+                    g2d.setStroke(new BasicStroke((float) (streetSize * PATH_SIZE_MULT / zoomLevel)));
                     g2d.drawLine(segStart.x, segStart.y, segEnd.x, segEnd.y);
 
                     g2d.setStroke(new BasicStroke(PATH_ARROW_THICKNESS));
