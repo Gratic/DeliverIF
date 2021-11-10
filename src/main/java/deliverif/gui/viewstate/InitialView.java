@@ -19,7 +19,7 @@ public class InitialView extends ViewState {
         gui.getGraphicalViewPanel().repaint();
     }
 
-    private void createGuiComponents() {
+    protected void createGuiComponents() {
         // base panel
         panel = new JPanel();
         panel.setOpaque(true);

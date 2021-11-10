@@ -2,6 +2,17 @@ package pdtsp;
 
 import java.util.*;
 
+/**
+ * The goal in this transformation is to simplify the graph by keeping only the concerned nodes.
+ * Also, this graph makes arc between every concerned nodes with a weight equal to the cost of the shortest path between
+ * the two.
+ * <p>
+ * Plus change the index of the starting node to 0 as it is required for the PDTSP algorithm to work.
+ * <p>
+ * A concerned node is a node in a request or the starting node.
+ * <p>
+ * If there is n requests there is at most 2n+1 nodes (1 is the starting node).
+ */
 public class ReevaluationTransformer implements GraphTransformer, RequestsTransformer {
     private final List<Pair<Integer, Integer>> requests;
     private final Graph map;

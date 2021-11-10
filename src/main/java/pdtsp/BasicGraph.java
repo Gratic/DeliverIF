@@ -67,6 +67,11 @@ public class BasicGraph implements Graph {
         return adjacencyList.get(i);
     }
 
+    /**
+     * Utility function to print a graph.
+     *
+     * @param g the graph to print.
+     */
     public static void printGraph(Graph g) {
         System.out.println("number vertices=" + g.getNbVertices());
         for (int i = 0; i < g.getNbVertices(); i++) {

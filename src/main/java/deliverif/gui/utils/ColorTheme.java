@@ -10,13 +10,13 @@ public class ColorTheme {
 
     // palette 1: base colors for panels
     public static Color MEDIUM_BASE_GREY = new Color(0x616966);
-    public static Color LIGHT_BASE_GREY = new Color(0x99968E);
-    public static Color LIGHT_BASE_GREY_ALT = new Color(0xC7C5BE);
+    public static final Color LIGHT_BASE_GREY = new Color(0x99968E);
+    public static final Color LIGHT_BASE_GREY_ALT = new Color(0xC7C5BE);
     public static Color MEDIUM_BASE_PURPLE = new Color(0x635E65);
 
-    public static Color BOX_BG_LIGHT_BASE_GREY = new Color(0x89857A);
+    public static final Color BOX_BG_LIGHT_BASE_GREY = new Color(0x89857A);
 
-    public static List<Color> REQUEST_PALETTE = new ArrayList<>() {
+    public static final List<Color> REQUEST_PALETTE = new ArrayList<>() {
         {
             add(new Color(0x197278));
             add(new Color(0xFF90004A, true));
@@ -43,7 +43,7 @@ public class ColorTheme {
         }
     };
 
-    public static Color DEPARTURE_COLOR = new Color(255, 0, 0);
+    public static final Color DEPARTURE_COLOR = new Color(255, 0, 0);
 
     // general theme settings
     public static Color GENERAL_BASE_BG = Color.WHITE;

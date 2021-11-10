@@ -11,6 +11,19 @@ import java.util.Map;
  * This class is the bridge between the real world and the algorithmic world.
  * <p>
  * It is also the only class to call if there is a need for a TSP Computation.
+ * <p>
+ * The basic method order calling :
+ * 1) Constructor
+ * 2) prepare()
+ * 3) compute()
+ * 4) updateDeliveryTour()
+ * <p>
+ * Note: this implementation makes the algorithm works on a different thread to be able
+ * to pause and resume at any time or pause automatically the algorithm after a time limit.
+ * This means that even though compute has "finished" the solution could be yet to be found and/or not optimal.
+ * In that case, to continue the search, calling compute() is enough.
+ * But, if you want to stop the algorithm and keep the current solution, you must kill the thread by calling
+ * killAlgorithmThread().
  */
 public class PDTSPWrapper {
     private final boolean DEBUG = false;
@@ -70,6 +83,16 @@ public class PDTSPWrapper {
         isPreparationDone = false;
     }
 
+    /**
+     * Usually the first method to be called.
+     * <p>
+     * Prepare everything so that there still only need to do the actual computation.
+     * <p>
+     * The graph must be transformed to be actually computable.
+     * What is a computable graph :
+     * - Starting node is 0.
+     * - The graph is complete.
+     */
     public void prepare() {
         if (!isPreparationDone) {
             // TASK 1: Reevaluation
@@ -102,17 +125,27 @@ public class PDTSPWrapper {
             isPreparationDone = true;
 
             if (pdtsp == null) {
-                pdtsp = new BnBPDTSP(timeLimit, distorter.getTransformedGraph(), precedencer.getTransformedGraph());
+                pdtsp = new PaperPDTSP(timeLimit, distorter.getTransformedGraph(), precedencer.getTransformedGraph());
                 pdtspThread = new Thread(pdtsp);
                 pdtspThread.start();
 
                 while (!pdtsp.isReady()) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
 
     }
 
+    /**
+     * The actual computation.
+     * <p>
+     * In fact, the algorithm runs on another thread. And the code doing the actual search is in another class.
+     */
     public void compute() {
         if (isPreparationDone && !isSolutionOptimal() && pdtsp.isRunning()) {
             if (DEBUG) {
@@ -134,6 +167,13 @@ public class PDTSPWrapper {
         }
     }
 
+    /**
+     * Returns a list of long corresponding to the path found by the algorithm.
+     * <p>
+     * A solution must be found before.
+     *
+     * @return a list of long corresponding to the path found.
+     */
     public List<Long> getPath() {
         Graph distorted = distorter.getTransformedGraph();
         Map<Integer, Integer> distortedPortalOut = distorter.getAfterToBeforeIndexes();
@@ -213,6 +253,13 @@ public class PDTSPWrapper {
         return realPath;
     }
 
+    /**
+     * Usually one of the last method.
+     * <p>
+     * Compute and a path must be found before.
+     * <p>
+     * Effectively updates the DeliveryTour object with the path found by the algorithm.
+     */
     public void updateDeliveryTour() {
         Graph distorted = distorter.getTransformedGraph();
         Map<Integer, Integer> distortedPortalOut = distorter.getAfterToBeforeIndexes();
@@ -300,7 +347,6 @@ public class PDTSPWrapper {
                     deliveryTour.getPath().add(rsCurrentToNext);
                 }
                 case "traversal" -> {
-                    Integer requestNumber = listNodeRequest.get(i);
                     deliveryTour.addAddressNoNotify(currentAddress, EnumAddressType.TRAVERSAL_ADDRESS, null);
                     deliveryTour.getPath().add(rsCurrentToNext);
                 }
@@ -316,7 +362,7 @@ public class PDTSPWrapper {
      * Get the real (shortest) path between to node.
      * Starting node is not included.
      * <p>
-     * NOTE: this must be used with REAL WORLD node from the REAL WORLD graph (a.k.a map).
+     * NOTE: this must be used with REAL WORLD node from the REAL WORLD graph (a.k.a. map).
      */
     private static List<Integer> getRealPath(Integer i, Integer j, Map<Integer, List<Pair<Double, Integer>>> shortestPaths) {
         List<Pair<Double, Integer>> result = shortestPaths.get(i);
@@ -349,5 +395,11 @@ public class PDTSPWrapper {
 
     public void killAlgorithmThread() {
         pdtsp.kill();
+
+        try {
+            pdtspThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

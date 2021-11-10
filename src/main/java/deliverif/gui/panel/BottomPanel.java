@@ -35,23 +35,13 @@ public class BottomPanel extends GuiPanel implements StateVisitor {
     }
 
     @Override
-    public void visit(ChooseAssociatedRequestState state) {
-        currentStateLabel.setText("PLEASE WRITE A CORRECT NAME FOR THIS STATE");  // TODO
-    }
-
-    @Override
-    public void visit(ChooseRequestToDeleteState state) {
-        currentStateLabel.setText("PLEASE WRITE A CORRECT NAME FOR THIS STATE");  // TODO
-    }
-
-    @Override
     public void visit(ComputingTourState state) {
         currentStateLabel.setText("Computing tour...");
     }
 
     @Override
     public void visit(DeleteRequestState state) {
-
+        currentStateLabel.setText("Delete a request: please choose a request to remove");
     }
 
     @Override
@@ -72,11 +62,6 @@ public class BottomPanel extends GuiPanel implements StateVisitor {
     @Override
     public void visit(LoadingRequestsState state) {
         currentStateLabel.setText("Loading requests...");
-    }
-
-    @Override
-    public void visit(LocallyModifyTourState state) {
-        currentStateLabel.setText("PLEASE WRITE A CORRECT NAME FOR THIS STATE");  // TODO
     }
 
     @Override

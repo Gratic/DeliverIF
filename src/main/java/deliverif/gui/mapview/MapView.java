@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
 
@@ -36,7 +37,7 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private final double ZOOM_SENSITIVITY = 0.2;
 
     private final float BASE_STREET_SIZE = 1.f;
-    private final float PATH_SIZE_MULT = 1.5f;
+    private final float PATH_SIZE_MULT = 4.f;
     private final float BOTH_WAY_MULT = 1.25f;
     private final float PATH_ARROW_THICKNESS = 3.f;
 
@@ -57,7 +58,14 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     private Address hoveredAddress;
 
     private Map<Request, Color> requestColorMap = new HashMap<>();
-    private Map<Address, Integer> pathOverlapCounts = new HashMap<>();
+    private Map<RoadSegment, Integer> pathOverlapCounts = new HashMap<>();
+
+    enum PathColorMode {
+        RED,
+        REQUEST_COLOR,
+        GRADIENT
+    }
+    private PathColorMode colorMode = PathColorMode.GRADIENT;
 
     public MapView(Controller controller) {
         this.controller = controller;
@@ -232,8 +240,18 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
             // Display tour path
             if (this.tour.getPath().size() >= 2) {
+                String fontName = g.getFont().getName();
+                Font myFont = new Font(fontName, Font.PLAIN, 20);
+                g.setFont(myFont);
+
+                g.setColor(new Color(255, 255, 0));
+                g.drawString("Départ", 10, 20);
+                g.setColor(new Color(255, 0, 255));
+                g.drawString("Arrivée", 10, 50);
+
                 int nextRqAddressIndex = this.tour.nextRequestAddressIndex(0);
                 Color color = ColorTheme.DEPARTURE_COLOR;
+                Point prevEnd = null;
 
                 for (int j = 1; j < this.tour.getPathAddresses().size(); j++) {  // address 0 is always departure
                     Address currentAddress = this.tour.getPathAddresses().get(j);
@@ -241,13 +259,25 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
                     RoadSegment segment = this.tour.getPath().get(j - 1);
 
-                    g.setColor(color);
+                    if(colorMode == PathColorMode.REQUEST_COLOR) {
+                        g.setColor(color);
+                    }
+                    else if(colorMode == PathColorMode.GRADIENT) {
+                        double ratio = ((double)j / this.tour.getPathAddresses().size());
+                        int colorValue = 255 - (int) (ratio * 255);
+                        int reverseColorValue = 255 - colorValue;
+                        g.setColor(new Color(255, colorValue, reverseColorValue));
+                    }
+                    else {
+                        g.setColor(Color.RED);
+                    }
+
                     if (j == nextRqAddressIndex) {  // color update will apply on next segment (this is intended)
                         color = requestColorMap.get(addrMetadata.getY());
                         nextRqAddressIndex = this.tour.nextRequestAddressIndex(nextRqAddressIndex);
                     }
 
-                    int overlap = this.pathOverlapCounts.getOrDefault(currentAddress, 0);
+                    int overlap = getOverlap(segment);
 
                     Point segStart = this.latlongToXY(segment.getOrigin().getCoords());
                     Point segEnd = this.latlongToXY(segment.getDestination().getCoords());
@@ -262,6 +292,10 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                     segStart.y += printDelta.y;
                     segEnd.x += printDelta.x;
                     segEnd.y += printDelta.y;
+
+                    if (prevEnd == null) {
+                        prevEnd = new Point(segEnd);
+                    }
 
                     Point arrowTip = new Point(
                             segStart.x + (int) ((segEnd.x - segStart.x) * 0.8),
@@ -284,16 +318,15 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                             arrowTip.y + (int) ((segNormal.y - arrowTip.y) / arrowVecNorm * 4 * this.zoomLevel)
                     );
 
-                    g2d.setStroke(new BasicStroke(streetSize * PATH_SIZE_MULT));
-                    g2d.drawLine(segStart.x, segStart.y, segEnd.x, segEnd.y);
+                    g2d.setStroke(new BasicStroke((float) (streetSize * PATH_SIZE_MULT / zoomLevel), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
+                    g2d.drawPolyline(new int[]{prevEnd.x, segStart.x, segEnd.x}, new int[]{prevEnd.y, segStart.y, segEnd.y}, 3);
+                    prevEnd = new Point(segEnd);
                     g2d.setStroke(new BasicStroke(PATH_ARROW_THICKNESS));
                     g2d.drawLine(arrowBase.x, arrowBase.y, arrowTip.x, arrowTip.y);
 
-                    if (this.pathOverlapCounts.containsKey(currentAddress))
-                        this.pathOverlapCounts.replace(currentAddress, overlap + 1);
-                    else
-                        this.pathOverlapCounts.put(currentAddress, overlap + 1);
+                    addOverlap(segment);
+
                 }
             }
 
@@ -457,6 +490,24 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
 
         if (SwingUtilities.isLeftMouseButton(e)) { // left click on map
 
+            // trigger controller address event
+            if (this.isMapClickable) {
+                List<Pair<Double, Address>> closestAddresses = map.getClosestAddressesFrom(XYToLatLong(e.getPoint()), ADDRESS_SELECTION_THRESHOLD);
+                for (Pair<Double, Address> p : closestAddresses) {
+                    System.out.println(p.getY().getId() + " - " + p.getX());
+                }
+
+                Address clickedAddress = null;
+
+                if (closestAddresses.size() >= 1) {
+                    clickedAddress = closestAddresses.get(0).getY();
+                }
+
+                if (clickedAddress != null) { // don't call addressClick if no addresses were actually clicked/chosen
+                    controller.addressClick(controller.getGui(), clickedAddress);
+                }
+            }
+
             // check request selection / controller event
             if (this.isTourLoaded()) {  // request highlighting
                 Coord pos = XYToLatLong(e.getPoint());
@@ -482,24 +533,6 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
                 this.repaint();
             }
 
-
-            // trigger controller address event
-            if (this.isMapClickable) {
-                List<Pair<Double, Address>> closestAddresses = map.getClosestAddressesFrom(XYToLatLong(e.getPoint()), ADDRESS_SELECTION_THRESHOLD);
-                for (Pair<Double, Address> p : closestAddresses) {
-                    System.out.println(p.getY().getId() + " - " + p.getX());
-                }
-
-                Address clickedAddress = null;
-
-                if (closestAddresses.size() >= 1) {
-                    clickedAddress = closestAddresses.get(0).getY();
-                }
-
-                if (clickedAddress != null) { // don't call addressClick if no addresses were actually clicked/chosen
-                    controller.addressClick(controller.getGui(), clickedAddress);
-                }
-            }
         }
     }
 
@@ -633,4 +666,24 @@ public class MapView extends JPanel implements Observer, MouseInputListener, Mou
     public void setMapClickable(boolean clickable) {
         this.isMapClickable = clickable;
     }
+
+    private int getOverlap(RoadSegment segment) {
+        RoadSegment reverse = map.findSegment(segment.getDestination().getId(), segment.getOrigin().getId());
+        int res = 0;
+        if (reverse != null) {
+            res = pathOverlapCounts.getOrDefault(reverse, res);
+        }
+
+        res += pathOverlapCounts.getOrDefault(segment, 0);
+        return res;
+    }
+
+    private void addOverlap(RoadSegment segment) {
+        if (pathOverlapCounts.containsKey(segment)) {
+            pathOverlapCounts.replace(segment, pathOverlapCounts.get(segment) + 1);
+        } else {
+            pathOverlapCounts.put(segment, 1);
+        }
+    }
+
 }

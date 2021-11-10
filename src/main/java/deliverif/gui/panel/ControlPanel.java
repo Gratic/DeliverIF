@@ -86,6 +86,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         );
         addRequestButton.setFocusPainted(false);
         addRequestButton.setContentAreaFilled(false);
+        addRequestButton.setToolTipText("Add Request");
         addRequestButton.addActionListener(this);
         addRequestButton.setEnabled(false);
         northPanel.add(addRequestButton);
@@ -96,6 +97,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         );
         deleteRequestButton.setFocusPainted(false);
         deleteRequestButton.setContentAreaFilled(false);
+        deleteRequestButton.setToolTipText("Delete Request");
         deleteRequestButton.addActionListener(this);
         deleteRequestButton.setEnabled(false);
         northPanel.add(deleteRequestButton);
@@ -107,6 +109,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         );
         undoButton.setFocusPainted(false);
         undoButton.setContentAreaFilled(false);
+        undoButton.setToolTipText("Undo");
         undoButton.addActionListener(this);
         undoButton.setEnabled(false);
         southPanel.add(undoButton);
@@ -117,6 +120,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         );
         redoButton.setFocusPainted(false);
         redoButton.setContentAreaFilled(false);
+        redoButton.setToolTipText("Redo");
         redoButton.addActionListener(this);
         redoButton.setEnabled(false);
         southPanel.add(redoButton);
@@ -132,7 +136,7 @@ public class ControlPanel extends GuiPanel implements ActionListener {
         } else if (e.getSource() == addRequestButton) {
             this.gui.getController().addRequestButtonClick(this.gui);
         } else if (e.getSource() == deleteRequestButton) {
-
+            this.gui.getController().deleteButtonClick(this.gui);
         } else if (e.getSource() == undoButton) {
             this.gui.getController().undo();
         } else if(e.getSource() == redoButton) {

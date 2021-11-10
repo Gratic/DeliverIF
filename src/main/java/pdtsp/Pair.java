@@ -6,8 +6,8 @@ import java.util.Objects;
  * Utility class to access two elements that can be of different type.
  * Only the first element must be comparable to compare two pair.
  *
- * @param <T>
- * @param <K>
+ * @param <T> any object
+ * @param <K> any object can be different from \<T\>
  */
 public class Pair<T extends Comparable<T>, K> implements Comparable<Pair<T, K>> {
     private T x;
@@ -38,7 +38,6 @@ public class Pair<T extends Comparable<T>, K> implements Comparable<Pair<T, K>> 
     public void setY(K y) {
         this.y = y;
     }
-
 
     @Override
     public int compareTo(Pair<T, K> o) {

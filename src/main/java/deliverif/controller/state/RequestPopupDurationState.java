@@ -28,7 +28,7 @@ public class RequestPopupDurationState implements State, IAddRequestState {
         };
         boolean keepTrying = true;
 
-        while(keepTrying) {
+        while (keepTrying) {
             JOptionPane.showMessageDialog(gui.getFrame(), message,
                     "Choose pickup and delivery durations", JOptionPane.INFORMATION_MESSAGE);
 
@@ -39,11 +39,11 @@ public class RequestPopupDurationState implements State, IAddRequestState {
                 int pickupDuration = Integer.parseInt(pickupDurationStr);
                 int deliveryDuration = Integer.parseInt(deliveryDurationStr);
 
-                if(pickupDuration < 0 || deliveryDuration < 0) throw new Exception(); // to be caught immediately after
+                if (pickupDuration < 0 || deliveryDuration < 0) throw new Exception(); // to be caught immediately after
 
                 int option = this.showConfirmDialog(gui, pickupDuration, deliveryDuration);
-                
-                if(option == JOptionPane.OK_OPTION) {
+
+                if (option == JOptionPane.OK_OPTION) {
                     JOptionPane.showMessageDialog(gui.getFrame(), "The system will now add the request and recompute the tour.");
 
                     Request request = new Request(
@@ -53,7 +53,7 @@ public class RequestPopupDurationState implements State, IAddRequestState {
                             deliveryDuration
                     );
                     try {
-                        if (request.getDeliveryAddress()==request.getDeliveryAddress()){
+                        if (request.getPickupAddress() == request.getDeliveryAddress()) {
                             throw new Exception("Same pickup and delivery address");
                         }
                         Command command = new AddRequestCommand(
@@ -61,21 +61,15 @@ public class RequestPopupDurationState implements State, IAddRequestState {
                                 addressBeforePickup, addressBeforeDelivery
                         );
                         controller.getListOfCommands().add(command);
-
-
-                        JOptionPane.showMessageDialog(gui.getFrame(), "Request added!",
-                                "Request added", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                    catch (Exception e) {
-                        JOptionPane.showMessageDialog(gui.getFrame(), "An unexpected error occurred during the operation.\n"+e.getMessage(),
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(gui.getFrame(), "An unexpected error occurred during the operation.\n" + e.getMessage(),
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
 
                     controller.setCurrentState(controller.tourCompleted);
                     return;
-                }
-                else if (option == JOptionPane.CANCEL_OPTION) {
+                } else if (option == JOptionPane.CANCEL_OPTION) {
                     keepTrying = false;
                 }
 
@@ -104,13 +98,13 @@ public class RequestPopupDurationState implements State, IAddRequestState {
                 "<html>The system will now add a request with the specified parameters:<br>"
                         + "<ul>"
                         + "<li>Request pickup address is @" + this.pickupAddress.getId() + "</li>"
-                        + "<li>Request delivery address is @"+ this.deliveryAddress.getId() +"</li>"
+                        + "<li>Request delivery address is @" + this.deliveryAddress.getId() + "</li>"
                         + "<li>Request pickup address is added after " + this.addressBeforeMessage(this.addressBeforePickup) + "</li>"
                         + "<li>Request delivery address is added after " + this.addressBeforeMessage(this.addressBeforeDelivery) + "</li>"
                         + "<li>Request pickup duration is " + pickupDuration + " seconds</li>"
                         + "<li>Request delivery duration is " + deliveryDuration + " seconds</li>"
                         + "</ul>"
-                        +"</html>",
+                        + "</html>",
                 "Confirm your choices",
                 JOptionPane.OK_CANCEL_OPTION
         );
